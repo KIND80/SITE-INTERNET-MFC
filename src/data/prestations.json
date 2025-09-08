@@ -1,0 +1,1234 @@
+[
+  {
+    "caisse": "Sanitas",
+    "produit": "Vital Basic / DIVERSA",
+    "categorie": "ambulatoire",
+    "critere": "meds_hors_base",
+    "description": "50% pour les médicaments non obligatoires enregistrés auprès de Swissmedic.",
+    "score": 1
+  },
+  {
+    "caisse": "Sanitas",
+    "produit": "Vital Smart / DIVERSAcare",
+    "categorie": "ambulatoire",
+    "critere": "meds_hors_base",
+    "description": "75% pour les médicaments non obligatoires enregistrés auprès de Swissmedic.",
+    "score": 2
+  },
+  {
+    "caisse": "Sanitas",
+    "produit": "Vital Premium",
+    "categorie": "ambulatoire",
+    "critere": "meds_hors_base",
+    "description": "90% pour les médicaments non obligatoires enregistrés auprès de Swissmedic.",
+    "score": 3
+  },
+  {
+    "caisse": "Concordia",
+    "produit": "DIVERSAplus / DIVERSApremium",
+    "categorie": "ambulatoire",
+    "critere": "meds_hors_base",
+    "description": "75% pour les médicaments non obligatoires enregistrés auprès de Swissmedic.",
+    "score": 2
+  },
+  {
+    "caisse": "CSS",
+    "produit": "Assurance ambulatoire myFlex",
+    "categorie": "ambulatoire",
+    "critere": "meds_hors_base",
+    "description": "90%, montant illimité pour les médicaments prescrits par un médecin, reconnus par CSS.",
+    "score": 3
+  },
+  {
+    "caisse": "AXA",
+    "produit": "Livo",
+    "categorie": "ambulatoire",
+    "critere": "meds_hors_base",
+    "description": "75%, illimité.",
+    "score": 2
+  },
+  {
+    "caisse": "Helsana",
+    "produit": "Santé PLUS",
+    "categorie": "ambulatoire",
+    "critere": "meds_hors_base",
+    "description": "75% des coûts pour les médicaments non soumis à l’AOS et autorisés par Swissmedic.",
+    "score": 1
+  },
+  {
+    "caisse": "Helsana",
+    "produit": "Santé COMPLET",
+    "categorie": "ambulatoire",
+    "critere": "meds_hors_base",
+    "description": "90% des coûts pour les médicaments non soumis à l’AOS et autorisés par Swissmedic.",
+    "score": 2
+  },
+  {
+    "caisse": "Helsana",
+    "produit": "TOP / COMPLETA",
+    "categorie": "ambulatoire",
+    "critere": "meds_hors_base",
+    "description": "90% des coûts pour les médicaments hors liste, prescrits par un médecin.",
+    "score": 3
+  },
+  {
+    "caisse": "SWICA",
+    "produit": "COMPLETA TOP / FORTE",
+    "categorie": "ambulatoire",
+    "critere": "meds_hors_base",
+    "description": "Médicaments sur indication médicale qui ne sont pas pris en charge par l’assurance de base.",
+    "score": 3
+  },
+  {
+    "caisse": "KPT",
+    "produit": "Assurance des soins Plus / Comfort",
+    "categorie": "ambulatoire",
+    "critere": "meds_hors_base",
+    "description": "90% des coûts des médicaments autorisés par Swissmedic.",
+    "score": 3
+  },
+  {
+    "caisse": "Assura",
+    "produit": "Pulse",
+    "categorie": "ambulatoire",
+    "critere": "meds_hors_base",
+    "description": "90% pour les médicaments non obligatoires, max. CHF 50 000.–.",
+    "score": 3
+  },
+  {
+    "caisse": "Visana",
+    "produit": "COMPLEMENTA EXTRA",
+    "categorie": "ambulatoire",
+    "critere": "meds_hors_base",
+    "description": "CHF 50 000.– pour les médicaments vitaux sans équivalent dans la liste des spécialités.",
+    "score": 3
+  },
+  {
+    "caisse": "Visana",
+    "produit": "MEDNA",
+    "categorie": "ambulatoire",
+    "critere": "meds_hors_base",
+    "description": "80% du prix, au max. CHF 2000.– par an, sur ordonnance médicale.",
+    "score": 2
+  },
+  {
+    "caisse": "Visana",
+    "produit": "Traitements ambulatoires",
+    "categorie": "ambulatoire",
+    "critere": "meds_hors_base",
+    "description": "90% pour les médicaments non remboursés, avec plafond selon niveau (CHF 1000/an ou illimité).",
+    "score": 2
+  },
+  {
+    "caisse": "Groupe Mutuel",
+    "produit": "Tous les produits",
+    "categorie": "ambulatoire",
+    "critere": "meds_hors_base",
+    "description": "70% à 90% sur les médicaments, avec des plafonds variables (ex: CHF 800/an) ou illimités.",
+    "score": 2
+  },
+  {
+    "caisse": "Sanitas",
+    "produit": "Vital Smart / NATURA",
+    "categorie": "ambulatoire",
+    "critere": "med_alt",
+    "description": "80%, jusqu’à CHF 2500.– ou CHF 5000.– selon l'option.",
+    "score": 2
+  },
+  {
+    "caisse": "Sanitas",
+    "produit": "Vital Premium / NATURAplus",
+    "categorie": "ambulatoire",
+    "critere": "med_alt",
+    "description": "80%, jusqu’à CHF 10 000.–.",
+    "score": 3
+  },
+  {
+    "caisse": "Concordia",
+    "produit": "NATURA / NATURAplus",
+    "categorie": "ambulatoire",
+    "critere": "med_alt",
+    "description": "75%, au max. CHF 6000.–/an pour naturopathes, et CHF 2000.–/an pour thérapeutes.",
+    "score": 3
+  },
+  {
+    "caisse": "CSS",
+    "produit": "Assurance médecine alternative myFlex Economy",
+    "categorie": "ambulatoire",
+    "critere": "med_alt",
+    "description": "75%, jusqu’à CHF 1000.–/an.",
+    "score": 1
+  },
+  {
+    "caisse": "CSS",
+    "produit": "Assurance médecine alternative myFlex Balance",
+    "categorie": "ambulatoire",
+    "critere": "med_alt",
+    "description": "75%, jusqu’à CHF 3000.–/an.",
+    "score": 2
+  },
+  {
+    "caisse": "CSS",
+    "produit": "Assurance médecine alternative myFlex Premium",
+    "categorie": "ambulatoire",
+    "critere": "med_alt",
+    "description": "75%, jusqu’à CHF 10 000.–/an.",
+    "score": 3
+  },
+  {
+    "caisse": "AXA",
+    "produit": "Livo",
+    "categorie": "ambulatoire",
+    "critere": "med_alt",
+    "description": "50% à 75% jusqu'à CHF 10 000.–/an, avec une franchise de CHF 300.– (sauf enfants).",
+    "score": 2
+  },
+  {
+    "caisse": "Helsana",
+    "produit": "SANA / COMPLETA",
+    "categorie": "ambulatoire",
+    "critere": "med_alt",
+    "description": "75% avec des plafonds jusqu'à CHF 5000.– par an.",
+    "score": 2
+  },
+  {
+    "caisse": "Helsana",
+    "produit": "COMPLETA PLUS",
+    "categorie": "ambulatoire",
+    "critere": "med_alt",
+    "description": "Bonus de 15% des frais jusqu’à CHF 500.–/an en plus de COMPLETA.",
+    "score": 3
+  },
+  {
+    "caisse": "SWICA",
+    "produit": "COMPLETA TOP / FORTE / OPTIMA",
+    "categorie": "ambulatoire",
+    "critere": "med_alt",
+    "description": "Jusqu'à CHF 120.-/heure chez les thérapeutes reconnus par SWICA.",
+    "score": 3
+  },
+  {
+    "caisse": "KPT",
+    "produit": "Assurance des soins Comfort",
+    "categorie": "ambulatoire",
+    "critere": "med_alt",
+    "description": "90% des coûts, jusqu’à CHF 2000.– par an.",
+    "score": 2
+  },
+  {
+    "caisse": "Assura",
+    "produit": "Pulse Top / Premium",
+    "categorie": "ambulatoire",
+    "critere": "med_alt",
+    "description": "75%, jusqu’à CHF 4000.–/an (franchise de CHF 100.–/an).",
+    "score": 2
+  },
+  {
+    "caisse": "Visana",
+    "produit": "NATURA",
+    "categorie": "ambulatoire",
+    "critere": "med_alt",
+    "description": "90% pour 12 séances par an (franchise CHF 200.–).",
+    "score": 1
+  },
+  {
+    "caisse": "Visana",
+    "produit": "MEDNA",
+    "categorie": "ambulatoire",
+    "critere": "med_alt",
+    "description": "CHF 80.– par séance, nombre de séances illimité (franchise CHF 200.–).",
+    "score": 2
+  },
+  {
+    "caisse": "Visana",
+    "produit": "Médecine complémentaire",
+    "categorie": "ambulatoire",
+    "critere": "med_alt",
+    "description": "90% des coûts, avec plafonds annuels de CHF 1000.– à CHF 10 000.–.",
+    "score": 2
+  },
+  {
+    "caisse": "Groupe Mutuel",
+    "produit": "Tous les produits",
+    "categorie": "ambulatoire",
+    "critere": "med_alt",
+    "description": "Couverture variable, de 30% à 90%, plafonds de CHF 2000.- à illimité.",
+    "score": 2
+  },
+  {
+    "caisse": "Sanitas",
+    "produit": "Vital Smart",
+    "categorie": "ambulatoire",
+    "critere": "optique",
+    "description": "100%, au max. CHF 300.– sur 3 ans.",
+    "score": 2
+  },
+  {
+    "caisse": "Sanitas",
+    "produit": "Vital Premium",
+    "categorie": "ambulatoire",
+    "critere": "optique",
+    "description": "100%, au max. CHF 600.– sur 3 ans.",
+    "score": 3
+  },
+  {
+    "caisse": "Concordia",
+    "produit": "DIVERSA",
+    "categorie": "ambulatoire",
+    "critere": "optique",
+    "description": "Jusqu’à 18 ans: CHF 200-300.–/an. Adultes: CHF 200-300.–/3 ans.",
+    "score": 2
+  },
+  {
+    "caisse": "CSS",
+    "produit": "Assurance ambulatoire myFlex Balance / Premium",
+    "categorie": "ambulatoire",
+    "critere": "optique",
+    "description": "Jusqu'à 18 ans: CHF 150-300/an. Adultes: CHF 150-300/cas.",
+    "score": 2
+  },
+  {
+    "caisse": "AXA",
+    "produit": "Livo",
+    "categorie": "ambulatoire",
+    "critere": "optique",
+    "description": "100%, max. CHF 200.–/an. Chirurgie: 90%, max. CHF 1000.-.",
+    "score": 3
+  },
+  {
+    "caisse": "Helsana",
+    "produit": "Santé PLUS / COMPLET",
+    "categorie": "ambulatoire",
+    "critere": "optique",
+    "description": "CHF 150.–/an à CHF 300.–/an.",
+    "score": 2
+  },
+  {
+    "caisse": "Helsana",
+    "produit": "COMPLETA PLUS",
+    "categorie": "ambulatoire",
+    "critere": "optique",
+    "description": "En plus de COMPLETA: 90% du montant excédentaire, max. CHF 200.–/an. Chirurgie laser: 100%, max. CHF 500.– par œil/an.",
+    "score": 3
+  },
+  {
+    "caisse": "SWICA",
+    "produit": "COMPLETA / OPTIMA",
+    "categorie": "ambulatoire",
+    "critere": "optique",
+    "description": "90%, jusqu’à CHF 200.– à CHF 900.– tous les 3 ans.",
+    "score": 2
+  },
+  {
+    "caisse": "KPT",
+    "produit": "Assurance des soins Comfort",
+    "categorie": "ambulatoire",
+    "critere": "optique",
+    "description": "CHF 2000.– par an (délai de carence: 365 jours).",
+    "score": 3
+  },
+  {
+    "caisse": "Assura",
+    "produit": "Pulse",
+    "categorie": "ambulatoire",
+    "critere": "optique",
+    "description": "Limite de CHF 250.– à CHF 500.– tous les 3 ans.",
+    "score": 2
+  },
+  {
+    "caisse": "Visana",
+    "produit": "COMPLEMENTA EXTRA",
+    "categorie": "ambulatoire",
+    "critere": "optique",
+    "description": "CHF 100.– par an, cumulable sur 5 ans (max CHF 500.–).",
+    "score": 2
+  },
+  {
+    "caisse": "Visana",
+    "produit": "Traitements ambulatoires",
+    "categorie": "ambulatoire",
+    "critere": "optique",
+    "description": "90%, au max. CHF 200.– à 250.–/an.",
+    "score": 2
+  },
+  {
+    "caisse": "Groupe Mutuel",
+    "produit": "Tous les produits",
+    "categorie": "ambulatoire",
+    "critere": "optique",
+    "description": "De CHF 100.– à CHF 200.– tous les 3 ans.",
+    "score": 1
+  },
+  {
+    "caisse": "Sanitas",
+    "produit": "Vital Smart",
+    "categorie": "ambulatoire",
+    "critere": "fitness",
+    "description": "50%, jusqu’à CHF 400.– ou CHF 600.– selon l'option.",
+    "score": 2
+  },
+  {
+    "caisse": "Sanitas",
+    "produit": "Vital Premium",
+    "categorie": "ambulatoire",
+    "critere": "fitness",
+    "description": "80%, au max. CHF 800.–.",
+    "score": 3
+  },
+  {
+    "caisse": "Concordia",
+    "produit": "NATURAplus",
+    "categorie": "ambulatoire",
+    "critere": "fitness",
+    "description": "50%, au max. CHF 500.– par an.",
+    "score": 2
+  },
+  {
+    "caisse": "CSS",
+    "produit": "Assurance ambulatoire myFlex Economy",
+    "categorie": "ambulatoire",
+    "critere": "fitness",
+    "description": "50%, au max. CHF 300.–/an.",
+    "score": 1
+  },
+  {
+    "caisse": "CSS",
+    "produit": "Assurance ambulatoire myFlex Balance",
+    "categorie": "ambulatoire",
+    "critere": "fitness",
+    "description": "50%, au max. CHF 500.–/an.",
+    "score": 2
+  },
+  {
+    "caisse": "CSS",
+    "produit": "Assurance ambulatoire myFlex Premium",
+    "categorie": "ambulatoire",
+    "critere": "fitness",
+    "description": "50%, au max. CHF 700.–/an.",
+    "score": 3
+  },
+  {
+    "caisse": "AXA",
+    "produit": "Assurance prévention Livo",
+    "categorie": "ambulatoire",
+    "critere": "fitness",
+    "description": "50% à 75%, plafonds de CHF 500.– à CHF 3000.–/an.",
+    "score": 2
+  },
+  {
+    "caisse": "Helsana",
+    "produit": "Santé ACTIF / COMPLET",
+    "categorie": "ambulatoire",
+    "critere": "fitness",
+    "description": "CHF 400 à 500.–/an (abonnements, clubs de sport, etc.).",
+    "score": 2
+  },
+  {
+    "caisse": "SWICA",
+    "produit": "COMPLETA FORTE / PRAEVENTA / OPTIMA",
+    "categorie": "ambulatoire",
+    "critere": "fitness",
+    "description": "50% à 90%, plafonds de CHF 300.– à 500.– par an.",
+    "score": 3
+  },
+  {
+    "caisse": "KPT",
+    "produit": "Assurance des soins Comfort",
+    "categorie": "ambulatoire",
+    "critere": "fitness",
+    "description": "CHF 200.– pour le fitness. Bonus santé de CHF 200.-/an.",
+    "score": 2
+  },
+  {
+    "caisse": "Assura",
+    "produit": "Pulse",
+    "categorie": "ambulatoire",
+    "critere": "fitness",
+    "description": "De CHF 50.–/an (Eco) à CHF 600.–/an (Premium).",
+    "score": 2
+  },
+  {
+    "caisse": "Visana",
+    "produit": "Traitements ambulatoires",
+    "categorie": "ambulatoire",
+    "critere": "fitness",
+    "description": "Jusqu’à CHF 200 pour le fitness, CHF 100 pour le wellness.",
+    "score": 1
+  },
+  {
+    "caisse": "Groupe Mutuel",
+    "produit": "Tous les produits",
+    "categorie": "ambulatoire",
+    "critere": "fitness",
+    "description": "Plafonds de CHF 30 à CHF 500 par an.",
+    "score": 2
+  },
+  {
+    "caisse": "Sanitas",
+    "produit": "Vital Smart",
+    "categorie": "ambulatoire",
+    "critere": "prevention",
+    "description": "80%, au max. CHF 1000.–.",
+    "score": 2
+  },
+  {
+    "caisse": "Sanitas",
+    "produit": "Vital Premium",
+    "categorie": "ambulatoire",
+    "critere": "prevention",
+    "description": "80%, au max. CHF 1500.–.",
+    "score": 3
+  },
+  {
+    "caisse": "Concordia",
+    "produit": "NATURAplus",
+    "categorie": "ambulatoire",
+    "critere": "prevention",
+    "description": "90 %, au max. CHF 500.–/an.",
+    "score": 2
+  },
+  {
+    "caisse": "CSS",
+    "produit": "Assurance ambulatoire myFlex Economy",
+    "categorie": "ambulatoire",
+    "critere": "prevention",
+    "description": "Gynécologie: 90%, illimité. Vaccins: 90%, max. CHF 100.–/an.",
+    "score": 1
+  },
+  {
+    "caisse": "CSS",
+    "produit": "Assurance ambulatoire myFlex Balance / Premium",
+    "categorie": "ambulatoire",
+    "critere": "prevention",
+    "description": "Check-up: 80-100% jusqu'à CHF 1800.-/3 ans. Gynécologie & Vaccins: 90%, illimité.",
+    "score": 3
+  },
+  {
+    "caisse": "AXA",
+    "produit": "Assurance prévention Livo",
+    "categorie": "ambulatoire",
+    "critere": "prevention",
+    "description": "Vaccins: 50%, max. CHF 200.–/an. Check-up: 50%, max. CHF 500.–/2 ans.",
+    "score": 2
+  },
+  {
+    "caisse": "Helsana",
+    "produit": "SANA / COMPLETA",
+    "categorie": "ambulatoire",
+    "critere": "prevention",
+    "description": "75-90%, plafond de CHF 500 à 750.–/an.",
+    "score": 2
+  },
+  {
+    "caisse": "SWICA",
+    "produit": "COMPLETA PRAEVENTA / OPTIMA",
+    "categorie": "ambulatoire",
+    "critere": "prevention",
+    "description": "Check-up: 90%, CHF 500.–/3 ans. Vaccins: 90%, CHF 200.–/an.",
+    "score": 3
+  },
+  {
+    "caisse": "KPT",
+    "produit": "Assurance des soins Comfort",
+    "categorie": "ambulatoire",
+    "critere": "prevention",
+    "description": "Vaccins & Gynécologie: 90%. Check-up: 90%, max. CHF 200.–/an.",
+    "score": 2
+  },
+  {
+    "caisse": "Assura",
+    "produit": "Pulse",
+    "categorie": "ambulatoire",
+    "critere": "prevention",
+    "description": "Vaccins: 100% jusqu'à CHF 800.-/an. Gynécologie: 100%. Check-up: 75% jusqu'à CHF 4000.-/an.",
+    "score": 3
+  },
+  {
+    "caisse": "Visana",
+    "produit": "Traitements ambulatoires",
+    "categorie": "ambulatoire",
+    "critere": "prevention",
+    "description": "Gynéco: 90%. Check-up: 90%, max CHF 200-600/3 ans. Vaccins: 90%, max CHF 100-illimité.",
+    "score": 2
+  },
+  {
+    "caisse": "Groupe Mutuel",
+    "produit": "Tous les produits",
+    "categorie": "ambulatoire",
+    "critere": "prevention",
+    "description": "Mammographies et vaccins: 70-90% avec plafonds variables ou illimité.",
+    "score": 2
+  },
+  {
+    "caisse": "Sanitas",
+    "produit": "Vital Smart / Premium",
+    "categorie": "ambulatoire",
+    "critere": "maternite",
+    "description": "Gymnastique pré/postnatale, préparation accouchement: 80%, jusqu'à CHF 1000.–/an.",
+    "score": 3
+  },
+  {
+    "caisse": "Concordia",
+    "produit": "NATURA",
+    "categorie": "ambulatoire",
+    "critere": "maternite",
+    "description": "Préparation à l’accouchement, gymnastique, etc: max. CHF 500.–/an.",
+    "score": 1
+  },
+  {
+    "caisse": "CSS",
+    "produit": "Assurance ambulatoire myFlex Economy",
+    "categorie": "ambulatoire",
+    "critere": "maternite",
+    "description": "Indemnité d’allaitement: CHF 200.–/enfant. Accouchement ambulatoire: 90%, illimité.",
+    "score": 2
+  },
+  {
+    "caisse": "AXA",
+    "produit": "Livo Top Balance / Premium",
+    "categorie": "ambulatoire",
+    "critere": "maternite",
+    "description": "Échographies: 90%, illimité. Accouchement ambulatoire: CHF 500.-/enfant. Indemnité allaitement: CHF 200.-.",
+    "score": 3
+  },
+  {
+    "caisse": "Helsana",
+    "produit": "Santé COMPLET",
+    "categorie": "ambulatoire",
+    "critere": "maternite",
+    "description": "Préparation accouchement & gym postnatale: 75%, jusqu’à CHF 500.-/an.",
+    "score": 1
+  },
+  {
+    "caisse": "SWICA",
+    "produit": "COMPLETA",
+    "categorie": "ambulatoire",
+    "critere": "maternite",
+    "description": "Indemnité d’allaitement: CHF 200.–. Gymnastique pré/postnatale: 50-90% jusqu'à CHF 300.-.",
+    "score": 2
+  },
+  {
+    "caisse": "KPT",
+    "produit": "Assurance des soins Comfort",
+    "categorie": "ambulatoire",
+    "critere": "maternite",
+    "description": "CHF 150.–/naissance pour préparation, CHF 100.– pour gym postnatale.",
+    "score": 2
+  },
+  {
+    "caisse": "Assura",
+    "produit": "Pulse Top / Premium",
+    "categorie": "ambulatoire",
+    "critere": "maternite",
+    "description": "Contrôles de grossesse, conseils allaitement, etc.: 75% jusqu'à CHF 10'000.-/an.",
+    "score": 3
+  },
+  {
+    "caisse": "Visana",
+    "produit": "Traitements ambulatoires II / III",
+    "categorie": "ambulatoire",
+    "critere": "maternite",
+    "description": "Examens de contrôle/échographies supplémentaires: 90%. Gymnastique: 90%, max CHF 300.–.",
+    "score": 2
+  },
+  {
+    "caisse": "Groupe Mutuel",
+    "produit": "Tous les produits",
+    "categorie": "ambulatoire",
+    "critere": "maternite",
+    "description": "Échographie: 90%. Préparation accouchement: CHF 150.-. Indemnité allaitement: CHF 100.-.",
+    "score": 2
+  },
+  {
+    "caisse": "Sanitas",
+    "produit": "Vital Smart",
+    "categorie": "ambulatoire",
+    "critere": "dentaire",
+    "description": "Orthodontie: 50% jusqu’à 20 ans.",
+    "score": 1
+  },
+  {
+    "caisse": "Sanitas",
+    "produit": "Vital Premium",
+    "categorie": "ambulatoire",
+    "critere": "dentaire",
+    "description": "Orthodontie: 80% jusqu’à 20 ans.",
+    "score": 3
+  },
+  {
+    "caisse": "Concordia",
+    "produit": "DIVERSA",
+    "categorie": "ambulatoire",
+    "critere": "dentaire",
+    "description": "Orthodontie: 50-75% jusqu'à CHF 10'000.- (jusqu'à 20 ans).",
+    "score": 2
+  },
+  {
+    "caisse": "CSS",
+    "produit": "Assurance ambulatoire myFlex Balance",
+    "categorie": "ambulatoire",
+    "critere": "dentaire",
+    "description": "Soins: 50%, max. CHF 1000.–/an. Orthodontie: 50%, max. CHF 12 000.–/an.",
+    "score": 2
+  },
+  {
+    "caisse": "CSS",
+    "produit": "Assurance ambulatoire myFlex Premium",
+    "categorie": "ambulatoire",
+    "critere": "dentaire",
+    "description": "Soins: 50%, max. CHF 2000.–/an. Orthodontie: 50%, illimité.",
+    "score": 3
+  },
+  {
+    "caisse": "AXA",
+    "produit": "Livo",
+    "categorie": "ambulatoire",
+    "critere": "dentaire",
+    "description": "Soins: 50%, max. CHF 2000.–/an. Orthodontie: 50%, max. CHF 12 000.–/an.",
+    "score": 2
+  },
+  {
+    "caisse": "Helsana",
+    "produit": "COMPLET / TOP",
+    "categorie": "ambulatoire",
+    "critere": "dentaire",
+    "description": "Orthodontie: 75%, jusqu’à CHF 12'000.-/an.",
+    "score": 2
+  },
+  {
+    "caisse": "SWICA",
+    "produit": "COMPLETA TOP / FORTE",
+    "categorie": "ambulatoire",
+    "critere": "dentaire",
+    "description": "Hygiène: 50%, max CHF 100.-/an. Orthodontie: 50%, max CHF 10'000.-/an (jusqu'à 25 ans).",
+    "score": 3
+  },
+  {
+    "caisse": "Visana",
+    "produit": "Traitements ambulatoires II / III",
+    "categorie": "ambulatoire",
+    "critere": "dentaire",
+    "description": "Soins: 25-50%, max CHF 1000/an. Orthodontie: 80%, max CHF 10'000.- total.",
+    "score": 2
+  },
+  {
+    "caisse": "Sanitas",
+    "produit": "Vital Smart",
+    "categorie": "ambulatoire",
+    "critere": "psychotherapie",
+    "description": "80%, jusqu’à CHF 2000.– par an.",
+    "score": 2
+  },
+  {
+    "caisse": "Sanitas",
+    "produit": "Vital Premium",
+    "categorie": "ambulatoire",
+    "critere": "psychotherapie",
+    "description": "80%, jusqu’à CHF 4000.– par an.",
+    "score": 3
+  },
+  {
+    "caisse": "Concordia",
+    "produit": "DIVERSA",
+    "categorie": "ambulatoire",
+    "critere": "psychotherapie",
+    "description": "CHF 20.– à 60.– par séance, max 60 séances/an.",
+    "score": 2
+  },
+  {
+    "caisse": "CSS",
+    "produit": "Assurance ambulatoire myFlex Balance",
+    "categorie": "ambulatoire",
+    "critere": "psychotherapie",
+    "description": "CHF 100.– par séance, max. 30 séances/an.",
+    "score": 2
+  },
+  {
+    "caisse": "CSS",
+    "produit": "Assurance ambulatoire myFlex Premium",
+    "categorie": "ambulatoire",
+    "critere": "psychotherapie",
+    "description": "CHF 150.– par séance, max. 40 séances/an.",
+    "score": 3
+  },
+  {
+    "caisse": "AXA",
+    "produit": "Livo Top Balance / Premium",
+    "categorie": "ambulatoire",
+    "critere": "psychotherapie",
+    "description": "75%, max. CHF 3000.–/an.",
+    "score": 2
+  },
+  {
+    "caisse": "SWICA",
+    "produit": "COMPLETA TOP / FORTE",
+    "categorie": "ambulatoire",
+    "critere": "psychotherapie",
+    "description": "CHF 80.– par séance, max. 60 séances/an.",
+    "score": 3
+  },
+  {
+    "caisse": "KPT",
+    "produit": "Assurance des soins Comfort",
+    "categorie": "ambulatoire",
+    "critere": "psychotherapie",
+    "description": "90% des coûts, max. CHF 100.–/séance, jusqu’à 60 séances/an.",
+    "score": 3
+  },
+  {
+    "caisse": "Assura",
+    "produit": "Pulse Premium",
+    "categorie": "ambulatoire",
+    "critere": "psychotherapie",
+    "description": "CHF 50.–/séance, jusqu’à 60 séances/an.",
+    "score": 2
+  },
+  {
+    "caisse": "Visana",
+    "produit": "Traitements ambulatoires III",
+    "categorie": "ambulatoire",
+    "critere": "psychotherapie",
+    "description": "CHF 40.– par séance, 40 séances max par an.",
+    "score": 1
+  },
+  {
+    "caisse": "Groupe Mutuel",
+    "produit": "Tous les produits",
+    "categorie": "ambulatoire",
+    "critere": "psychotherapie",
+    "description": "CHF 20.– à 100.– par séance (30 à 60 séances/an).",
+    "score": 2
+  },
+  {
+    "caisse": "Sanitas",
+    "produit": "Vital Smart",
+    "categorie": "ambulatoire",
+    "critere": "moyens_auxiliaires",
+    "description": "80%, jusqu’à CHF 1000.– par an.",
+    "score": 2
+  },
+  {
+    "caisse": "Sanitas",
+    "produit": "Vital Premium",
+    "categorie": "ambulatoire",
+    "critere": "moyens_auxiliaires",
+    "description": "80%, jusqu’à CHF 2000.– par an.",
+    "score": 3
+  },
+  {
+    "caisse": "CSS",
+    "produit": "Assurance ambulatoire myFlex Economy",
+    "categorie": "ambulatoire",
+    "critere": "moyens_auxiliaires",
+    "description": "90%, au max. CHF 500.–/an.",
+    "score": 1
+  },
+  {
+    "caisse": "CSS",
+    "produit": "Assurance ambulatoire myFlex Balance",
+    "categorie": "ambulatoire",
+    "critere": "moyens_auxiliaires",
+    "description": "90%, au max. CHF 1000.–/an.",
+    "score": 2
+  },
+  {
+    "caisse": "CSS",
+    "produit": "Assurance ambulatoire myFlex Premium",
+    "categorie": "ambulatoire",
+    "critere": "moyens_auxiliaires",
+    "description": "90%, montant illimité.",
+    "score": 3
+  },
+  {
+    "caisse": "Helsana",
+    "produit": "TOP / COMPLETA",
+    "categorie": "ambulatoire",
+    "critere": "moyens_auxiliaires",
+    "description": "90% des coûts, sans plafond.",
+    "score": 3
+  },
+  {
+    "caisse": "Sanitas",
+    "produit": "Vital Premium",
+    "categorie": "ambulatoire",
+    "critere": "voyage",
+    "description": "Transport, recherche, sauvetage et urgences à l'étranger: 100%, illimité monde entier.",
+    "score": 3
+  },
+  {
+    "caisse": "AXA",
+    "produit": "Assurance pour les urgences Livo",
+    "categorie": "ambulatoire",
+    "critere": "voyage",
+    "description": "Transport, sauvetage (max CHF 100'000) et urgences à l'étranger: 100%, illimité.",
+    "score": 3
+  },
+  {
+    "caisse": "Helsana",
+    "produit": "TOP / COMPLETA",
+    "categorie": "ambulatoire",
+    "critere": "voyage",
+    "description": "Transports et sauvetages: 90%, illimité en Suisse, CHF 100'000.– à l'étranger. Urgences étranger: illimité.",
+    "score": 3
+  },
+  {
+    "caisse": "KPT",
+    "produit": "Assurance des soins Comfort",
+    "categorie": "ambulatoire",
+    "critere": "voyage",
+    "description": "Transport/Sauvetage: 90% illimité. Urgences étranger: couverture intégrale. Assistance.",
+    "score": 3
+  },
+  {
+    "caisse": "Sanitas",
+    "produit": "Hospital Extra Liberty",
+    "categorie": "hospitalisation_demi_privee",
+    "critere": "voyage",
+    "description": "Urgences étranger: 100%, max 180 jours. Traitements planifiés: CHF 1000.–/jour, max 180 jours.",
+    "score": 3
+  },
+  {
+    "caisse": "Sanitas",
+    "produit": "Hospital Top Liberty",
+    "categorie": "hospitalisation_privee",
+    "critere": "voyage",
+    "description": "Urgences étranger: 100%, illimité. Traitements planifiés: max CHF 250'000.–/séjour.",
+    "score": 3
+  },
+  {
+    "caisse": "CSS",
+    "produit": "Assurance ambulatoire myFlex Premium",
+    "categorie": "ambulatoire",
+    "critere": "aide_domicile",
+    "description": "Soins et aide à domicile: max. CHF 100.–/jour, max CHF 4000.–/an.",
+    "score": 3
+  },
+  {
+    "caisse": "Visana",
+    "produit": "COMPLEMENTA EXTRA",
+    "categorie": "ambulatoire",
+    "critere": "aide_domicile",
+    "description": "Soins à domicile: CHF 200.–/jour, 21 jours/an. Aide-ménagère: CHF 70.-/jour, 30 jours/an.",
+    "score": 3
+  },
+  {
+    "caisse": "AXA",
+    "produit": "Livo Top Balance / Premium",
+    "categorie": "ambulatoire",
+    "critere": "cures",
+    "description": "Cures balnéaires et de convalescence: max. CHF 120.–/jour, max CHF 3000.–/an.",
+    "score": 3
+  },
+  {
+    "caisse": "Sanitas",
+    "produit": "Hospital Standard Liberty",
+    "categorie": "hospitalisation_commune",
+    "critere": "hosp_commune",
+    "description": "Division générale dans toute la Suisse, chambre à plusieurs lits.",
+    "score": 3
+  },
+  {
+    "caisse": "Sanitas",
+    "produit": "Hospital Extra Liberty",
+    "categorie": "hospitalisation_demi_privee",
+    "critere": "hosp_semi",
+    "description": "Chambre à deux lits, libre choix du médecin.",
+    "score": 3
+  },
+  {
+    "caisse": "Sanitas",
+    "produit": "Hospital Top Liberty",
+    "categorie": "hospitalisation_privee",
+    "critere": "hosp_privee",
+    "description": "Chambre à un lit, libre choix du médecin, dans le monde entier.",
+    "score": 3
+  },
+  {
+    "caisse": "Concordia",
+    "produit": "Hospitalisation COMMUNE",
+    "categorie": "hospitalisation_commune",
+    "critere": "hosp_commune",
+    "description": "100% des coûts en division générale.",
+    "score": 3
+  },
+  {
+    "caisse": "Concordia",
+    "produit": "Hospitalisation MI-PRIVÉE",
+    "categorie": "hospitalisation_demi_privee",
+    "critere": "hosp_semi",
+    "description": "Chambre à deux lits, libre choix de l’hôpital et du médecin.",
+    "score": 3
+  },
+  {
+    "caisse": "Concordia",
+    "produit": "Hospitalisation PRIVÉE",
+    "categorie": "hospitalisation_privee",
+    "critere": "hosp_privee",
+    "description": "Chambre individuelle, libre choix de l’hôpital et du médecin dans le monde entier.",
+    "score": 3
+  },
+  {
+    "caisse": "CSS",
+    "produit": "Assurance hospitalisation myFlex Economy",
+    "categorie": "hospitalisation_commune",
+    "critere": "hosp_commune",
+    "description": "100% des coûts en division générale.",
+    "score": 3
+  },
+  {
+    "caisse": "CSS",
+    "produit": "Assurance hospitalisation myFlex Balance",
+    "categorie": "hospitalisation_demi_privee",
+    "critere": "hosp_semi",
+    "description": "100% des coûts, chambre à deux lits.",
+    "score": 3
+  },
+  {
+    "caisse": "CSS",
+    "produit": "Assurance hospitalisation myFlex Premium",
+    "categorie": "hospitalisation_privee",
+    "critere": "hosp_privee",
+    "description": "100% des coûts, chambre à un lit.",
+    "score": 3
+  },
+  {
+    "caisse": "AXA",
+    "produit": "Hôpital division générale / Livo Smart",
+    "categorie": "hospitalisation_commune",
+    "critere": "hosp_commune",
+    "description": "100% des coûts en division générale.",
+    "score": 3
+  },
+  {
+    "caisse": "AXA",
+    "produit": "Hôpital division demi-privée / Livo Top Balance",
+    "categorie": "hospitalisation_demi_privee",
+    "critere": "hosp_semi",
+    "description": "Chambre à deux lits et libre choix du médecin.",
+    "score": 3
+  },
+  {
+    "caisse": "AXA",
+    "produit": "Hôpital division privée / Livo Top Premium",
+    "categorie": "hospitalisation_privee",
+    "critere": "hosp_privee",
+    "description": "Chambre à un lit et libre choix du médecin.",
+    "score": 3
+  },
+  {
+    "caisse": "Helsana",
+    "produit": "HOSPITAL ECO",
+    "categorie": "hospitalisation_commune",
+    "critere": "hosp_commune",
+    "description": "100% des coûts en division générale.",
+    "score": 3
+  },
+  {
+    "caisse": "Helsana",
+    "produit": "HOSPITAL Demi-privée",
+    "categorie": "hospitalisation_demi_privee",
+    "critere": "hosp_semi",
+    "description": "Couverture intégrale en division demi-privée.",
+    "score": 3
+  },
+  {
+    "caisse": "Helsana",
+    "produit": "HOSPITAL PRIVÉE",
+    "categorie": "hospitalisation_privee",
+    "critere": "hosp_privee",
+    "description": "100% des coûts en division privée.",
+    "score": 3
+  },
+  {
+    "caisse": "SWICA",
+    "produit": "HOSPITA DIVISION COMMUNE",
+    "categorie": "hospitalisation_commune",
+    "critere": "hosp_commune",
+    "description": "Couverture intégrale en division commune.",
+    "score": 3
+  },
+  {
+    "caisse": "SWICA",
+    "produit": "HOSPITA DEMI-PRIVÉE",
+    "categorie": "hospitalisation_demi_privee",
+    "critere": "hosp_semi",
+    "description": "Couverture intégrale en division demi-privée.",
+    "score": 3
+  },
+  {
+    "caisse": "SWICA",
+    "produit": "HOSPITA PRIVÉE",
+    "categorie": "hospitalisation_privee",
+    "critere": "hosp_privee",
+    "description": "Couverture intégrale en division privée.",
+    "score": 3
+  },
+  {
+    "caisse": "KPT",
+    "produit": "Assurance hospitalisation division commune",
+    "categorie": "hospitalisation_commune",
+    "critere": "hosp_commune",
+    "description": "Couverture intégrale en division commune.",
+    "score": 3
+  },
+  {
+    "caisse": "KPT",
+    "produit": "Assurance hospitalisation division demi-privée",
+    "categorie": "hospitalisation_demi_privee",
+    "critere": "hosp_semi",
+    "description": "Couverture intégrale en division demi-privée.",
+    "score": 3
+  },
+  {
+    "caisse": "KPT",
+    "produit": "Assurance hospitalisation division privée",
+    "categorie": "hospitalisation_privee",
+    "critere": "hosp_privee",
+    "description": "Couverture intégrale en division privée.",
+    "score": 3
+  },
+  {
+    "caisse": "Assura",
+    "produit": "OPTIMA VARIA / FLEX VARIA",
+    "categorie": "hospitalisation_demi_privee",
+    "critere": "hosp_semi",
+    "description": "Division semi-privée, chambre à deux lits.",
+    "score": 3
+  },
+  {
+    "caisse": "Assura",
+    "produit": "OPTIMA PLUS / ULTRA VARIA",
+    "categorie": "hospitalisation_privee",
+    "critere": "hosp_privee",
+    "description": "Division privée, chambre à un lit.",
+    "score": 3
+  },
+  {
+    "caisse": "Visana",
+    "produit": "Hôpital division commune",
+    "categorie": "hospitalisation_commune",
+    "critere": "hosp_commune",
+    "description": "Division commune, chambre à plusieurs lits.",
+    "score": 3
+  },
+  {
+    "caisse": "Visana",
+    "produit": "Hôpital division mi-privée",
+    "categorie": "hospitalisation_demi_privee",
+    "critere": "hosp_semi",
+    "description": "Division mi-privée, chambre à deux lits.",
+    "score": 3
+  },
+  {
+    "caisse": "Visana",
+    "produit": "Hôpital division privée",
+    "categorie": "hospitalisation_privee",
+    "critere": "hosp_privee",
+    "description": "Division privée, chambre à un lit.",
+    "score": 3
+  },
+  {
+    "caisse": "Groupe Mutuel",
+    "produit": "Global 1/2/3/4",
+    "categorie": "hospitalisation_commune",
+    "critere": "hosp_commune",
+    "description": "Division commune dans toute la Suisse.",
+    "score": 3
+  },
+  {
+    "caisse": "Groupe Mutuel",
+    "produit": "Global mi-privée (GMP)",
+    "categorie": "hospitalisation_demi_privee",
+    "critere": "hosp_semi",
+    "description": "Division mi-privée dans toute la Suisse.",
+    "score": 3
+  },
+  {
+    "caisse": "Groupe Mutuel",
+    "produit": "Global privée (GP)",
+    "categorie": "hospitalisation_privee",
+    "critere": "hosp_privee",
+    "description": "Division privée dans toute la Suisse.",
+    "score": 3
+  },
+  {
+    "caisse": "Concordia",
+    "produit": "Hospitalisation MI-PRIVÉE",
+    "categorie": "hospitalisation_demi_privee",
+    "critere": "maternite",
+    "description": "Accouchement ambulatoire/maison: Forfait CHF 1500.–. Rooming-in: max. CHF 80.–/jour.",
+    "score": 3
+  },
+  {
+    "caisse": "AXA",
+    "produit": "Hôpital division privée",
+    "categorie": "hospitalisation_privee",
+    "critere": "maternite",
+    "description": "Forfait d’accouchement: CHF 3000.–. Rooming-in: CHF 160.–/jour.",
+    "score": 3
+  },
+  {
+    "caisse": "Helsana",
+    "produit": "HOSPITAL Demi-privée",
+    "categorie": "hospitalisation_demi_privee",
+    "critere": "maternite",
+    "description": "Forfait accouchement: CHF 1500.–. Rooming-in: CHF 100.–/jour.",
+    "score": 3
+  },
+  {
+    "caisse": "Visana",
+    "produit": "Hôpital division privée",
+    "categorie": "hospitalisation_privee",
+    "critere": "maternite",
+    "description": "Forfait accouchement: CHF 1500.–. Rooming-in: 100% la 1ère année, puis max CHF 50.-/jour.",
+    "score": 3
+  },
+  {
+    "caisse": "Sanitas",
+    "produit": "Hospital Day Comfort",
+    "categorie": "hospitalisation_ambulatoire",
+    "critere": "hospitalisation_ambulatoire",
+    "description": "Libre choix du médecin, confort, nuitée (CHF 1500.-/an), transports (CHF 1000.-/an), aide-ménagère (CHF 1800.-/intervention), assistance (CHF 2000.-/an).",
+    "score": 3
+  },
+  {
+    "caisse": "Concordia",
+    "produit": "DIVERSAcare / DIVERSApremium",
+    "categorie": "hospitalisation_ambulatoire",
+    "critere": "hospitalisation_ambulatoire",
+    "description": "Nuitée en cas d’intervention ambulatoire : 50-75%, max. CHF 200.–/an.",
+    "score": 1
+  },
+  {
+    "caisse": "CSS",
+    "produit": "Assurance hospitalisation PRIMEO Balance",
+    "categorie": "hospitalisation_ambulatoire",
+    "critere": "hospitalisation_ambulatoire",
+    "description": "Libre choix médecin, confort, nuitée, etc. Budget total : CHF 900.-/an.",
+    "score": 2
+  },
+  {
+    "caisse": "CSS",
+    "produit": "Assurance hospitalisation PRIMEO Premium",
+    "categorie": "hospitalisation_ambulatoire",
+    "critere": "hospitalisation_ambulatoire",
+    "description": "Libre choix médecin, confort, etc. Budget total : CHF 1400.-/an.",
+    "score": 3
+  },
+  {
+    "caisse": "Helsana",
+    "produit": "PRIMEO",
+    "categorie": "hospitalisation_ambulatoire",
+    "critere": "hospitalisation_ambulatoire",
+    "description": "Libre choix médecin, confort, nuitée (max CHF 1200.-/an), etc.",
+    "score": 3
+  },
+  {
+    "caisse": "KPT",
+    "produit": "Flex Top",
+    "categorie": "hospitalisation_ambulatoire",
+    "critere": "hospitalisation_ambulatoire",
+    "description": "Contributions au libre choix du médecin, transport, garde d'enfants. 75%, max CHF 1000.–/an.",
+    "score": 2
+  }
+]
