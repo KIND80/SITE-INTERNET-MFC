@@ -49,6 +49,11 @@ module.exports = {
 				card: {
 					DEFAULT: 'hsl(var(--card))',
 					foreground: 'hsl(var(--card-foreground))',
+					top3: {
+						bronze: '#CD7F32', // Pour le TOP 3
+						silver: '#008080', // Pour le TOP 1 (Standard)
+						gold: '#4169E1'    // Pour le TOP 2 (Premium)
+					}
 				},
 			},
 			borderRadius: {
@@ -69,11 +74,11 @@ module.exports = {
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
 				'accordion-up': 'accordion-up 0.2s ease-out',
-        'pulse': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+				'pulse': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
 			},
-      animationDelay: {
-        '2000': '2000ms',
-      },
+			animationDelay: {
+				'2000': '2000ms',
+			},
 		},
 	},
 	plugins: [require('tailwindcss-animate'), require('tailwindcss-animation-delay')],
