@@ -339,3 +339,4 @@ coverage/
 .Trashes
 ehthumbs.db
 Thumbs.db
+/services
