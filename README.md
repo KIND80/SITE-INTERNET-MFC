@@ -1,7 +1,3 @@
-Absolument. Voici une proposition de fichier `README.md` qui explique clairement la méthodologie derrière le comparateur. C'est un document essentiel pour la maintenance future du projet et pour que toute l'équipe (y compris le client) comprenne la logique.
-
-Vous pouvez copier-coller ce contenu directement dans un fichier `README.md` à la racine de votre projet.
-
 ---
 
 # Moteur de Comparaison d'Assurances Complémentaires
