@@ -24,10 +24,10 @@ const footer = {
   usefulLinks: {
     title: "Liens utiles",
     links: [
-      { label: 'Comparatif LAMal', path: 'https://www.priminfo.admin.ch/fr/praemien', isExternal: true },
+      { label: 'Comparer ma complémentaire', path: 'https://www.priminfo.admin.ch/fr/praemien', isExternal: true },
       { label: 'Comparateur voiture', path: '/comparateur/assurance-automobile' },
       { label: 'Rabais collectif', path: '/rabais-collectif' },
-      { label: 'Contacter un conseiller', path: '+41797896193', isPhone: true }
+      { label: 'Contacter un conseiller', action: 'mailto', subject: 'Demande de contact depuis le site' },
     ]
   },
   copyright: "© {year} Mon Fidele Conseiller. Tous droits réservés. | Agrément en tant qu'intermédiaire d'assurance non liés. FINMA : F01487128 | Cicero : 32283",

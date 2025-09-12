@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
 import * as Icons from 'lucide-react';
 import siteConfig from '@/config/siteConfig';
+import { Link } from 'react-router-dom';
 
 const Services = ({ showToast }) => {
   const { servicesSection } = siteConfig.homePage;
@@ -42,12 +43,10 @@ const Services = ({ showToast }) => {
                   <h3 className="text-2xl font-semibold text-gray-900 mb-3">{service.title}</h3>
                   <p className="text-gray-600 mb-6">{service.description}</p>
                 </div>
-                <button 
-                  onClick={showToast}
-                  className="flex items-center text-orange-600 font-semibold group-hover:text-orange-500 transition-colors"
-                >
+                {/* MODIFICATION DU BOUTON */}
+                <Link to={service.path} className="flex items-center text-orange-600 font-semibold group-hover:text-orange-500 transition-colors mt-auto">
                   {service.linkText} <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
-                </button>
+                </Link>
               </motion.div>
             );
           })}

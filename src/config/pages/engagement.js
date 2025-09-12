@@ -27,7 +27,8 @@ const engagementPage = {
   cta: {
     title: "Votre association a un projet porteur ?",
     description: "Vous œuvrez pour la communauté à Genève ou dans le Vaud ? Soumettez-nous votre demande de sponsoring. Nous sommes toujours à l'écoute des belles initiatives.",
-    buttonText: "Soumettre un projet"
+    buttonText: "Soumettre un projet",
+    path: "/#contact"
   }
 };
 

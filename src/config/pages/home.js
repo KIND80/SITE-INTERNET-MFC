@@ -28,50 +28,49 @@ const homePage = {
   servicesSection: {
     tagline: "Nos Domaines d'Expertise",
     title: "Une solution sur-mesure pour chaque besoin",
-    description:
-      "Que vous soyez un particulier, une famille ou une entreprise, nous maîtrisons tous les aspects de votre protection.",
+    description: "Que vous soyez un particulier, une famille ou une entreprise, nous maîtrisons tous les aspects de votre protection.",
     services: [
       {
         icon: "HeartHandshake",
         title: "Assurance Maladie (LAMal)",
-        description:
-          "Économisez sur vos primes sans sacrifier votre couverture. Nous comparons toutes les caisses pour vous.",
+        description: "Économisez sur vos primes sans sacrifier votre couverture. Nous comparons toutes les caisses pour vous.",
         linkText: "Assurance maladie",
+        path: "assurances/particulier/assurance-maladie" // AJOUT
       },
       {
         icon: "Users",
         title: "Prévoyance & 3ème Pilier",
-        description:
-          "Construisez votre avenir en toute sérénité. Nos stratégies de prévoyance sont fiscalement avantageuses.",
+        description: "Construisez votre avenir en toute sérénité. Nos stratégies de prévoyance sont fiscalement avantageuses.",
         linkText: "Préparer ma retraite",
+        path: "assurances/particulier/3eme-pilier" // AJOUT
       },
       {
         icon: "Building",
         title: "Assurances Entreprise",
-        description:
-          "De la RC Pro à la LPP, protégez votre activité et vos collaborateurs avec des solutions adaptées.",
+        description: "De la RC Pro à la LPP, protégez votre activité et vos collaborateurs avec des solutions adaptées.",
         linkText: "Protéger mon business",
+        path: "assurances/entreprise/rc-professionnelle" // AJOUT
       },
       {
         icon: "Home",
         title: "Hypothèque & Habitat",
-        description:
-          "Accédez à la propriété ou assurez votre bien. Nous négocions les meilleures conditions pour vous.",
+        description: "Accédez à la propriété ou assurez votre bien. Nous négocions les meilleures conditions pour vous.",
         linkText: "Mon projet immobilier",
+        path: "assurances/habitat/assurance-batiment" // AJOUT
       },
       {
         icon: "ShieldCheck",
         title: "Protection & Patrimoine",
-        description:
-          "Assurance vie, protection juridique... Sécurisez ce qui compte le plus pour vous et vos proches.",
+        description: "Assurance vie, protection juridique... Sécurisez ce qui compte le plus pour vous et vos proches.",
         linkText: "Sécuriser ma famille",
+        path: "assurances/particulier/assurance-automobile" // AJOUT
       },
       {
         icon: "Car",
         title: "Véhicules & Mobilité",
-        description:
-          "Auto, moto, bateau... Obtenez les meilleures garanties pour tous vos véhicules au tarif le plus juste.",
+        description: "Auto, moto, bateau... Obtenez les meilleures garanties pour tous vos véhicules au tarif le plus juste.",
         linkText: "Assurer mon véhicule",
+        path: "assurances/particulier/assurance-automobile" // AJOUT
       },
     ],
   },

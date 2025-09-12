@@ -8,7 +8,8 @@ const insurancePages = {
             "Optimisez votre LAMal à Genève et Vaud et réalisez jusqu'à 2000 CHF d'économies par an.",
           description:
             "L'assurance de base est obligatoire, mais votre prime ne devrait pas être une fatalité. Nos experts analysent votre situation pour trouver la caisse, le modèle (médecin de famille, Telmed...) et la franchise qui vous feront réellement économiser, tout en préservant votre accès aux soins.",
-          ctaText: "Recevoir mon offre LAMal",
+          ctaText: "Comparer mon Offre",
+          path: "/comparateur/assurance-maladie", // Lien vers le comparateur
           image: {
             alt: "Stéthoscope posé sur un formulaire d'assurance maladie suisse",
           },
@@ -22,7 +23,8 @@ const insurancePages = {
             "Optimisation franchise et modèle",
             "Conseil sur les complémentaires indispensables",
           ],
-          ctaText: "Comparer les primes 2025",
+          ctaText: "Comparer les primes", // Texte mis à jour
+          path: "/comparateur/assurance-maladie", // Lien vers le comparateur
           image: {
             alt: "Graphique montrant des économies sur les primes d'assurance maladie",
           },
@@ -44,6 +46,9 @@ const insurancePages = {
         },
       },
     },
+    entreprise: {
+      // Pages pour les entreprises
+    }
   },
 };
 

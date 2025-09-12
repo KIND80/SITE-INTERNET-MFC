@@ -3,9 +3,10 @@ import { motion } from 'framer-motion';
 import PageTransition from '@/components/layout/PageTransition';
 import { Button } from '@/components/ui/button';
 import siteConfig from '@/config/siteConfig';
+import { openMailto, CONTACT_EMAIL } from '@/lib/mailto'; // Import nécessaire
 
 const CollectiveDiscountPage = () => {
-  const { collectiveDiscountPage, contactInfo } = siteConfig;
+  const { collectiveDiscountPage } = siteConfig;
 
   return (
     <PageTransition>
@@ -21,8 +22,13 @@ const CollectiveDiscountPage = () => {
                     <p key={index}>{paragraph}</p>
                   ))}
                 </div>
-                <Button asChild size="lg" className="mt-8 btn-primary">
-                  <a href={`mailto:${contactInfo.email}?subject=Demande d'audit gratuit - Rabais Collectif`}>{collectiveDiscountPage.ctaText}</a>
+                {/* Bouton MODIFIÉ pour utiliser openMailto */}
+                <Button 
+                  size="lg" 
+                  className="mt-8 btn-primary"
+                  onClick={() => openMailto(CONTACT_EMAIL, collectiveDiscountPage.subject)}
+                >
+                  {collectiveDiscountPage.ctaText}
                 </Button>
               </motion.div>
               <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.7, delay: 0.2 }}>

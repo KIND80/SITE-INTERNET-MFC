@@ -11,6 +11,8 @@ const collectiveDiscountPage = {
     text: "Une famille heureuse se promenant au bord du lac Léman avec les montagnes en arrière-plan."
   },
   ctaText: "Demander mon audit gratuit",
+  action: "mailto", // Ajout de l'action
+  subject: "Demande d'audit gratuit - Rabais Collectif" // Ajout du sujet de l'email
 };
 
 export default collectiveDiscountPage;
