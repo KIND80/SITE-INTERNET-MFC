@@ -8,8 +8,8 @@ const homePage = {
       path: "#contact",
     },
     secondaryCta: {
-      text: "Comparer mon assurance",
-      path: "https://www.monfideleconseiller.ch/comparateur/assurance-maladie",
+      text: "Comparer complémentaire",
+      path: "comparateur/assurance-maladie",
     },
     image: {
       alt: "Vue sur le lac Léman et Genève",
