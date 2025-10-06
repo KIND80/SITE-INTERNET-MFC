@@ -166,7 +166,7 @@ const homePage = {
       lastName: { label: "Nom", placeholder: "Votre nom" },
       email: {
         label: "Email",
-        placeholder: "votre.email@exemple.ch & Numero de Téléphone",
+        placeholder: "votre.email@exemple.ch",
       },
       insuranceType: {
         label: "Sujet de votre demande",
@@ -180,7 +180,7 @@ const homePage = {
         ],
       },
       message: {
-        label: "Votre message (facultatif)",
+        label: "Votre message + Numéro de Télephone",
         placeholder: "Décrivez brièvement votre situation ou votre question...",
       },
       submitButtonText: "Envoyer et recevoir mon analyse",
