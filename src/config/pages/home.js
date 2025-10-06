@@ -164,7 +164,10 @@ const homePage = {
     form: {
       firstName: { label: "Prénom", placeholder: "Votre prénom" },
       lastName: { label: "Nom", placeholder: "Votre nom" },
-      email: { label: "Email", placeholder: "votre.email@exemple.ch" },
+      email: {
+        label: "Email",
+        placeholder: "votre.email@exemple.ch & Numero de Téléphone",
+      },
       insuranceType: {
         label: "Sujet de votre demande",
         options: [
