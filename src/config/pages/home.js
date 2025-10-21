@@ -12,19 +12,23 @@ const homePage = {
       path: "comparateur/assurance-maladie",
     },
     image: {
+      src: "/img/lac-leman.jpg", // ✅ Nouvelle image de fond
       alt: "Vue sur le lac Léman et Genève",
       text: "Vue panoramique sur Genève, le Jet d'Eau et le lac Léman",
     },
   },
+
   intro: {
     title: "L'expertise d'un courtier local, la force d'un réseau national.",
     description:
       "Basés à Genève, nous sommes vos alliés pour naviguer dans le monde complexe des assurances. Indépendants, nous travaillons pour vous, pas pour les compagnies. Notre mission : vous garantir les meilleures couvertures aux meilleurs prix.",
     image: {
+      src: "/img/conseiller-geneve.jpg",
       alt: "Conseiller souriant dans un bureau moderne à Genève",
       text: "Un conseiller en assurance dans un bureau lumineux avec la ville de Genève en arrière-plan",
     },
   },
+
   servicesSection: {
     tagline: "Nos Domaines d'Expertise",
     title: "Une solution sur-mesure pour chaque besoin",
@@ -37,7 +41,7 @@ const homePage = {
         description:
           "Économisez sur vos primes sans sacrifier votre couverture. Nous comparons toutes les caisses pour vous.",
         linkText: "Assurance maladie",
-        path: "assurances/particulier/assurance-maladie", // AJOUT
+        path: "assurances/particulier/assurance-maladie",
       },
       {
         icon: "Users",
@@ -45,7 +49,7 @@ const homePage = {
         description:
           "Construisez votre avenir en toute sérénité. Nos stratégies de prévoyance sont fiscalement avantageuses.",
         linkText: "Préparer ma retraite",
-        path: "assurances/particulier/3eme-pilier", // AJOUT
+        path: "assurances/particulier/3eme-pilier",
       },
       {
         icon: "Building",
@@ -53,7 +57,7 @@ const homePage = {
         description:
           "De la RC Pro à la LPP, protégez votre activité et vos collaborateurs avec des solutions adaptées.",
         linkText: "Protéger mon business",
-        path: "assurances/entreprise/rc-professionnelle", // AJOUT
+        path: "assurances/entreprise/rc-professionnelle",
       },
       {
         icon: "Home",
@@ -61,7 +65,7 @@ const homePage = {
         description:
           "Accédez à la propriété ou assurez votre bien. Nous négocions les meilleures conditions pour vous.",
         linkText: "Mon projet immobilier",
-        path: "assurances/habitat/assurance-batiment", // AJOUT
+        path: "assurances/habitat/assurance-batiment",
       },
       {
         icon: "ShieldCheck",
@@ -69,7 +73,7 @@ const homePage = {
         description:
           "Assurance vie, protection juridique... Sécurisez ce qui compte le plus pour vous et vos proches.",
         linkText: "Sécuriser ma famille",
-        path: "assurances/particulier/assurance-automobile", // AJOUT
+        path: "assurances/particulier/assurance-automobile",
       },
       {
         icon: "Car",
@@ -77,50 +81,30 @@ const homePage = {
         description:
           "Auto, moto, bateau... Obtenez les meilleures garanties pour tous vos véhicules au tarif le plus juste.",
         linkText: "Assurer mon véhicule",
-        path: "assurances/particulier/assurance-automobile", // AJOUT
+        path: "assurances/particulier/assurance-automobile",
       },
     ],
   },
+
   partnersSection: {
     title: "Notre indépendance, votre avantage",
     description:
       "Nous collaborons avec toutes les compagnies d'assurance majeures en Suisse pour vous garantir une objectivité totale et les offres les plus compétitives.",
     linkText: "Découvrir tous nos partenaires",
     logos: [
-      {
-        name: "Allianz",
-        src: "https://horizons-cdn.hostinger.com/ef8bc239-7c6e-4d4c-8761-3b9aebb7bc3e/8770e989d3cab95d3034ec6e9998c52a.png",
-      },
-      {
-        name: "AXA",
-        src: "https://horizons-cdn.hostinger.com/ef8bc239-7c6e-4d4c-8761-3b9aebb7bc3e/b47b098cd15329475a36a2b91b3be8a2.png",
-      },
-      {
-        name: "Generali",
-        src: "https://horizons-cdn.hostinger.com/ef8bc239-7c6e-4d4c-8761-3b9aebb7bc3e/67e770273d2279691af02049ccda9adb.png",
-      },
-      {
-        name: "Helsana",
-        src: "https://horizons-cdn.hostinger.com/ef8bc239-7c6e-4d4c-8761-3b9aebb7bc3e/46a82c005979458b96be52eddb04277c.png",
-      },
-      {
-        name: "Groupe Mutuel",
-        src: "https://horizons-cdn.hostinger.com/ef8bc239-7c6e-4d4c-8761-3b9aebb7bc3e/65d8bca760808d612fe35dc1261a47c2.png",
-      },
-      {
-        name: "Visana",
-        src: "https://horizons-cdn.hostinger.com/ef8bc239-7c6e-4d4c-8761-3b9aebb7bc3e/1438d3779ecf3d96794ada8644ddb4f1.png",
-      },
-      {
-        name: "Swica",
-        src: "https://horizons-cdn.hostinger.com/ef8bc239-7c6e-4d4c-8761-3b9aebb7bc3e/8d9aec73b30f9f6052d26db5e1dd4409.png",
-      },
-      {
-        name: "Sanitas",
-        src: "https://horizons-cdn.hostinger.com/ef8bc239-7c6e-4d4c-8761-3b9aebb7bc3e/2e77ad6c2cfc0b52ae0eee67ecafbd7d.png",
-      },
+      { name: "Assura", src: "/partners/assura.png" },
+      { name: "AXA", src: "/partners/axa.png" },
+      { name: "Generali", src: "/partners/generali.png" },
+      { name: "Groupe Mutuel", src: "/partners/groupe-mutuel.jpg" },
+      { name: "Helsana", src: "/partners/helsana.png" },
+      { name: "Sanitas", src: "/partners/Sanitas.png" },
+      { name: "Swica", src: "/partners/swica.png" },
+      { name: "Visana", src: "/partners/visana.png" },
+      { name: "Zugerberg", src: "/partners/Zugerberg.png" },
     ],
   },
+  
+
   testimonialsSection: {
     tagline: "La parole à nos clients",
     title: "Ceux qui parlent le mieux de nous, ce sont eux.",
@@ -150,12 +134,14 @@ const homePage = {
       },
     ],
   },
+
   ctaSection: {
     title: "Prêt à payer le juste prix pour vos assurances ?",
     description:
       "Ne laissez plus l'argent sur la table. Demandez votre analyse de portefeuille gratuite. Notre expertise à votre service, sans engagement.",
     buttonText: "Je demande mon analyse gratuite",
   },
+
   contactSection: {
     tagline: "Contactez un expert",
     title: "Parlons de vos besoins. C'est simple et gratuit.",
@@ -164,10 +150,7 @@ const homePage = {
     form: {
       firstName: { label: "Prénom", placeholder: "Votre prénom" },
       lastName: { label: "Nom", placeholder: "Votre nom" },
-      email: {
-        label: "Email",
-        placeholder: "votre.email@exemple.ch",
-      },
+      email: { label: "Email", placeholder: "votre.email@exemple.ch" },
       insuranceType: {
         label: "Sujet de votre demande",
         options: [
@@ -180,7 +163,7 @@ const homePage = {
         ],
       },
       message: {
-        label: "Votre message + Numéro de Télephone",
+        label: "Votre message + Numéro de Téléphone",
         placeholder: "Décrivez brièvement votre situation ou votre question...",
       },
       submitButtonText: "Envoyer et recevoir mon analyse",

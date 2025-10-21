@@ -8,25 +8,28 @@ import { Button } from '@/components/ui/button';
 import siteConfig from '@/config/siteConfig';
 import { openMailto, CONTACT_EMAIL } from '@/lib/mailto';
 
+const FALLBACK_HERO = '/insurance-hero.webp';         // place ce fichier dans /public
+const FALLBACK_COMPARATOR = '/insurance-comparator.jpg'; // place ce fichier dans /public
+
 const generateFallbackData = (title) => ({
   title: title,
   hero: {
     subtitle: `La protection optimale pour votre ${title.toLowerCase()}, négociée au meilleur prix.`,
     description: `Nos experts analysent pour vous des dizaines d'offres afin de construire le contrat d'${title.toLowerCase()} parfaitement adapté à vos besoins spécifiques et à votre budget.`,
     ctaText: 'Demander une offre sur-mesure',
-    action: 'mailto', // Par défaut, les pages non configurées envoient un email
+    action: 'mailto',
     subject: `Demande d'offre sur-mesure pour : ${title}`,
-    image: { alt: `Illustration experte pour ${title}` }
+    image: { alt: `Illustration experte pour ${title}`, src: FALLBACK_HERO }
   },
   comparator: {
     title: `Comparez en 2 minutes les offres pour ${title}`,
     description:
       "Notre outil exclusif vous donne une vision claire du marché. Identifiez les meilleures primes et garanties instantanément. C'est 100% gratuit, neutre et sans engagement.",
-    points: ['Comparatif 100% indépendant', "Jusqu'à 40% d'économies", 'Conseils de nos experts inclus'],
+    points: ['Comparatif 100% indépendant', "Jusqu'à 40% d’économies", 'Conseils de nos experts inclus'],
     ctaText: 'Parler à un expert',
-    action: 'mailto', // Par défaut, les pages non configurées envoient un email
+    action: 'mailto',
     subject: `Demande de conseil pour : ${title}`,
-    image: { alt: "Analyse comparative d'offres d'assurance sur un écran" }
+    image: { alt: "Analyse comparative d'offres d'assurance sur un écran", src: FALLBACK_COMPARATOR }
   },
   complements: {
     title: 'Garanties & Options Clés',
@@ -44,33 +47,20 @@ const InsurancePage = () => {
   const { category, slug } = useParams();
   const navigate = useNavigate();
   const { insurancePages } = siteConfig;
+
   const pageInfo = insurancePages.pages[category]?.[slug];
   const title = pageInfo?.title || slug.replace(/-/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase());
   const data = pageInfo || generateFallbackData(title);
 
-  // Fonction unifiée pour gérer les clics sur les boutons CTA
   const handleCtaClick = (ctaData) => {
     if (ctaData.path) {
       navigate(ctaData.path);
     } else if (ctaData.action === 'mailto') {
       openMailto(CONTACT_EMAIL, ctaData.subject || `Demande d'informations pour : ${title}`);
     } else {
-      // Comportement de secours si ni path ni action n'est défini
       document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' });
     }
   };
-
-  if (!data) {
-    return (
-      <div className="text-center py-40">
-        <h1 className="text-3xl font-bold">Page non trouvée</h1>
-        <p className="mt-4">Cette page d'assurance n'existe pas.</p>
-        <Button asChild className="mt-8">
-          <Link to="/">Retour à l'accueil</Link>
-        </Button>
-      </div>
-    );
-  }
 
   return (
     <PageTransition>
@@ -82,10 +72,15 @@ const InsurancePage = () => {
               <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.7 }}>
                 <img
                   className="rounded-2xl shadow-xl w-full h-auto object-cover"
-                  alt={data.hero.image.alt}
-                  src="https://horizons-cdn.hostinger.com/ef8bc239-7c6e-4d4c-8761-3b9aebb7bc3e/assurance-genevoise-geneve-assurance-TU5b7.webp"
+                  alt={data.hero.image.alt || 'Assurance – visuel'}
+                  src={data.hero.image?.src || FALLBACK_HERO}
+                  onError={(e) => {
+                    e.currentTarget.onerror = null;
+                    e.currentTarget.src = FALLBACK_HERO;
+                  }}
                 />
               </motion.div>
+
               <motion.div initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.7, delay: 0.2 }}>
                 <h1 className="text-4xl lg:text-5xl font-extrabold text-gray-900">{data.title}</h1>
                 <p className="mt-4 text-lg font-semibold text-orange-600">{data.hero.subtitle}</p>
@@ -128,11 +123,16 @@ const InsurancePage = () => {
                     </Button>
                   </div>
                 </motion.div>
+
                 <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.7, delay: 0.2 }}>
                   <img
                     className="rounded-2xl shadow-xl w-full h-auto object-cover"
-                    alt={data.comparator.image.alt}
-                    src="https://horizons-cdn.hostinger.com/ef8bc239-7c6e-4d4c-8761-3b9aebb7bc3e/34c65f3c-3676-4f02-9d17-30f48c9f9648-u42gt.jpeg"
+                    alt={data.comparator.image.alt || 'Comparateur – visuel'}
+                    src={data.comparator.image?.src || FALLBACK_COMPARATOR}
+                    onError={(e) => {
+                      e.currentTarget.onerror = null;
+                      e.currentTarget.src = FALLBACK_COMPARATOR;
+                    }}
                   />
                 </motion.div>
               </div>
@@ -146,6 +146,7 @@ const InsurancePage = () => {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
               <h2 className="text-4xl font-bold text-white">{data.complements.title}</h2>
               <p className="mt-4 text-xl text-blue-100 max-w-3xl mx-auto">{data.complements.description}</p>
+
               <div className="mt-16 grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-4">
                 {data.complements.items.map((item, i) => {
                   const Icon = Icons[item.icon] || Icons.Shield;

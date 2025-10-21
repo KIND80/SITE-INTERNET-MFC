@@ -3,11 +3,12 @@ import { Link, useNavigate } from "react-router-dom";
 import siteConfig from "@/config/siteConfig";
 import { openMailto, CONTACT_EMAIL } from "@/lib/mailto"; // Import nécessaire
 
+const FALLBACK_LOGO = "/logo.png";
+
 const Footer = ({ showToast }) => {
   const navigate = useNavigate();
   const { footer: footerData } = siteConfig;
 
-  // Fonction handleLinkClick MODIFIÉE
   const handleLinkClick = (link) => {
     if (link.action === "mailto") {
       openMailto(CONTACT_EMAIL, link.subject || "Contact");
@@ -27,13 +28,17 @@ const Footer = ({ showToast }) => {
       <div className="bg-gray-900/80 backdrop-brightness-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
           <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-10">
-            {/* ... Colonne logo et liens assurance inchangés ... */}
+            {/* Colonne logo + contact */}
             <div className="col-span-1 md:col-span-1 lg:col-span-2 space-y-4">
               <Link to="/" className="flex items-center">
                 <img
-                  alt={footerData.logo.alt}
+                  alt={footerData.logo?.alt || "Mon Fidèle Conseiller"}
                   className="h-12 w-auto"
-                  src={siteConfig.logoUrl}
+                  src={(siteConfig.logoUrl) || FALLBACK_LOGO}
+                  onError={(e) => {
+                    e.currentTarget.onerror = null;   // évite boucle
+                    e.currentTarget.src = FALLBACK_LOGO;
+                  }}
                 />
               </Link>
               <span className="text-lg font-semibold block text-gray-200">
@@ -61,6 +66,7 @@ const Footer = ({ showToast }) => {
               </ul>
             </div>
 
+            {/* Colonne Liens Assurance */}
             <div className="col-span-1">
               <span className="text-lg font-semibold mb-4 block text-gray-200">
                 {footerData.insuranceLinks.title}
@@ -79,7 +85,7 @@ const Footer = ({ showToast }) => {
               </ul>
             </div>
 
-            {/* ColonNne Liens Utiles - MODIFIÉE pour gérer les deux types de liens */}
+            {/* Colonne Liens Utiles */}
             <div className="col-span-1">
               <span className="text-lg font-semibold mb-4 block text-gray-200">
                 {footerData.usefulLinks.title}

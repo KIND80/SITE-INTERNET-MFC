@@ -54,7 +54,7 @@ const NewHero = () => {
           <img
             alt={newHero.image.alt}
             className="w-full h-full object-cover"
-            src="https://horizons-cdn.hostinger.com/ef8bc239-7c6e-4d4c-8761-3b9aebb7bc3e/csm_xavier-von-erlach-yesqzahdkqs-unsplash_4403f9baec-5OFmy.jpg"
+            src="/hero.jpg"
           />
         </div>
         <div className="absolute inset-0 bg-gradient-to-r from-red-600 via-red-600/80 to-transparent"></div>
@@ -163,7 +163,7 @@ const Home = ({ showToast }) => {
                 <img
                   alt={siteConfig.homePage.intro.image.alt}
                   className="rounded-lg shadow-xl"
-                  src="https://horizons-cdn.hostinger.com/ef8bc239-7c6e-4d4c-8761-3b9aebb7bc3e/4b89dd3f-128d-4d68-844d-7be9da01720d-scaled-5mT5E.jpg"
+                  src="/intro.jpg"
                 />
               </div>
             </div>

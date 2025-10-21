@@ -63,7 +63,7 @@ const Header = ({ showToast }) => {
         <div className="flex justify-between items-center h-20">
           <Link to="/" className="flex items-center" onClick={closeAll}>
             <motion.div className="flex items-center cursor-pointer" whileHover={{ scale: 1.05 }}>
-              <img src={logoUrl} alt="Mon Fidèle Conseiller" className="h-12 w-auto" />
+              <img src="/logo.png" alt="Mon Fidèle Conseiller" className="h-12 w-auto" />
             </motion.div>
           </Link>
 
