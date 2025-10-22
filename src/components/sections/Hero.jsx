@@ -1,19 +1,23 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { Button } from '@/components/ui/button';
-import { ArrowRight, CheckCircle } from 'lucide-react';
-import siteConfig from '@/config/siteConfig';
-import { openMailto, CONTACT_EMAIL } from '@/lib/mailto';
+import React from "react";
+import { motion } from "framer-motion";
+import { Button } from "@/components/ui/button";
+import { ArrowRight, CheckCircle } from "lucide-react";
+import siteConfig from "@/config/siteConfig";
+import { openMailto, CONTACT_EMAIL } from "@/lib/mailto";
 
 const Hero = () => {
   const { heroSection } = siteConfig.homePage;
 
   // Chemin attendu dans /public/img/
-  const HERO_IMG = '/lac-leman.jpg';
-  const FALLBACK_IMG = '/intro.jpg'; // présent chez toi
+  const HERO_IMG = "/lac-leman.jpg";
+  const FALLBACK_IMG = "/intro.jpg"; // présent chez toi
 
   const handleImgError = (e) => {
-    console.error('[Hero] Image introuvable :', HERO_IMG, '→ fallback appliqué.');
+    console.error(
+      "[Hero] Image introuvable :",
+      HERO_IMG,
+      "→ fallback appliqué."
+    );
     e.currentTarget.src = FALLBACK_IMG;
   };
 
@@ -30,7 +34,7 @@ const Hero = () => {
           <motion.div
             initial={{ opacity: 0, x: -50 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8, ease: 'easeOut' }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
             className="space-y-8 text-center lg:text-left"
           >
             <motion.h1
@@ -58,10 +62,12 @@ const Hero = () => {
             >
               <Button
                 size="lg"
-                onClick={() => openMailto(CONTACT_EMAIL, 'Obtenir une offre gratuite')}
+                onClick={() =>
+                  openMailto(CONTACT_EMAIL, "Obtenir une offre gratuite")
+                }
                 className="btn-primary rounded-full font-semibold shadow-lg hover:shadow-xl transition-all hover:scale-105 px-8 py-6 text-base w-full sm:w-auto"
               >
-                {heroSection.ctaButtonText}{' '}
+                {heroSection.ctaButtonText}{" "}
                 <ArrowRight className="ml-2 h-5 w-5 inline" />
               </Button>
             </motion.div>
@@ -86,7 +92,7 @@ const Hero = () => {
           <motion.div
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.8, delay: 0.3, ease: 'easeOut' }}
+            transition={{ duration: 0.8, delay: 0.3, ease: "easeOut" }}
             className="relative"
           >
             <div className="relative z-10 overflow-hidden rounded-2xl shadow-2xl">

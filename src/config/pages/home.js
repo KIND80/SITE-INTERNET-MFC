@@ -12,7 +12,7 @@ const homePage = {
       path: "comparateur/assurance-maladie",
     },
     image: {
-      src: "/img/lac-leman.jpg", // ✅ Nouvelle image de fond
+      src: "/public/lac-leman.jpg", // ✅ Nouvelle image de fond
       alt: "Vue sur le lac Léman et Genève",
       text: "Vue panoramique sur Genève, le Jet d'Eau et le lac Léman",
     },
@@ -103,7 +103,6 @@ const homePage = {
       { name: "Zugerberg", src: "/partners/Zugerberg.png" },
     ],
   },
-  
 
   testimonialsSection: {
     tagline: "La parole à nos clients",
