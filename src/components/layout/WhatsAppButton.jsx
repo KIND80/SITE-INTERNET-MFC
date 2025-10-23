@@ -6,16 +6,20 @@ import siteConfig from "@/config/siteConfig";
 const WhatsAppButton = () => {
   const { whatsapp } = siteConfig;
   const [showHello, setShowHello] = useState(false);
+  const [showHelp, setShowHelp] = useState(false);
 
   const phoneNumber = whatsapp.phone;
   const message = encodeURIComponent(whatsapp.message);
   const whatsappUrl = `https://wa.me/${phoneNumber}?text=${message}`;
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setShowHello(true);
-    }, 3000); // 3 secondes
-    return () => clearTimeout(timer);
+    const helloTimer = setTimeout(() => setShowHello(true), 3000);
+    const helpTimer = setTimeout(() => setShowHelp(true), 6000);
+
+    return () => {
+      clearTimeout(helloTimer);
+      clearTimeout(helpTimer);
+    };
   }, []);
 
   if (!whatsapp.enabled) return null;
@@ -27,17 +31,31 @@ const WhatsAppButton = () => {
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.8, duration: 0.6, ease: "easeOut" }}
     >
-      {/* Bulle automatique "Hello" */}
+      {/* Messages automatiques */}
       <AnimatePresence>
         {showHello && (
           <motion.div
+            key="hello"
             initial={{ opacity: 0, y: 20, scale: 0.8 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 10, scale: 0.8 }}
             transition={{ duration: 0.4 }}
-            className="absolute bottom-20 right-0 bg-white text-gray-800 font-semibold px-4 py-2 rounded-xl shadow-xl border border-gray-200 whitespace-nowrap"
+            className="absolute bottom-24 right-0 bg-white text-gray-800 font-semibold px-4 py-2 rounded-xl shadow-xl border border-gray-200 whitespace-nowrap"
           >
             👋 Hello !
+          </motion.div>
+        )}
+
+        {showHelp && (
+          <motion.div
+            key="help"
+            initial={{ opacity: 0, y: 20, scale: 0.8 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 10, scale: 0.8 }}
+            transition={{ duration: 0.5 }}
+            className="absolute bottom-36 right-0 bg-white text-gray-800 font-semibold px-4 py-2 rounded-xl shadow-xl border border-gray-200 whitespace-nowrap"
+          >
+            💬 Souhaitez-vous que je vous aide ?
           </motion.div>
         )}
       </AnimatePresence>
