@@ -25,7 +25,7 @@ const homePage = {
     description:
       "Basés à Genève, nous sommes vos alliés pour naviguer dans le monde complexe des assurances. Indépendants, nous travaillons pour vous, pas pour les compagnies. Notre mission : vous garantir les meilleures couvertures aux meilleurs prix.",
     image: {
-      src: "/img/conseiller-geneve.jpg",
+      src: "conseiller-geneve.jpg",
       alt: "Conseiller souriant dans un bureau moderne à Genève",
       text: "Un conseiller en assurance dans un bureau lumineux avec la ville de Genève en arrière-plan",
     },
