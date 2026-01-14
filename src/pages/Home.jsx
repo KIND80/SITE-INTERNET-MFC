@@ -18,7 +18,7 @@ const NewHero = () => {
   const handleCTAClick = (path) => {
     if (!path) return;
 
-    // 0) Tenter d'abord un scroll vers un ID (ex: "contact" ou "#contact")
+    // 0) Scroll vers un ID (ex: "#contact")
     const id = path.replace(/^#/, "");
     const maybeEl = document.getElementById(id);
     if (maybeEl) {
@@ -35,31 +35,37 @@ const NewHero = () => {
       return;
     }
 
-    // 2) Routes internes (avec ou sans /)
+    // 2) Routes internes
     if (path.startsWith("/")) {
       navigate(path);
       return;
     }
     if (!path.startsWith("#") && !path.includes(" ")) {
-      // ex: "contact" → "/contact"
       navigate(`/${path}`);
     }
   };
 
   return (
     <section className="relative min-h-[calc(100vh-80px)] flex items-center bg-gray-50 overflow-hidden">
+      {/* Background */}
       <div className="absolute inset-0 w-full h-full">
+        {/* Partie rouge gauche */}
         <div className="absolute inset-y-0 left-0 w-1/2 bg-red-600"></div>
+
+        {/* Image droite */}
         <div className="absolute inset-y-0 right-0 w-1/2">
           <img
             alt={newHero.image.alt}
             className="w-full h-full object-cover"
-            src="/hero.jpg"
+            src={newHero.image.src} // ✅ ICI LA CORRECTION IMPORTANTE
           />
         </div>
+
+        {/* Dégradé overlay */}
         <div className="absolute inset-0 bg-gradient-to-r from-red-600 via-red-600/80 to-transparent"></div>
       </div>
 
+      {/* Contenu */}
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
         <div className="w-full lg:w-1/2">
           <motion.div
@@ -71,6 +77,7 @@ const NewHero = () => {
             <h1 className="text-5xl md:text-6xl font-extrabold tracking-tight">
               {newHero.title}
             </h1>
+
             <p className="text-xl text-red-100">{newHero.subtitle}</p>
 
             <div className="flex flex-col sm:flex-row gap-4">
@@ -83,7 +90,7 @@ const NewHero = () => {
                 {newHero.primaryCta.text}
               </Button>
 
-              {/* CTA secondaire - animé, blanc translucide avec halo pulse */}
+              {/* CTA secondaire animé */}
               <motion.div
                 className="relative overflow-visible"
                 whileHover={{ scale: 1.08 }}
@@ -100,7 +107,7 @@ const NewHero = () => {
                     ease: "easeOut",
                   }}
                 />
-                {/* Halo 2 (décalé) */}
+                {/* Halo 2 */}
                 <motion.span
                   className="absolute inset-0 rounded-lg bg-white/20"
                   style={{ filter: "blur(3px)" }}
@@ -144,6 +151,7 @@ const Home = ({ showToast }) => {
   return (
     <PageTransition>
       <NewHero />
+
       <div id="main-content" className="bg-white">
         <div className="section-padding bg-gray-100">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -159,11 +167,12 @@ const Home = ({ showToast }) => {
                   <Link to="/a-propos">En savoir plus sur nous</Link>
                 </Button>
               </div>
+
               <div>
                 <img
                   alt={siteConfig.homePage.intro.image.alt}
                   className="rounded-lg shadow-xl"
-                  src="/intro.jpg"
+                  src={siteConfig.homePage.intro.image.src}
                 />
               </div>
             </div>
@@ -174,6 +183,7 @@ const Home = ({ showToast }) => {
         <Partners />
         <Testimonials />
         <CtaSection scrollToSection={scrollToSection} />
+
         <div id="contact">
           <Contact showToast={showToast} />
         </div>

@@ -1,3 +1,5 @@
+import lacLeman from "../../assets/images/lac-leman.jpg";
+
 const homePage = {
   newHero: {
     title: "Votre Assurance, Simplifiée & Optimisée.",
@@ -12,7 +14,7 @@ const homePage = {
       path: "comparateur/assurance-maladie",
     },
     image: {
-      src: "/public/lac-leman.jpg", // ✅ Nouvelle image de fond
+      src: lacLeman, // ✅ import propre depuis src/assets
       alt: "Vue sur le lac Léman et Genève",
       text: "Vue panoramique sur Genève, le Jet d'Eau et le lac Léman",
     },
