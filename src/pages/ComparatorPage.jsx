@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useRef } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -82,7 +82,7 @@ const TopSheet = ({ open, onClose, children, maxWidth = "md" }) => {
             <div
               className={[
                 // MOBILE: plein écran + pas d'arrondis
-                "bg-white/85 dark:bg-neutral-900/75 backdrop-blur-xl shadow-2xl",
+                "relative bg-white/85 dark:bg-neutral-900/75 backdrop-blur-xl shadow-2xl",
                 "border border-border",
                 "sm:rounded-2xl sm:mx-0",
                 "rounded-none",
@@ -137,7 +137,7 @@ const SparklesIcon = () => (
     <path
       strokeLinecap="round"
       strokeLinejoin="round"
-      d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456zM16.898 20.623L17.25 21.75l-.352-1.127a3.375 3.375 0 00-2.456-2.456L13.5 18l1.127-.352a3.375 3.375 0 002.456-2.456L17.25 14.25l.352 1.127a3.375 3.375 0 002.456 2.456L21 18.375l-1.127.352a3.375 3.375 0 00-2.456 2.456z"
+      d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456zM16.898 20.623L17.25 21.75l-.352-1.127a3.375 3.375 0 00-2.456-2.456L13.5 18l1.127-.352a3.375 3.375 0 002.456-2.456L17.25 14.25l.352 1.127a3.375 3.375 0 00 2.456 2.456L21 18.375l-1.127.352a3.375 3.375 0 00-2.456 2.456z"
     />
   </svg>
 );
@@ -150,26 +150,75 @@ const WhatsIcon = () => (
   </svg>
 );
 
-// Questionnaire
+/* ----------------------------- Questions ------------------------------ */
+/**
+ * ✅ Upgrade: groups + search + future scalability.
+ * Tu peux enrichir la liste sans casser l’UI.
+ */
 const questions = [
-  { id: "optique", label: "Lunettes ou lentilles" },
-  { id: "med_alt", label: "Médecines alternatives" },
-  { id: "fitness", label: "Fitness / Sport" },
-  { id: "voyage", label: "Voyages à l’étranger" },
-  { id: "hosp_semi", label: "Hospitalisation semi-privé" },
-  { id: "hosp_privee", label: "Hospitalisation privé" },
-  { id: "meds_hors_base", label: "Médicaments hors base" },
-  { id: "maternite", label: "Couverture maternité" },
-  { id: "prevention", label: "Prévention (vaccins, check-up)" },
+  { id: "optique", label: "Lunettes ou lentilles", group: "Soins" },
+  { id: "med_alt", label: "Médecines alternatives", group: "Soins" },
+  { id: "meds_hors_base", label: "Médicaments hors base", group: "Soins" },
+  { id: "prevention", label: "Prévention (vaccins, check-up)", group: "Prévention" },
+  { id: "fitness", label: "Fitness / Sport", group: "Bien-être" },
+  { id: "voyage", label: "Voyages à l’étranger", group: "Voyage" },
+  { id: "hosp_semi", label: "Hospitalisation semi-privé", group: "Hospitalisation" },
+  { id: "hosp_privee", label: "Hospitalisation privé", group: "Hospitalisation" },
+  { id: "maternite", label: "Couverture maternité", group: "Famille" },
 ];
 
-// Helpers
+/* ------------------------------- Helpers ------------------------------ */
 const encodeText = (s) => encodeURIComponent(s);
 
-function buildWhatsAppLink({ phone, motif, datetimeISO, top3, selectedNeeds }) {
-  const dateText = datetimeISO
-    ? new Date(datetimeISO).toLocaleString()
-    : "à définir";
+function toLocalDatetimeInputValue(date) {
+  const pad = (n) => String(n).padStart(2, "0");
+  const yyyy = date.getFullYear();
+  const mm = pad(date.getMonth() + 1);
+  const dd = pad(date.getDate());
+  const hh = pad(date.getHours());
+  const min = pad(date.getMinutes());
+  return `${yyyy}-${mm}-${dd}T${hh}:${min}`;
+}
+
+function getCoverageCount(result, choices) {
+  if (!Array.isArray(result?.prestations)) return 0;
+  return result.prestations.filter((p) => choices[p.critere]).length;
+}
+
+function getCoveragePct(result, selectedNeedsCount, choices) {
+  if (!selectedNeedsCount) return 0;
+  const covered = getCoverageCount(result, choices);
+  return Math.round((covered / selectedNeedsCount) * 100);
+}
+
+function getTopStrengths(result, choices, limit = 3) {
+  if (!Array.isArray(result?.prestations)) return [];
+  const matches = result.prestations
+    .filter((p) => choices[p.critere])
+    .sort((a, b) => (b.score || 0) - (a.score || 0))
+    .slice(0, limit);
+  return matches.map((p) => p.critere);
+}
+
+function getWeakSpot(result, choices) {
+  if (!Array.isArray(result?.prestations)) return null;
+  const missed = result.prestations
+    .filter((p) => !choices[p.critere])
+    .sort((a, b) => (b.score || 0) - (a.score || 0));
+  return missed[0]?.critere || null;
+}
+
+function buildWhatsAppLink({
+  phone,
+  motif,
+  datetimeISO,
+  top3,
+  selectedNeeds,
+  priority,
+  messageMode = "full", // "full" | "quick"
+}) {
+  const dateText = datetimeISO ? new Date(datetimeISO).toLocaleString() : "à définir";
+
   const needsText = selectedNeeds.length
     ? selectedNeeds
         .map((id) => questions.find((q) => q.id === id)?.label || id)
@@ -180,10 +229,20 @@ function buildWhatsAppLink({ phone, motif, datetimeISO, top3, selectedNeeds }) {
     .map((r, i) => `#${i + 1} ${r.caisse} – ${r.produit} (${r.totalScore} pts)`)
     .join("\n");
 
-  const msg = `Bonjour 👋, je viens de terminer ma comparaison et je souhaite prendre RDV.
+  const priorityText =
+    priority === "budget"
+      ? "Budget"
+      : priority === "premium"
+      ? "Premium"
+      : "Équilibré";
+
+  const msgQuick = `Bonjour 👋\n\nJe viens du comparateur et j’aimerais un avis rapide.\nPriorité: ${priorityText}\nBesoins: ${needsText}\n\nPouvez-vous me conseiller ? Merci !`;
+
+  const msgFull = `Bonjour 👋, je viens de terminer ma comparaison et je souhaite prendre RDV.
 
 • Raison: ${motif}
 • Créneau souhaité: ${dateText}
+• Priorité: ${priorityText}
 • Besoins principaux: ${needsText}
 
 Mes résultats TOP 3:
@@ -191,8 +250,10 @@ ${top3Text || "—"}
 
 Pouvez-vous me confirmer la disponibilité ? Merci !`;
 
-  return `https://wa.me/${phone}?text=${encodeText(msg)}`;
+  return `https://wa.me/${phone}?text=${encodeText(messageMode === "quick" ? msgQuick : msgFull)}`;
 }
+
+/* --------------------------------------------------------------------- */
 
 const ComparatorPage = () => {
   const [choices, setChoices] = useState({});
@@ -200,11 +261,17 @@ const ComparatorPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [selectedInsurance, setSelectedInsurance] = useState(null);
 
+  // ✅ NEW: UX options
+  const [qSearch, setQSearch] = useState("");
+  const [openGroups, setOpenGroups] = useState({});
+  const [priority, setPriority] = useState("balanced"); // "budget" | "balanced" | "premium"
+  const [showAll, setShowAll] = useState(false);
+  const [sortMode, setSortMode] = useState("score"); // "score" | "coverage"
+  const [compareOpen, setCompareOpen] = useState(false);
+
   // Popup “Prendre RDV”
   const [showBooking, setShowBooking] = useState(false);
-  const [bookingReason, setBookingReason] = useState(
-    "Obtenir un devis personnalisé"
-  );
+  const [bookingReason, setBookingReason] = useState("Obtenir un devis personnalisé");
   const [bookingWhen, setBookingWhen] = useState("");
   const [popupCountdown, setPopupCountdown] = useState(0); // affichage UX
 
@@ -212,14 +279,31 @@ const ComparatorPage = () => {
   const popupTimerRef = useRef(null);
   const popupIntervalRef = useRef(null);
 
+  // Scroll results
+  const resultsRef = useRef(null);
+
   const { toast } = useToast();
 
+  // init choices + phone + restore
   useEffect(() => {
-    const initialChoices = questions.reduce(
-      (acc, q) => ({ ...acc, [q.id]: false }),
-      {}
-    );
-    setChoices(initialChoices);
+    const initialChoices = questions.reduce((acc, q) => ({ ...acc, [q.id]: false }), {});
+    const storageKey = "mfc_comparator_state_v1";
+
+    // Essaie restore
+    try {
+      const raw = localStorage.getItem(storageKey);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        setChoices({ ...initialChoices, ...(parsed.choices || {}) });
+        setPriority(parsed.priority || "balanced");
+        setShowAll(!!parsed.showAll);
+        setSortMode(parsed.sortMode || "score");
+      } else {
+        setChoices(initialChoices);
+      }
+    } catch {
+      setChoices(initialChoices);
+    }
 
     // Essaie de lire window.siteConfig.whatsapp.phone si dispo
     try {
@@ -229,6 +313,17 @@ const ComparatorPage = () => {
       }
     } catch {}
   }, []);
+
+  // persist light (choices + options)
+  useEffect(() => {
+    const storageKey = "mfc_comparator_state_v1";
+    try {
+      localStorage.setItem(
+        storageKey,
+        JSON.stringify({ choices, priority, showAll, sortMode })
+      );
+    } catch {}
+  }, [choices, priority, showAll, sortMode]);
 
   // Nettoyage des timers
   const clearPopupTimer = () => {
@@ -247,26 +342,53 @@ const ComparatorPage = () => {
     setChoices((prev) => ({ ...prev, [id]: !prev[id] }));
   };
 
-  const selectedNeeds = useMemo(
-    () => Object.keys(choices).filter((k) => choices[k]),
-    [choices]
-  );
+  const setAll = (value) => {
+    setChoices((prev) => {
+      const next = { ...prev };
+      for (const q of questions) next[q.id] = value;
+      return next;
+    });
+  };
+
+  const selectedNeeds = useMemo(() => Object.keys(choices).filter((k) => choices[k]), [choices]);
+
+  // Filter + group
+  const filteredQuestions = useMemo(() => {
+    const s = qSearch.trim().toLowerCase();
+    if (!s) return questions;
+    return questions.filter((q) => q.label.toLowerCase().includes(s));
+  }, [qSearch]);
+
+  const groupedQuestions = useMemo(() => {
+    const map = new Map();
+    for (const q of filteredQuestions) {
+      const g = q.group || "Autres";
+      if (!map.has(g)) map.set(g, []);
+      map.get(g).push(q);
+    }
+    return Array.from(map.entries());
+  }, [filteredQuestions]);
 
   const handleSubmit = async () => {
     setIsLoading(true);
     setResults([]);
     clearPopupTimer();
+
     await new Promise((resolve) => setTimeout(resolve, 100));
 
     try {
-      const topResults = calculateTop3(choices);
+      // ✅ compatible: si ton calculateTop3 accepte un 2e param, il l’utilise, sinon il ignore.
+      const topResults = calculateTop3(choices, { priority });
       setResults(topResults);
 
       if (topResults.length > 0) {
         toast({
           title: "Comparaison réussie ✨",
-          description: "Voici vos 3 meilleures correspondances.",
+          description: "Voici vos meilleures correspondances.",
         });
+
+        // scroll vers résultats
+        setTimeout(() => resultsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 120);
       } else {
         toast({
           variant: "default",
@@ -282,7 +404,7 @@ const ComparatorPage = () => {
         description: "Impossible d'effectuer la comparaison.",
       });
     } finally {
-      setTimeout(() => setIsLoading(false), 400);
+      setTimeout(() => setIsLoading(false), 350);
     }
   };
 
@@ -315,31 +437,50 @@ const ComparatorPage = () => {
   }, [results, showBooking]);
 
   const handleReset = () => {
-    const initialChoices = questions.reduce(
-      (acc, q) => ({ ...acc, [q.id]: false }),
-      {}
-    );
+    const initialChoices = questions.reduce((acc, q) => ({ ...acc, [q.id]: false }), {});
     setChoices(initialChoices);
     setResults([]);
     setShowBooking(false);
+    setSelectedInsurance(null);
+    setCompareOpen(false);
+    setQSearch("");
+    setShowAll(false);
+    setSortMode("score");
+    setPriority("balanced");
     clearPopupTimer();
   };
 
   const getDialogDetails = () => {
     if (!selectedInsurance) return { matched: [], others: [] };
-    const matched = (selectedInsurance.prestations || []).filter(
-      (p) => choices[p.critere]
-    );
+    const matched = (selectedInsurance.prestations || []).filter((p) => choices[p.critere]);
     const others = (selectedInsurance.prestations || []).filter(
       (p) => !choices[p.critere] && p.score >= 2
     );
     return { matched, others };
   };
 
-  const orderedResults =
-    results.length === 3 ? [results[1], results[0], results[2]] : results;
+  // Results display with sort + showAll
+  const displayedResults = useMemo(() => {
+    const list = [...(results || [])];
 
-  // Progress ring
+    const coverageOf = (r) => getCoverageCount(r, choices);
+
+    list.sort((a, b) => {
+      if (sortMode === "coverage") return coverageOf(b) - coverageOf(a);
+      return (b.totalScore || 0) - (a.totalScore || 0);
+    });
+
+    return showAll ? list : list.slice(0, 3);
+  }, [results, showAll, sortMode, choices]);
+
+  // Keep "top style" for top3 mode
+  const top3StyledOrder = useMemo(() => {
+    if (showAll) return displayedResults;
+    if (displayedResults.length === 3) return [displayedResults[1], displayedResults[0], displayedResults[2]];
+    return displayedResults;
+  }, [displayedResults, showAll]);
+
+  // Progress ring (countdown)
   const Ring = ({ value, max = 10, size = 36, stroke = 4 }) => {
     const radius = (size - stroke) / 2;
     const c = 2 * Math.PI * radius;
@@ -370,6 +511,63 @@ const ComparatorPage = () => {
     );
   };
 
+  // Compare data
+  const compareA = results?.[0] || null;
+  const compareB = results?.[1] || null;
+
+  const buildCompareRows = (a, b) => {
+    const rows = [];
+
+    // d’abord besoins sélectionnés (meilleure UX)
+    for (const id of selectedNeeds) {
+      const label = questions.find((q) => q.id === id)?.label || id;
+
+      const pa = Array.isArray(a?.prestations) ? a.prestations.find((p) => p.critere === id) : null;
+      const pb = Array.isArray(b?.prestations) ? b.prestations.find((p) => p.critere === id) : null;
+
+      rows.push({
+        id,
+        label,
+        aScore: pa?.score ?? 0,
+        bScore: pb?.score ?? 0,
+        aDesc: pa?.description || "",
+        bDesc: pb?.description || "",
+        selected: true,
+      });
+    }
+
+    // puis autres avantages (score >=2)
+    const union = new Set();
+    const addAdv = (r) => {
+      if (!Array.isArray(r?.prestations)) return;
+      r.prestations.forEach((p) => {
+        if ((p.score || 0) >= 2 && !choices[p.critere]) union.add(p.critere);
+      });
+    };
+    addAdv(a);
+    addAdv(b);
+
+    for (const id of Array.from(union)) {
+      const label = questions.find((q) => q.id === id)?.label || id;
+      const pa = Array.isArray(a?.prestations) ? a.prestations.find((p) => p.critere === id) : null;
+      const pb = Array.isArray(b?.prestations) ? b.prestations.find((p) => p.critere === id) : null;
+
+      rows.push({
+        id,
+        label,
+        aScore: pa?.score ?? 0,
+        bScore: pb?.score ?? 0,
+        aDesc: pa?.description || "",
+        bDesc: pb?.description || "",
+        selected: false,
+      });
+    }
+
+    return rows;
+  };
+
+  const compareRows = useMemo(() => buildCompareRows(compareA, compareB), [compareA, compareB, selectedNeeds, choices]);
+
   return (
     <PageTransition>
       {/* fond “premium” */}
@@ -379,20 +577,19 @@ const ComparatorPage = () => {
           <div className="absolute bottom-0 -left-24 h-72 w-72 rounded-full bg-purple-500/20 blur-3xl" />
         </div>
 
-        <div className="container py-12 md:py-20 relative">
+        <div className="container py-10 md:py-16 relative">
           {/* Titre */}
           <motion.div
-            className="text-center mb-12"
-            initial={{ opacity: 0, y: -20 }}
+            className="text-center mb-10"
+            initial={{ opacity: 0, y: -18 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
+            transition={{ duration: 0.45 }}
           >
             <h1 className="text-4xl md:text-6xl font-black bg-clip-text text-transparent bg-gradient-to-r from-primary to-purple-500 uppercase">
               Votre Assurance Sur-Mesure
             </h1>
             <p className="mt-4 text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto">
-              Cochez vos besoins et laissez notre algorithme trouver les 3
-              complémentaires qui matchent vraiment.
+              Cochez vos besoins, choisissez votre priorité, et obtenez des recommandations claires + comparables.
             </p>
 
             {/* mini info “le popup arrive dans …” */}
@@ -414,52 +611,147 @@ const ComparatorPage = () => {
             </AnimatePresence>
           </motion.div>
 
-          {/* Checklist */}
-          <motion.div
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12"
-            variants={{
-              hidden: { opacity: 0 },
-              show: { opacity: 1, transition: { staggerChildren: 0.05 } },
-            }}
-            initial="hidden"
-            animate="show"
-          >
-            {questions.map((q) => {
-              const active = !!choices[q.id];
-              return (
-                <motion.div
-                  key={q.id}
-                  variants={{
-                    hidden: { opacity: 0, y: 20 },
-                    show: { opacity: 1, y: 0 },
-                  }}
-                >
-                  <label
-                    className={`group relative flex items-center justify-between w-full p-5 rounded-xl border-2 cursor-pointer transition-all duration-300 ${
-                      active
-                        ? "bg-primary/10 border-primary shadow-xl shadow-primary/10"
-                        : "bg-card border-border hover:border-primary/50"
+          {/* ✅ NEW: Priorité (impact énorme sur l’UX et la conversion) */}
+          <div className="max-w-4xl mx-auto mb-8">
+            <div className="rounded-2xl border border-border bg-card/70 backdrop-blur p-4 sm:p-5">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                <div>
+                  <p className="font-bold">Votre priorité</p>
+                  <p className="text-xs text-muted-foreground">Ça guide le classement (budget vs premium).</p>
+                </div>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => setPriority("budget")}
+                    className={`px-3 py-2 rounded-xl text-sm border transition ${
+                      priority === "budget"
+                        ? "border-transparent bg-gradient-to-r from-primary to-purple-500 text-white"
+                        : "border-border bg-background hover:border-primary/50"
                     }`}
                   >
-                    <span className="font-semibold">{q.label}</span>
-                    <div
-                      className={`flex items-center justify-center w-7 h-7 rounded-full transition-all duration-300 ${
-                        active
-                          ? "bg-primary text-primary-foreground"
-                          : "bg-muted"
-                      }`}
-                    >
-                      {active && <CheckIcon />}
+                    💸 Budget
+                  </button>
+                  <button
+                    onClick={() => setPriority("balanced")}
+                    className={`px-3 py-2 rounded-xl text-sm border transition ${
+                      priority === "balanced"
+                        ? "border-transparent bg-gradient-to-r from-primary to-purple-500 text-white"
+                        : "border-border bg-background hover:border-primary/50"
+                    }`}
+                  >
+                    ⚖️ Équilibre
+                  </button>
+                  <button
+                    onClick={() => setPriority("premium")}
+                    className={`px-3 py-2 rounded-xl text-sm border transition ${
+                      priority === "premium"
+                        ? "border-transparent bg-gradient-to-r from-primary to-purple-500 text-white"
+                        : "border-border bg-background hover:border-primary/50"
+                    }`}
+                  >
+                    👑 Premium
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* ✅ NEW: Search + quick actions */}
+          <div className="max-w-4xl mx-auto mb-8">
+            <div className="flex flex-col sm:flex-row gap-3 items-stretch">
+              <input
+                value={qSearch}
+                onChange={(e) => setQSearch(e.target.value)}
+                placeholder="Rechercher un besoin… (optique, voyage, hospitalisation...)"
+                className="w-full rounded-xl border border-border bg-card/70 backdrop-blur px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+              />
+              <div className="flex gap-2">
+                <Button variant="outline" onClick={() => setAll(true)}>
+                  Tout cocher
+                </Button>
+                <Button variant="outline" onClick={() => setAll(false)}>
+                  Tout décocher
+                </Button>
+              </div>
+            </div>
+
+            {/* Sticky mini summary mobile */}
+            <div className="mt-3 flex flex-wrap items-center justify-between gap-2 text-xs">
+              <div className="inline-flex items-center gap-2 rounded-full border border-border bg-card/70 backdrop-blur px-3 py-1">
+                <span className="opacity-70">Besoins sélectionnés</span>
+                <span className="font-bold">{selectedNeeds.length}</span>
+              </div>
+              <button
+                onClick={() => setQSearch("")}
+                className="underline opacity-70 hover:opacity-100"
+              >
+                Réinitialiser la recherche
+              </button>
+            </div>
+          </div>
+
+          {/* ✅ NEW: Grouped checklist (scalable & premium) */}
+          <motion.div className="space-y-6 mb-10 max-w-6xl mx-auto" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+            {groupedQuestions.map(([group, items]) => {
+              const isOpen = openGroups[group] ?? true;
+              return (
+                <div
+                  key={group}
+                  className="rounded-2xl border border-border bg-card/60 backdrop-blur overflow-hidden"
+                >
+                  <button
+                    className="w-full flex items-center justify-between px-5 py-4"
+                    onClick={() => setOpenGroups((p) => ({ ...p, [group]: !isOpen }))}
+                  >
+                    <div className="text-left">
+                      <p className="font-bold">{group}</p>
+                      <p className="text-xs text-muted-foreground">{items.length} options</p>
                     </div>
-                    <span className="pointer-events-none absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity bg-gradient-to-r from-primary/0 via-primary/5 to-purple-500/10" />
-                    <input
-                      type="checkbox"
-                      checked={active}
-                      onChange={() => handleChoiceChange(q.id)}
-                      className="sr-only"
-                    />
-                  </label>
-                </motion.div>
+                    <span className="text-xs opacity-70">{isOpen ? "Masquer" : "Afficher"}</span>
+                  </button>
+
+                  <AnimatePresence initial={false}>
+                    {isOpen && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        className="px-4 pb-4"
+                      >
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                          {items.map((q) => {
+                            const active = !!choices[q.id];
+                            return (
+                              <label
+                                key={q.id}
+                                className={`group relative flex items-center justify-between w-full p-4 rounded-xl border-2 cursor-pointer transition-all duration-300 ${
+                                  active
+                                    ? "bg-primary/10 border-primary shadow-xl shadow-primary/10"
+                                    : "bg-background border-border hover:border-primary/50"
+                                }`}
+                              >
+                                <span className="font-semibold text-sm">{q.label}</span>
+                                <div
+                                  className={`flex items-center justify-center w-7 h-7 rounded-full transition-all duration-300 ${
+                                    active ? "bg-primary text-primary-foreground" : "bg-muted"
+                                  }`}
+                                >
+                                  {active && <CheckIcon />}
+                                </div>
+                                <span className="pointer-events-none absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity bg-gradient-to-r from-primary/0 via-primary/5 to-purple-500/10" />
+                                <input
+                                  type="checkbox"
+                                  checked={active}
+                                  onChange={() => handleChoiceChange(q.id)}
+                                  className="sr-only"
+                                />
+                              </label>
+                            );
+                          })}
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
               );
             })}
           </motion.div>
@@ -476,10 +768,11 @@ const ComparatorPage = () => {
                 "Analyse en cours..."
               ) : (
                 <div className="flex items-center">
-                  <SparklesIcon /> Trouver mon Top 3
+                  <SparklesIcon /> Trouver mes résultats
                 </div>
               )}
             </Button>
+
             {results.length > 0 && !isLoading && (
               <Button
                 size="lg"
@@ -493,7 +786,7 @@ const ComparatorPage = () => {
           </div>
 
           {/* Résultats */}
-          <div className="mt-20">
+          <div className="mt-14" ref={resultsRef}>
             <AnimatePresence mode="wait">
               {isLoading && (
                 <motion.div
@@ -502,7 +795,7 @@ const ComparatorPage = () => {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  transition={{ duration: 0.3 }}
+                  transition={{ duration: 0.25 }}
                 >
                   <div className="inline-block w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
                   <p className="mt-4 text-muted-foreground font-semibold">
@@ -512,166 +805,221 @@ const ComparatorPage = () => {
               )}
 
               {!isLoading && results.length > 0 && (
-                <motion.div
-                  key="results"
-                  className="grid grid-cols-1 lg:grid-cols-3 items-stretch justify-center gap-8"
-                  initial="hidden"
-                  animate="show"
-                  variants={{
-                    hidden: {},
-                    show: {
-                      transition: { staggerChildren: 0.1, delayChildren: 0.2 },
-                    },
-                  }}
-                >
-                  {orderedResults.map((res, index) => {
-                    const isTop1 =
-                      (results.length === 3 && index === 1) ||
-                      (results.length < 3 && index === 0);
-                    const rank = isTop1 ? 1 : index === 0 ? 2 : 3;
+                <motion.div key="results" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.25 }}>
+                  {/* ✅ NEW: controls results */}
+                  <div className="flex flex-col sm:flex-row items-center justify-between gap-3 mb-6">
+                    <div className="flex items-center gap-2">
+                      <Button variant={showAll ? "outline" : "default"} onClick={() => setShowAll(false)}>
+                        Top 3
+                      </Button>
+                      <Button variant={showAll ? "default" : "outline"} onClick={() => setShowAll(true)}>
+                        Tout afficher
+                      </Button>
+                    </div>
 
-                    const cardColors = {
-                      1: {
-                        bg: "bg-card-top3-gold",
-                        text: "text-card-top3-gold",
-                        border: "border-t-card-top3-gold",
-                        bottom: "border-b-card-top3-gold",
-                      },
-                      2: {
-                        bg: "bg-card-top3-silver",
-                        text: "text-card-top3-silver",
-                        border: "border-t-card-top3-silver",
-                        bottom: "border-b-card-top3-silver",
-                      },
-                      3: {
-                        bg: "bg-card-top3-bronze",
-                        text: "text-card-top3-bronze",
-                        border: "border-t-card-top3-bronze",
-                        bottom: "border-b-card-top3-bronze",
-                      },
-                    };
-                    const colors = cardColors[rank] || cardColors[3];
-
-                    const matchCount = Array.isArray(res?.prestations)
-                      ? res.prestations.filter((p) => choices[p.critere]).length
-                      : 0;
-
-                    return (
-                      <motion.div
-                        key={`${res.caisse}-${res.produit}`}
-                        variants={{
-                          hidden: { opacity: 0, y: 30 },
-                          show: {
-                            opacity: 1,
-                            y: 0,
-                            transition: { type: "spring", stiffness: 100 },
-                          },
-                        }}
-                        whileHover={{ y: -6, scale: 1.02 }}
-                        className={`relative bg-card rounded-2xl border border-border shadow-lg w-full max-w-xl overflow-hidden flex flex-col p-8 transition-all duration-300 ${
-                          isTop1
-                            ? "lg:-translate-y-4 lg:scale-105 lg:shadow-2xl z-10 ring-1 ring-primary/20"
-                            : "hover:shadow-xl"
-                        }`}
+                    <div className="flex items-center gap-2 text-sm">
+                      <span className="text-muted-foreground">Trier par</span>
+                      <Button variant={sortMode === "score" ? "default" : "outline"} onClick={() => setSortMode("score")}>
+                        Score
+                      </Button>
+                      <Button
+                        variant={sortMode === "coverage" ? "default" : "outline"}
+                        onClick={() => setSortMode("coverage")}
                       >
-                        {isTop1 && (
-                          <div className="absolute -left-10 top-6 rotate-[-35deg] bg-gradient-to-r from-primary to-purple-500 text-white px-10 py-1 text-[10px] font-black tracking-widest shadow">
-                            MEILLEUR MATCH
-                          </div>
-                        )}
+                        Couverture
+                      </Button>
+                    </div>
+                  </div>
 
-                        <div
-                          className={`corner-triangle absolute top-0 right-0 w-0 h-0 border-l-[60px] border-l-transparent border-t-[60px] ${colors.border}`}
-                        />
-                        <div
-                          className={`corner-bottom absolute bottom-0 left-0 w-0 h-0 border-r-[60px] border-r-transparent border-b-[60px] ${colors.bottom}`}
-                        />
+                  {/* ✅ NEW: compare CTA */}
+                  {results.length >= 2 && !showAll && (
+                    <div className="mb-6 flex flex-col sm:flex-row gap-3 items-stretch">
+                      <Button
+                        variant="outline"
+                        className="w-full sm:w-auto"
+                        onClick={() => setCompareOpen(true)}
+                      >
+                        Comparer TOP 1 vs TOP 2
+                      </Button>
+                      <Button
+                        className="w-full sm:w-auto font-bold bg-gradient-to-r from-emerald-500 to-primary text-white hover:opacity-95"
+                        onClick={() => setShowBooking(true)}
+                      >
+                        Finaliser avec un conseiller
+                      </Button>
+                      <Button
+                        variant="outline"
+                        className="w-full sm:w-auto"
+                        onClick={() => {
+                          const link = buildWhatsAppLink({
+                            phone: WHATSAPP_PHONE,
+                            motif: "Avis rapide",
+                            datetimeISO: undefined,
+                            top3: results || [],
+                            selectedNeeds,
+                            priority,
+                            messageMode: "quick",
+                          });
+                          window.open(link, "_blank");
+                        }}
+                      >
+                        <WhatsIcon /> Avis rapide (WhatsApp)
+                      </Button>
+                    </div>
+                  )}
 
-                        <div className="flex items-center justify-between mb-4">
-                          <h2
-                            className={`text-2xl font-extrabold ${colors.text}`}
-                          >{`TOP ${rank}`}</h2>
-                          <div className="text-xs font-bold px-3 py-1 rounded-full bg-muted">
-                            {matchCount} / {selectedNeeds.length || 0} besoins
-                            couverts
-                          </div>
-                        </div>
+                  <motion.div
+                    className="grid grid-cols-1 lg:grid-cols-3 items-stretch justify-center gap-8"
+                    initial="hidden"
+                    animate="show"
+                    variants={{
+                      hidden: {},
+                      show: { transition: { staggerChildren: 0.08, delayChildren: 0.15 } },
+                    }}
+                  >
+                    {top3StyledOrder.map((res, index) => {
+                      // Styling "Top 3" seulement si showAll = false
+                      const isTop1 = !showAll && ((results.length >= 3 && index === 1) || (results.length < 3 && index === 0));
+                      const rank = showAll ? index + 1 : isTop1 ? 1 : index === 0 ? 2 : 3;
 
-                        <div
-                          className={`w-28 h-28 rounded-full flex flex-col items-center justify-center mb-6 text-white ${colors.bg} shadow-inner`}
+                      const cardColors = {
+                        1: { bg: "bg-card-top3-gold", text: "text-card-top3-gold", border: "border-t-card-top3-gold", bottom: "border-b-card-top3-gold" },
+                        2: { bg: "bg-card-top3-silver", text: "text-card-top3-silver", border: "border-t-card-top3-silver", bottom: "border-b-card-top3-silver" },
+                        3: { bg: "bg-card-top3-bronze", text: "text-card-top3-bronze", border: "border-t-card-top3-bronze", bottom: "border-b-card-top3-bronze" },
+                      };
+                      const colors = cardColors[rank] || cardColors[3];
+
+                      const covered = getCoverageCount(res, choices);
+                      const pct = getCoveragePct(res, selectedNeeds.length, choices);
+
+                      const strengths = getTopStrengths(res, choices, 3).map(
+                        (id) => questions.find((q) => q.id === id)?.label || id
+                      );
+                      const weak = getWeakSpot(res, choices);
+                      const weakLabel = weak ? questions.find((q) => q.id === weak)?.label || weak : null;
+
+                      return (
+                        <motion.div
+                          key={`${res.caisse}-${res.produit}-${index}`}
+                          variants={{
+                            hidden: { opacity: 0, y: 28 },
+                            show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 110 } },
+                          }}
+                          whileHover={{ y: -6, scale: 1.02 }}
+                          className={`relative bg-card rounded-2xl border border-border shadow-lg w-full max-w-xl overflow-hidden flex flex-col p-8 transition-all duration-300 ${
+                            isTop1
+                              ? "lg:-translate-y-4 lg:scale-105 lg:shadow-2xl z-10 ring-1 ring-primary/20"
+                              : "hover:shadow-xl"
+                          }`}
                         >
-                          <span className="text-4xl font-black">
-                            {res.totalScore}
-                          </span>
-                          <span className="text-[10px] font-bold uppercase tracking-wider">
-                            Points
-                          </span>
-                        </div>
+                          {!showAll && isTop1 && (
+                            <div className="absolute -left-10 top-6 rotate-[-35deg] bg-gradient-to-r from-primary to-purple-500 text-white px-10 py-1 text-[10px] font-black tracking-widest shadow">
+                              MEILLEUR MATCH
+                            </div>
+                          )}
 
-                        <div className="flex-grow mb-6">
-                          <h3 className="text-xl font-bold text-foreground">
-                            {res.caisse}
-                          </h3>
-                          <p className="text-sm text-muted-foreground">
-                            {res.produit}
-                          </p>
+                          {!showAll && (
+                            <>
+                              <div
+                                className={`corner-triangle absolute top-0 right-0 w-0 h-0 border-l-[60px] border-l-transparent border-t-[60px] ${colors.border}`}
+                              />
+                              <div
+                                className={`corner-bottom absolute bottom-0 left-0 w-0 h-0 border-r-[60px] border-r-transparent border-b-[60px] ${colors.bottom}`}
+                              />
+                            </>
+                          )}
 
-                          {Array.isArray(res?.prestations) &&
-                            res.prestations.length > 0 && (
+                          <div className="flex items-center justify-between mb-4">
+                            <h2 className={`text-2xl font-extrabold ${!showAll ? colors.text : "text-foreground"}`}>
+                              {showAll ? `#${rank}` : `TOP ${rank}`}
+                            </h2>
+                            <div className="text-xs font-bold px-3 py-1 rounded-full bg-muted">
+                              {covered} / {selectedNeeds.length || 0} besoins • {pct}%
+                            </div>
+                          </div>
+
+                          <div className={`w-28 h-28 rounded-full flex flex-col items-center justify-center mb-6 text-white ${!showAll ? colors.bg : "bg-gradient-to-r from-primary to-purple-500"} shadow-inner`}>
+                            <span className="text-4xl font-black">{res.totalScore}</span>
+                            <span className="text-[10px] font-bold uppercase tracking-wider">
+                              Score
+                            </span>
+                          </div>
+
+                          <div className="flex-grow mb-5">
+                            <h3 className="text-xl font-bold text-foreground">{res.caisse}</h3>
+                            <p className="text-sm text-muted-foreground">{res.produit}</p>
+
+                            {/* ✅ NEW: Why this match */}
+                            <div className="mt-4 rounded-xl border border-border bg-background/50 p-4">
+                              <p className="text-sm font-semibold">Pourquoi ce résultat ?</p>
+                              <ul className="mt-2 space-y-1 text-sm text-muted-foreground">
+                                {strengths.length ? (
+                                  strengths.map((t) => (
+                                    <li key={t} className="flex items-start gap-2">
+                                      <span className="mt-[6px] inline-block w-1.5 h-1.5 rounded-full bg-primary" />
+                                      <span>{t}</span>
+                                    </li>
+                                  ))
+                                ) : (
+                                  <li className="text-xs">Aucun besoin sélectionné (choisissez 1-2 options pour affiner).</li>
+                                )}
+                              </ul>
+                              {weakLabel && (
+                                <p className="mt-3 text-xs text-muted-foreground">
+                                  ⚠️ Potentiel point faible : <span className="font-medium text-foreground">{weakLabel}</span>
+                                </p>
+                              )}
+                            </div>
+
+                            {/* Liste courte des matches */}
+                            {Array.isArray(res?.prestations) && res.prestations.length > 0 && (
                               <ul className="mt-4 space-y-2">
                                 {res.prestations
                                   .filter((p) => choices[p.critere])
                                   .slice(0, 3)
                                   .map((p) => (
-                                    <li
-                                      key={p.critere}
-                                      className="text-sm flex items-start gap-2"
-                                    >
+                                    <li key={p.critere} className="text-sm flex items-start gap-2">
                                       <span className="mt-[6px] inline-block w-1.5 h-1.5 rounded-full bg-primary"></span>
                                       <span className="text-muted-foreground">
                                         <span className="font-medium text-foreground">
-                                          {questions.find(
-                                            (q) => q.id === p.critere
-                                          )?.label || p.critere}
+                                          {questions.find((q) => q.id === p.critere)?.label || p.critere}
                                         </span>
-                                        {p.description
-                                          ? ` — ${p.description}`
-                                          : ""}
+                                        {p.description ? ` — ${p.description}` : ""}
                                       </span>
                                     </li>
                                   ))}
                               </ul>
                             )}
-                        </div>
+                          </div>
 
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                          <Button
-                            variant="outline"
-                            className="w-full font-bold hover:scale-[1.01]"
-                            onClick={() => setSelectedInsurance(res)}
-                          >
-                            Voir les détails
-                          </Button>
-                          <Button
-                            className={`w-full font-bold uppercase tracking-wider ${colors.bg} hover:opacity-90 hover:scale-[1.01]`}
-                            onClick={() => setShowBooking(true)}
-                          >
-                            Prendre RDV
-                          </Button>
-                        </div>
-                      </motion.div>
-                    );
-                  })}
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <Button
+                              variant="outline"
+                              className="w-full font-bold hover:scale-[1.01]"
+                              onClick={() => setSelectedInsurance(res)}
+                            >
+                              Voir les détails
+                            </Button>
+                            <Button
+                              className={`w-full font-bold uppercase tracking-wider ${
+                                !showAll ? colors.bg : "bg-gradient-to-r from-emerald-500 to-primary"
+                              } text-white hover:opacity-90 hover:scale-[1.01]`}
+                              onClick={() => setShowBooking(true)}
+                            >
+                              Prendre RDV
+                            </Button>
+                          </div>
+                        </motion.div>
+                      );
+                    })}
+                  </motion.div>
                 </motion.div>
               )}
             </AnimatePresence>
           </div>
 
-          {/* Détails produit — tu peux garder le Dialog shadcn */}
-          <Dialog
-            open={!!selectedInsurance}
-            onOpenChange={() => setSelectedInsurance(null)}
-          >
+          {/* Détails produit — Dialog shadcn */}
+          <Dialog open={!!selectedInsurance} onOpenChange={() => setSelectedInsurance(null)}>
             <DialogContent className="sm:max-w-md bg-card">
               {selectedInsurance && (
                 <>
@@ -679,10 +1027,9 @@ const ComparatorPage = () => {
                     <DialogTitle className="text-2xl bg-clip-text text-transparent bg-gradient-to-r from-primary to-purple-500">
                       {selectedInsurance.caisse} — {selectedInsurance.produit}
                     </DialogTitle>
-                    <DialogDescription>
-                      Aperçu des prestations de ce produit.
-                    </DialogDescription>
+                    <DialogDescription>Aperçu des prestations de ce produit.</DialogDescription>
                   </DialogHeader>
+
                   <div className="py-4 space-y-6 max-h-[60vh] overflow-y-auto pr-3">
                     <div>
                       <h4 className="text-lg font-semibold text-foreground mb-3">
@@ -693,8 +1040,7 @@ const ComparatorPage = () => {
                           <div key={p.critere}>
                             <div className="flex justify-between items-center">
                               <p className="font-semibold text-foreground">
-                                {questions.find((q) => q.id === p.critere)
-                                  ?.label || p.critere}
+                                {questions.find((q) => q.id === p.critere)?.label || p.critere}
                               </p>
                               <span
                                 className={`text-xs font-bold px-2 py-1 rounded-full ${
@@ -708,9 +1054,7 @@ const ComparatorPage = () => {
                                 Score {p.score}/3
                               </span>
                             </div>
-                            <p className="text-sm text-muted-foreground mt-1">
-                              {p.description}
-                            </p>
+                            <p className="text-sm text-muted-foreground mt-1">{p.description}</p>
                           </div>
                         ))}
                       </div>
@@ -726,8 +1070,7 @@ const ComparatorPage = () => {
                             <div key={p.critere}>
                               <div className="flex justify-between items-center">
                                 <p className="font-semibold text-foreground">
-                                  {questions.find((q) => q.id === p.critere)
-                                    ?.label || p.critere}
+                                  {questions.find((q) => q.id === p.critere)?.label || p.critere}
                                 </p>
                                 <span
                                   className={`text-xs font-bold px-2 py-1 rounded-full ${
@@ -739,9 +1082,7 @@ const ComparatorPage = () => {
                                   Score {p.score}/3
                                 </span>
                               </div>
-                              <p className="text-sm text-muted-foreground mt-1">
-                                {p.description}
-                              </p>
+                              <p className="text-sm text-muted-foreground mt-1">{p.description}</p>
                             </div>
                           ))}
                         </div>
@@ -752,23 +1093,137 @@ const ComparatorPage = () => {
               )}
             </DialogContent>
           </Dialog>
+
+          {/* ✅ NEW: Compare Top 1 vs Top 2 (Dialog) */}
+          <Dialog open={compareOpen} onOpenChange={setCompareOpen}>
+            <DialogContent className="sm:max-w-5xl bg-card">
+              <DialogHeader>
+                <DialogTitle className="text-2xl bg-clip-text text-transparent bg-gradient-to-r from-primary to-purple-500">
+                  Comparaison TOP 1 vs TOP 2
+                </DialogTitle>
+                <DialogDescription>
+                  Vos besoins sélectionnés d’abord, puis les autres avantages importants.
+                </DialogDescription>
+              </DialogHeader>
+
+              {!compareA || !compareB ? (
+                <div className="py-6 text-sm text-muted-foreground">
+                  Pas assez de résultats pour comparer.
+                </div>
+              ) : (
+                <div className="py-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
+                    <div className="rounded-xl border border-border bg-background/60 p-4">
+                      <p className="text-sm font-bold">{compareA.caisse}</p>
+                      <p className="text-xs text-muted-foreground">{compareA.produit}</p>
+                    </div>
+                    <div className="rounded-xl border border-border bg-background/60 p-4">
+                      <p className="text-sm font-bold">{compareB.caisse}</p>
+                      <p className="text-xs text-muted-foreground">{compareB.produit}</p>
+                    </div>
+                  </div>
+
+                  <div className="overflow-x-auto rounded-xl border border-border">
+                    <table className="min-w-[900px] w-full text-sm">
+                      <thead className="bg-muted/40">
+                        <tr>
+                          <th className="text-left p-3 font-semibold w-[280px]">Critère</th>
+                          <th className="text-left p-3 font-semibold">{compareA.caisse}</th>
+                          <th className="text-left p-3 font-semibold">{compareB.caisse}</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {compareRows.map((row) => {
+                          const aGood = row.aScore >= 2;
+                          const bGood = row.bScore >= 2;
+
+                          return (
+                            <tr key={row.id} className={row.selected ? "bg-background" : "bg-background/60"}>
+                              <td className="p-3 border-t border-border">
+                                <div className="flex items-center gap-2">
+                                  <span className="font-medium">{row.label}</span>
+                                  {row.selected && (
+                                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20">
+                                      sélectionné
+                                    </span>
+                                  )}
+                                </div>
+                              </td>
+                              <td className="p-3 border-t border-border align-top">
+                                <div className="flex items-center gap-2">
+                                  <span className={`text-xs font-bold px-2 py-1 rounded-full ${
+                                    aGood ? "bg-green-500/15 text-green-600" : "bg-amber-500/15 text-amber-600"
+                                  }`}>
+                                    {row.aScore}/3
+                                  </span>
+                                  <span className="text-xs text-muted-foreground">
+                                    {aGood ? "✅ Bon" : "⚠️ Moyen"}
+                                  </span>
+                                </div>
+                                {row.aDesc && (
+                                  <p className="mt-2 text-xs text-muted-foreground">{row.aDesc}</p>
+                                )}
+                              </td>
+                              <td className="p-3 border-t border-border align-top">
+                                <div className="flex items-center gap-2">
+                                  <span className={`text-xs font-bold px-2 py-1 rounded-full ${
+                                    bGood ? "bg-green-500/15 text-green-600" : "bg-amber-500/15 text-amber-600"
+                                  }`}>
+                                    {row.bScore}/3
+                                  </span>
+                                  <span className="text-xs text-muted-foreground">
+                                    {bGood ? "✅ Bon" : "⚠️ Moyen"}
+                                  </span>
+                                </div>
+                                {row.bDesc && (
+                                  <p className="mt-2 text-xs text-muted-foreground">{row.bDesc}</p>
+                                )}
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+
+                  <div className="mt-4 flex flex-col sm:flex-row gap-3">
+                    <Button
+                      className="font-bold bg-gradient-to-r from-emerald-500 to-primary text-white hover:opacity-95"
+                      onClick={() => {
+                        const link = buildWhatsAppLink({
+                          phone: WHATSAPP_PHONE,
+                          motif: "Comparaison TOP 1 vs TOP 2",
+                          datetimeISO: undefined,
+                          top3: results || [],
+                          selectedNeeds,
+                          priority,
+                          messageMode: "quick",
+                        });
+                        window.open(link, "_blank");
+                      }}
+                    >
+                      <WhatsIcon /> Envoyer la comparaison (WhatsApp)
+                    </Button>
+                    <Button variant="outline" onClick={() => setCompareOpen(false)}>
+                      Fermer
+                    </Button>
+                  </div>
+                </div>
+              )}
+            </DialogContent>
+          </Dialog>
         </div>
       </div>
 
       {/* Popup RDV — TopSheet sexy, toujours visible en haut */}
-      <TopSheet
-        open={showBooking}
-        onClose={() => setShowBooking(false)}
-        maxWidth="lg"
-      >
+      <TopSheet open={showBooking} onClose={() => setShowBooking(false)} maxWidth="lg">
         <div className="space-y-6">
           <div>
             <h3 className="text-2xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-primary to-purple-500">
               Finalisez en 1 minute avec un conseiller
             </h3>
             <p className="text-sm text-muted-foreground">
-              Choisissez une raison et un créneau — envoi direct par WhatsApp ou
-              email.
+              Choisissez une raison et un créneau — envoi direct par WhatsApp ou email.
             </p>
           </div>
 
@@ -803,21 +1258,22 @@ const ComparatorPage = () => {
 
           {/* Créneau rapide + personnalisé */}
           <div>
-            <p className="text-sm font-medium mb-2">
-              Créneau souhaité (optionnel)
-            </p>
+            <p className="text-sm font-medium mb-2">Créneau souhaité (optionnel)</p>
             <div className="grid grid-cols-3 gap-2 mb-3">
               {[
                 { t: "Aujourd’hui AM", addH: 3 },
                 { t: "Aujourd’hui PM", addH: 6 },
-                { t: "Demain 10h", addH: 24 + (10 - new Date().getHours()) },
+                {
+                  t: "Demain 10h",
+                  addH: 24 + Math.max(0, 10 - new Date().getHours()),
+                },
               ].map((opt) => (
                 <button
                   key={opt.t}
                   onClick={() => {
                     const dt = new Date();
                     dt.setHours(dt.getHours() + opt.addH, 0, 0, 0);
-                    setBookingWhen(dt.toISOString().slice(0, 16));
+                    setBookingWhen(toLocalDatetimeInputValue(dt));
                   }}
                   className="text-xs border border-border rounded-md px-2 py-2 hover:border-primary/50 hover:bg-primary/5"
                 >
@@ -825,6 +1281,7 @@ const ComparatorPage = () => {
                 </button>
               ))}
             </div>
+
             <input
               type="datetime-local"
               value={bookingWhen}
@@ -839,10 +1296,7 @@ const ComparatorPage = () => {
             {selectedNeeds.length > 0 ? (
               <div className="flex flex-wrap gap-2">
                 {selectedNeeds.map((id) => (
-                  <span
-                    key={id}
-                    className="text-[11px] px-2 py-1 rounded-full bg-muted"
-                  >
+                  <span key={id} className="text-[11px] px-2 py-1 rounded-full bg-muted">
                     {questions.find((q) => q.id === id)?.label || id}
                   </span>
                 ))}
@@ -853,29 +1307,43 @@ const ComparatorPage = () => {
           </div>
 
           {/* CTA */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <Button
               variant="outline"
               className="relative overflow-hidden"
               onClick={() => {
-                const subject = encodeText(
-                  "Demande de RDV – Comparateur complémentaires"
-                );
+                const subject = encodeText("Demande de RDV – Comparateur complémentaires");
                 const body = encodeText(
                   `Bonjour,\n\nJe souhaite un RDV.\nRaison: ${bookingReason}\nCréneau: ${
                     bookingWhen || "à définir"
-                  }\nBesoins: ${
+                  }\nPriorité: ${priority}\nBesoins: ${
                     selectedNeeds
-                      .map(
-                        (id) => questions.find((q) => q.id === id)?.label || id
-                      )
+                      .map((id) => questions.find((q) => q.id === id)?.label || id)
                       .join(", ") || "non précisé"
                   }\n\nMerci !`
                 );
                 window.location.href = `mailto:contact@monfideleconseiller.ch?subject=${subject}&body=${body}`;
               }}
             >
-              Être rappelé par email
+              Être rappelé (email)
+            </Button>
+
+            <Button
+              variant="outline"
+              onClick={() => {
+                const link = buildWhatsAppLink({
+                  phone: WHATSAPP_PHONE,
+                  motif: "Avis rapide",
+                  datetimeISO: undefined,
+                  top3: results || [],
+                  selectedNeeds,
+                  priority,
+                  messageMode: "quick",
+                });
+                window.open(link, "_blank");
+              }}
+            >
+              <WhatsIcon /> Avis rapide
             </Button>
 
             <Button
@@ -887,11 +1355,13 @@ const ComparatorPage = () => {
                   datetimeISO: bookingWhen || undefined,
                   top3: results || [],
                   selectedNeeds,
+                  priority,
+                  messageMode: "full",
                 });
                 window.open(link, "_blank");
               }}
             >
-              <WhatsIcon /> Envoyer via WhatsApp
+              <WhatsIcon /> Envoyer (WhatsApp)
             </Button>
           </div>
 
