@@ -9,6 +9,7 @@ import { AnimatePresence } from "framer-motion";
 import { Toaster } from "@/components/ui/toaster";
 import { useToast } from "@/components/ui/use-toast";
 import { Helmet } from "react-helmet";
+import { Analytics } from "@vercel/analytics/react";
 import siteConfig from "@/config/siteConfig";
 
 import Header from "@/components/layout/Header";
@@ -118,6 +119,7 @@ function App() {
       <ScrollToTop />
       <PageLayout />
       <Toaster />
+      <Analytics />
     </Router>
   );
 }
