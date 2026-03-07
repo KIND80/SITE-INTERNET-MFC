@@ -51,11 +51,18 @@ const footer = {
         label: "Comparer ma complementaire",
         path: "/comparateur/assurance-automobile",
       },
-      { label: "Rabais collectif", path: "/rabais-collectif" },
+      {
+        label: "Rabais collectif",
+        path: "/rabais-collectif",
+      },
       {
         label: "Contacter un conseiller",
         action: "mailto",
         subject: "Demande de contact depuis le site",
+      },
+      {
+        label: "Espace conseiller",
+        path: "/cabinet-login",
       },
     ],
   },

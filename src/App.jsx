@@ -1,22 +1,24 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   BrowserRouter as Router,
   Routes,
   Route,
   useLocation,
+  Navigate,
 } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
 import { Toaster } from "@/components/ui/toaster";
 import { useToast } from "@/components/ui/use-toast";
 import { Helmet } from "react-helmet";
 import siteConfig from "@/config/siteConfig";
+import { supabase } from "@/lib/supabase";
 
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import ScrollToTop from "@/components/layout/ScrollToTop";
 import WhatsAppButton from "@/components/layout/WhatsAppButton";
 
-// ✅ NEW: Popup lead capture global
+// Popup lead capture global
 import LeadCapturePopup from "@/components/layout/LeadCapturePopup";
 
 import Home from "@/pages/Home";
@@ -26,6 +28,10 @@ import ComparatorPage from "@/pages/ComparatorPage";
 import InsurancePage from "@/pages/InsurancePage";
 import EngagementPage from "@/pages/EngagementPage";
 import CollectiveDiscountPage from "@/pages/CollectiveDiscountPage";
+import DeclarationImpots from "@/pages/DeclarationImpots";
+import AdminFiscalDashboard from "@/pages/AdminFiscalDashboard";
+import AdminFiscalDetail from "@/pages/AdminFiscalDetail";
+import CabinetLogin from "@/pages/CabinetLogin";
 
 const ThemeInjector = () => {
   const { themeColors } = siteConfig.theme;
@@ -40,11 +46,54 @@ const ThemeInjector = () => {
   );
 };
 
+const ProtectedAdminRoute = ({ children }) => {
+  const [loading, setLoading] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    const checkUser = async () => {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+
+      setIsAuthenticated(!!session?.user);
+      setLoading(false);
+    };
+
+    checkUser();
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setIsAuthenticated(!!session?.user);
+      setLoading(false);
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[60vh] text-sm text-gray-500">
+        Chargement...
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return <Navigate to="/cabinet-login" replace />;
+  }
+
+  return children;
+};
+
 const PageLayout = () => {
   const location = useLocation();
   const { toast } = useToast();
 
-  const showToast = (options) => {
+  const showToast = (options = {}) => {
     toast({
       title:
         options?.title ||
@@ -75,9 +124,8 @@ const PageLayout = () => {
       <div className="min-h-screen bg-white text-gray-800 flex flex-col">
         <Header showToast={showToast} />
 
-        {/* ✅ Popup global visible sur TOUTES les pages */}
         <LeadCapturePopup
-          delayMs={10000} // 10 secondes
+          delayMs={10000}
           storageKey="mfc_lead_popup_dismissed_v1"
         />
 
@@ -91,6 +139,27 @@ const PageLayout = () => {
               <Route
                 path="/rabais-collectif"
                 element={<CollectiveDiscountPage />}
+              />
+              <Route
+                path="/declaration-impots"
+                element={<DeclarationImpots />}
+              />
+              <Route path="/cabinet-login" element={<CabinetLogin />} />
+              <Route
+                path="/admin/dossiers-fiscaux"
+                element={
+                  <ProtectedAdminRoute>
+                    <AdminFiscalDashboard />
+                  </ProtectedAdminRoute>
+                }
+              />
+              <Route
+                path="/admin/dossiers-fiscaux/:id"
+                element={
+                  <ProtectedAdminRoute>
+                    <AdminFiscalDetail />
+                  </ProtectedAdminRoute>
+                }
               />
               <Route
                 path="/comparateur/:type"
