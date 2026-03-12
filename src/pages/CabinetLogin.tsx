@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { Helmet } from "react-helmet";
 import { motion } from "framer-motion";
@@ -30,11 +30,33 @@ const itemVariants = {
 export default function CabinetLogin() {
   const navigate = useNavigate();
 
+  const [checkingSession, setCheckingSession] = useState(true);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+
+  useEffect(() => {
+    const checkSession = async () => {
+      try {
+        const {
+          data: { session },
+        } = await supabase.auth.getSession();
+
+        if (session) {
+          navigate("/admin/dossiers-fiscaux", { replace: true });
+          return;
+        }
+      } catch (error) {
+        console.error("Erreur vérification session :", error);
+      } finally {
+        setCheckingSession(false);
+      }
+    };
+
+    checkSession();
+  }, [navigate]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -56,8 +78,9 @@ export default function CabinetLogin() {
         return;
       }
 
-      navigate("/admin/dossiers-fiscaux");
+      navigate("/admin/dossiers-fiscaux", { replace: true });
     } catch (err) {
+      console.error(err);
       setErrorMessage(
         "Une erreur est survenue lors de la connexion. Veuillez réessayer."
       );
@@ -68,19 +91,32 @@ export default function CabinetLogin() {
     setLoading(false);
   };
 
+  if (checkingSession) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-slate-950 px-4">
+        <div className="rounded-3xl border border-white/10 bg-white/5 px-6 py-5 text-center backdrop-blur-xl">
+          <div className="mx-auto h-8 w-8 animate-spin rounded-full border-2 border-white/20 border-t-white" />
+          <p className="mt-4 text-sm text-slate-300">
+            Vérification de la session...
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <>
       <Helmet>
-        <title>Espace conseiller | Mon Fidèle Conseiller</title>
+        <title>Espace fiscal conseiller | Mon Fidèle Conseiller</title>
         <meta
           name="description"
-          content="Connexion à l'espace conseiller Mon Fidèle Conseiller."
+          content="Connexion à l'espace fiscal conseiller Mon Fidèle Conseiller."
         />
         <meta name="robots" content="noindex,nofollow" />
       </Helmet>
 
       <section className="relative overflow-hidden bg-slate-950 px-4 py-8 sm:px-6 sm:py-10 lg:px-8 lg:py-14">
-        <div className="absolute inset-0 pointer-events-none">
+        <div className="pointer-events-none absolute inset-0">
           <div className="absolute left-[-100px] top-[-120px] h-[320px] w-[320px] rounded-full bg-orange-500/20 blur-3xl" />
           <div className="absolute right-[-120px] top-[8%] h-[360px] w-[360px] rounded-full bg-amber-400/10 blur-3xl" />
           <div className="absolute bottom-[-120px] left-[8%] h-[260px] w-[260px] rounded-full bg-white/5 blur-3xl" />
@@ -102,7 +138,7 @@ export default function CabinetLogin() {
                   className="mb-5 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs font-medium text-white/80 backdrop-blur-md"
                 >
                   <span className="h-2 w-2 rounded-full bg-emerald-400" />
-                  Portail privé Mon Fidèle Conseiller
+                  Portail fiscal privé Mon Fidèle Conseiller
                 </motion.div>
 
                 <motion.h1
@@ -111,7 +147,7 @@ export default function CabinetLogin() {
                 >
                   Accédez à votre
                   <span className="block bg-gradient-to-r from-orange-300 via-orange-400 to-amber-200 bg-clip-text text-transparent">
-                    espace conseiller
+                    espace fiscal conseiller
                   </span>
                 </motion.h1>
 
@@ -119,8 +155,9 @@ export default function CabinetLogin() {
                   variants={itemVariants}
                   className="mt-5 max-w-lg text-base leading-7 text-slate-300 xl:text-lg"
                 >
-                  Retrouvez vos dossiers fiscaux, votre suivi administratif et
-                  vos outils de gestion dans une interface claire, rapide et
+                  Retrouvez vos dossiers fiscaux, simulations Genève / Vaud,
+                  parcours TOU / DRIS, documents clients et opportunités
+                  d’optimisation dans une interface claire, rapide et
                   professionnelle.
                 </motion.p>
 
@@ -130,12 +167,21 @@ export default function CabinetLogin() {
                 >
                   <FeatureCard
                     title="Accès sécurisé"
-                    text="Connexion privée reliée à Supabase pour protéger votre espace cabinet."
+                    text="Connexion privée reliée à Supabase pour protéger l’administration du cabinet."
                   />
                   <FeatureCard
-                    title="Suivi centralisé"
-                    text="Pilotez les dossiers, les statuts et les documents depuis un seul endroit."
+                    title="Pilotage fiscal"
+                    text="Suivez les dossiers, montants estimés, potentiels d’optimisation et statuts en un seul endroit."
                   />
+                </motion.div>
+
+                <motion.div
+                  variants={itemVariants}
+                  className="mt-6 grid gap-4 sm:grid-cols-3"
+                >
+                  <MiniInfoCard label="Cantons" value="GE / VD" />
+                  <MiniInfoCard label="Parcours" value="TOU / DRIS" />
+                  <MiniInfoCard label="Vue" value="Admin fiscal" />
                 </motion.div>
               </div>
             </motion.div>
@@ -166,16 +212,19 @@ export default function CabinetLogin() {
                     </div>
 
                     <h2 className="text-2xl font-black tracking-tight text-slate-900 sm:text-3xl">
-                      Espace conseiller
+                      Espace fiscal conseiller
                     </h2>
 
                     <p className="mx-auto mt-2 max-w-sm text-sm leading-6 text-slate-600 sm:text-[15px]">
                       Connectez-vous pour accéder à l’administration des
-                      dossiers fiscaux.
+                      dossiers fiscaux, simulations et analyses clients.
                     </p>
                   </motion.div>
 
-                  <form onSubmit={handleLogin} className="space-y-4 sm:space-y-5">
+                  <form
+                    onSubmit={handleLogin}
+                    className="space-y-4 sm:space-y-5"
+                  >
                     <motion.div variants={itemVariants}>
                       <label
                         htmlFor="email"
@@ -255,6 +304,20 @@ export default function CabinetLogin() {
                       </motion.div>
                     )}
 
+                    <motion.div
+                      variants={itemVariants}
+                      className="rounded-2xl border border-orange-100 bg-orange-50 px-4 py-3"
+                    >
+                      <p className="text-xs font-semibold uppercase tracking-wide text-orange-700">
+                        Accès réservé
+                      </p>
+                      <p className="mt-1 text-sm leading-6 text-orange-800">
+                        Cet espace est réservé à l’équipe cabinet pour la
+                        gestion des simulations, dossiers clients et suivis
+                        fiscaux.
+                      </p>
+                    </motion.div>
+
                     <motion.div variants={itemVariants} className="pt-1">
                       <button
                         type="submit"
@@ -302,6 +365,17 @@ function FeatureCard({ title, text }) {
     <div className="rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur-md transition duration-300 hover:border-white/20 hover:bg-white/[0.07]">
       <h3 className="text-sm font-bold text-white">{title}</h3>
       <p className="mt-2 text-sm leading-6 text-slate-300">{text}</p>
+    </div>
+  );
+}
+
+function MiniInfoCard({ label, value }) {
+  return (
+    <div className="rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur-md">
+      <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
+        {label}
+      </p>
+      <p className="mt-2 text-lg font-black text-white">{value}</p>
     </div>
   );
 }

@@ -2,7 +2,13 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { supabase } from "@/lib/supabase";
 
-const steps = ["Profil", "Revenus", "Déductions", "Fortune", "Résumé"];
+const steps = [
+  "Profil",
+  "Situation fiscale",
+  "Revenus",
+  "Déductions",
+  "Résumé",
+];
 
 const MAX_FILES = 10;
 const MAX_FILE_SIZE_MB = 10;
@@ -28,12 +34,14 @@ const fadeUp = {
   },
 };
 
-function SummaryCard({ label, value, tone = "default" }) {
+function SummaryCard({ label, value, tone = "default", subtext = "" }) {
   const toneClass =
     tone === "orange"
       ? "border-orange-200 bg-orange-50"
       : tone === "green"
       ? "border-green-200 bg-green-50"
+      : tone === "red"
+      ? "border-red-200 bg-red-50"
       : "border-slate-200 bg-slate-50";
 
   const valueClass =
@@ -41,6 +49,8 @@ function SummaryCard({ label, value, tone = "default" }) {
       ? "text-orange-700"
       : tone === "green"
       ? "text-green-700"
+      : tone === "red"
+      ? "text-red-700"
       : "text-slate-900";
 
   const labelClass =
@@ -48,6 +58,8 @@ function SummaryCard({ label, value, tone = "default" }) {
       ? "text-orange-700"
       : tone === "green"
       ? "text-green-700"
+      : tone === "red"
+      ? "text-red-700"
       : "text-slate-500";
 
   return (
@@ -56,9 +68,46 @@ function SummaryCard({ label, value, tone = "default" }) {
       <div className={`mt-2 text-2xl md:text-3xl font-black ${valueClass}`}>
         {value}
       </div>
+      {subtext ? (
+        <p className="mt-2 text-xs leading-5 text-slate-600">{subtext}</p>
+      ) : null}
     </div>
   );
 }
+
+const initialFormData = {
+  canton: "Genève",
+  statut: "Frontalier",
+  situationFamiliale: "Célibataire",
+  enfants: 0,
+
+  modeImposition: "Impôt à la source",
+  parcoursFiscal: "DRIS",
+  commune: "",
+  quasiResident: "Non",
+
+  nomComplet: "",
+  email: "",
+  telephone: "",
+
+  salaireAnnuel: "",
+  autresRevenus: "",
+  treiziemeSalaire: "Oui",
+  revenuConjoint: "",
+
+  troisiemePilier: "",
+  assuranceMaladie: "",
+  fraisTransport: "",
+  fraisGarde: "",
+  pensionsAlimentaires: "",
+  fraisFormation: "",
+  interetsDette: "",
+
+  avoirsBancaires: "",
+  titres: "",
+  immobilier: "",
+  dettes: "",
+};
 
 export default function DeclarationImpots() {
   const [currentStep, setCurrentStep] = useState(1);
@@ -73,28 +122,7 @@ export default function DeclarationImpots() {
 
   const topRef = useRef(null);
 
-  const [formData, setFormData] = useState({
-    canton: "Genève",
-    statut: "Frontalier",
-    situationFamiliale: "Célibataire",
-    enfants: 0,
-    nomComplet: "",
-    email: "",
-    telephone: "",
-
-    salaireAnnuel: "",
-    autresRevenus: "",
-
-    troisiemePilier: "",
-    assuranceMaladie: "",
-    fraisTransport: "",
-    fraisGarde: "",
-
-    avoirsBancaires: "",
-    titres: "",
-    immobilier: "",
-    dettes: "",
-  });
+  const [formData, setFormData] = useState(initialFormData);
 
   const stepProgress = Math.round((currentStep / steps.length) * 100);
 
@@ -109,13 +137,15 @@ export default function DeclarationImpots() {
   const parseNumber = (value) => {
     if (value === "" || value === null || value === undefined) return 0;
     const normalized =
-      typeof value === "string" ? value.replace(",", ".").trim() : value;
+      typeof value === "string"
+        ? value.replace(/\s/g, "").replace(",", ".").trim()
+        : value;
     const n = Number(normalized);
     return Number.isNaN(n) ? 0 : n;
   };
 
   const formatCurrency = (value) => {
-    return `${value.toLocaleString("fr-CH")} CHF`;
+    return `${Math.round(value).toLocaleString("fr-CH")} CHF`;
   };
 
   const isValidEmail = (email) => {
@@ -169,31 +199,69 @@ export default function DeclarationImpots() {
       return "assurance_maladie";
     }
 
+    if (
+      name.includes("source") ||
+      name.includes("dris") ||
+      name.includes("tou")
+    ) {
+      return "impot_source";
+    }
+
     return "autre_document";
   };
 
   const estimation = useMemo(() => {
     const salaire = parseNumber(formData.salaireAnnuel);
     const autresRevenus = parseNumber(formData.autresRevenus);
+    const revenuConjoint = parseNumber(formData.revenuConjoint);
 
     const troisiemePilier = parseNumber(formData.troisiemePilier);
     const assuranceMaladie = parseNumber(formData.assuranceMaladie);
     const fraisTransport = parseNumber(formData.fraisTransport);
     const fraisGarde = parseNumber(formData.fraisGarde);
+    const pensionsAlimentaires = parseNumber(formData.pensionsAlimentaires);
+    const fraisFormation = parseNumber(formData.fraisFormation);
+    const interetsDette = parseNumber(formData.interetsDette);
 
-    const totalRevenus = salaire + autresRevenus;
+    const totalRevenus =
+      salaire +
+      autresRevenus +
+      (formData.situationFamiliale === "Marié" ? revenuConjoint : 0);
+
     const totalDeductions =
-      troisiemePilier + assuranceMaladie + fraisTransport + fraisGarde;
+      troisiemePilier +
+      assuranceMaladie +
+      fraisTransport +
+      fraisGarde +
+      pensionsAlimentaires +
+      fraisFormation +
+      interetsDette;
 
     const revenuImposableEstime = Math.max(totalRevenus - totalDeductions, 0);
 
-    let taux = 0.08;
-    if (formData.canton === "Vaud") taux = 0.1;
-    if (formData.statut === "Résident") taux += 0.01;
-    if (formData.situationFamiliale === "Marié") taux -= 0.005;
-    if (parseNumber(formData.enfants) > 0) taux -= 0.005;
+    let tauxBase = 0.085;
 
-    const impotEstime = Math.max(revenuImposableEstime * taux, 0);
+    if (formData.canton === "Vaud") tauxBase = 0.102;
+    if (formData.modeImposition === "Ordinaire") tauxBase += 0.01;
+    if (formData.statut === "Résident") tauxBase += 0.008;
+
+    if (formData.situationFamiliale === "Marié") tauxBase -= 0.008;
+    if (parseNumber(formData.enfants) >= 1) tauxBase -= 0.006;
+    if (parseNumber(formData.enfants) >= 2) tauxBase -= 0.004;
+
+    if (formData.parcoursFiscal === "TOU") {
+      tauxBase += 0.004;
+    }
+
+    if (formData.parcoursFiscal === "DRIS") {
+      tauxBase -= 0.002;
+    }
+
+    if (formData.quasiResident === "Oui") {
+      tauxBase -= 0.004;
+    }
+
+    const impotEstime = Math.max(revenuImposableEstime * tauxBase, 0);
 
     const fortuneBrute =
       parseNumber(formData.avoirsBancaires) +
@@ -205,13 +273,98 @@ export default function DeclarationImpots() {
       0
     );
 
+    let impotFortuneEstime = 0;
+    if (fortuneNette > 0) {
+      if (formData.canton === "Genève") {
+        impotFortuneEstime = fortuneNette * 0.0018;
+      } else {
+        impotFortuneEstime = fortuneNette * 0.0012;
+      }
+    }
+
+    const impotTotalEstime = impotEstime + impotFortuneEstime;
+
+    let optimisationPotentielle = totalDeductions * 0.12;
+
+    if (formData.parcoursFiscal === "DRIS") {
+      optimisationPotentielle += 250;
+    }
+
+    if (formData.parcoursFiscal === "TOU") {
+      optimisationPotentielle += 350;
+    }
+
+    if (
+      formData.troisiemePilier === "" ||
+      parseNumber(formData.troisiemePilier) === 0
+    ) {
+      optimisationPotentielle += 400;
+    }
+
+    if (
+      formData.assuranceMaladie === "" ||
+      parseNumber(formData.assuranceMaladie) === 0
+    ) {
+      optimisationPotentielle += 250;
+    }
+
+    if (
+      formData.fraisTransport === "" ||
+      parseNumber(formData.fraisTransport) === 0
+    ) {
+      optimisationPotentielle += 180;
+    }
+
+    if (formData.situationFamiliale === "Marié") {
+      optimisationPotentielle += 220;
+    }
+
+    if (parseNumber(formData.enfants) > 0) {
+      optimisationPotentielle += parseNumber(formData.enfants) * 180;
+    }
+
+    optimisationPotentielle = Math.max(
+      Math.min(optimisationPotentielle, impotTotalEstime * 0.35 || 2500),
+      180
+    );
+
+    const impotSourceTheorique = Math.max(impotTotalEstime * 0.96, 0);
+    const differencePossible = Math.abs(
+      impotTotalEstime - impotSourceTheorique
+    );
+
+    let niveauOptimisation = "Faible";
+    if (optimisationPotentielle >= 700) niveauOptimisation = "Moyen";
+    if (optimisationPotentielle >= 1400) niveauOptimisation = "Élevé";
+
+    let recommandation = "Une vérification par un conseiller est recommandée.";
+    if (formData.parcoursFiscal === "DRIS") {
+      recommandation =
+        "Votre situation semble compatible avec une vérification DRIS pour récupérer d’éventuelles déductions oubliées.";
+    }
+    if (formData.parcoursFiscal === "TOU") {
+      recommandation =
+        "Une analyse TOU peut être utile pour comparer votre taxation à la source avec votre imposition réelle.";
+    }
+    if (formData.modeImposition === "Ordinaire") {
+      recommandation =
+        "Une relecture complète peut permettre d’identifier des déductions supplémentaires et d’éviter des oublis.";
+    }
+
     return {
       totalRevenus,
       totalDeductions,
       revenuImposableEstime,
-      impotEstime,
+      impotRevenuEstime: impotEstime,
+      impotFortuneEstime,
+      impotTotalEstime,
       fortuneBrute,
       fortuneNette,
+      optimisationPotentielle,
+      impotSourceTheorique,
+      differencePossible,
+      niveauOptimisation,
+      recommandation,
     };
   }, [formData]);
 
@@ -237,10 +390,14 @@ export default function DeclarationImpots() {
       "enfants",
       "salaireAnnuel",
       "autresRevenus",
+      "revenuConjoint",
       "troisiemePilier",
       "assuranceMaladie",
       "fraisTransport",
       "fraisGarde",
+      "pensionsAlimentaires",
+      "fraisFormation",
+      "interetsDette",
       "avoirsBancaires",
       "titres",
       "immobilier",
@@ -277,6 +434,20 @@ export default function DeclarationImpots() {
     }
 
     if (step === 2) {
+      if (!formData.modeImposition) {
+        errors.modeImposition = "Veuillez sélectionner un mode d’imposition.";
+      }
+
+      if (!formData.parcoursFiscal) {
+        errors.parcoursFiscal = "Veuillez sélectionner un parcours fiscal.";
+      }
+
+      if (!formData.canton) {
+        errors.canton = "Veuillez sélectionner un canton.";
+      }
+    }
+
+    if (step === 3) {
       if (
         formData.salaireAnnuel === "" ||
         parseNumber(formData.salaireAnnuel) <= 0
@@ -284,18 +455,29 @@ export default function DeclarationImpots() {
         errors.salaireAnnuel =
           "Veuillez renseigner un salaire annuel supérieur à 0.";
       }
+
+      if (
+        formData.situationFamiliale === "Marié" &&
+        formData.revenuConjoint !== "" &&
+        parseNumber(formData.revenuConjoint) < 0
+      ) {
+        errors.revenuConjoint = "Le revenu du conjoint doit être positif.";
+      }
     }
 
-    if (step === 3) {
-      const hasDeduction =
+    if (step === 4) {
+      const hasAnyValue =
         parseNumber(formData.troisiemePilier) > 0 ||
         parseNumber(formData.assuranceMaladie) > 0 ||
         parseNumber(formData.fraisTransport) > 0 ||
-        parseNumber(formData.fraisGarde) > 0;
+        parseNumber(formData.fraisGarde) > 0 ||
+        parseNumber(formData.pensionsAlimentaires) > 0 ||
+        parseNumber(formData.fraisFormation) > 0 ||
+        parseNumber(formData.interetsDette) > 0;
 
-      if (!hasDeduction) {
+      if (!hasAnyValue) {
         errors.troisiemePilier =
-          "Ajoutez au moins une déduction ou laissez 0 si aucune.";
+          "Ajoutez au moins une déduction connue ou laissez 0 si aucune.";
       }
     }
 
@@ -314,14 +496,22 @@ export default function DeclarationImpots() {
         "situationFamiliale",
         "enfants",
       ],
-      2: ["salaireAnnuel", "autresRevenus"],
+      2: ["modeImposition", "parcoursFiscal", "commune", "quasiResident"],
       3: [
+        "salaireAnnuel",
+        "autresRevenus",
+        "revenuConjoint",
+        "treiziemeSalaire",
+      ],
+      4: [
         "troisiemePilier",
         "assuranceMaladie",
         "fraisTransport",
         "fraisGarde",
+        "pensionsAlimentaires",
+        "fraisFormation",
+        "interetsDette",
       ],
-      4: ["avoirsBancaires", "titres", "immobilier", "dettes"],
       5: [],
     };
 
@@ -493,13 +683,23 @@ export default function DeclarationImpots() {
         situation_familiale: formData.situationFamiliale || null,
         enfants: parseNumber(formData.enfants),
 
+        mode_imposition: formData.modeImposition || null,
+        parcours_fiscal: formData.parcoursFiscal || null,
+        commune: formData.commune?.trim() || null,
+        quasi_resident: formData.quasiResident || null,
+
         salaire_annuel: parseNumber(formData.salaireAnnuel),
         autres_revenus: parseNumber(formData.autresRevenus),
+        revenu_conjoint: parseNumber(formData.revenuConjoint),
+        treizieme_salaire: formData.treiziemeSalaire || null,
 
         troisieme_pilier: parseNumber(formData.troisiemePilier),
         assurance_maladie: parseNumber(formData.assuranceMaladie),
         frais_transport: parseNumber(formData.fraisTransport),
         frais_garde: parseNumber(formData.fraisGarde),
+        pensions_alimentaires: parseNumber(formData.pensionsAlimentaires),
+        frais_formation: parseNumber(formData.fraisFormation),
+        interets_dette: parseNumber(formData.interetsDette),
 
         avoirs_bancaires: parseNumber(formData.avoirsBancaires),
         titres: parseNumber(formData.titres),
@@ -509,7 +709,14 @@ export default function DeclarationImpots() {
         total_revenus: estimation.totalRevenus,
         total_deductions: estimation.totalDeductions,
         revenu_imposable_estime: estimation.revenuImposableEstime,
-        impot_estime: Math.round(estimation.impotEstime),
+        impot_revenu_estime: Math.round(estimation.impotRevenuEstime),
+        impot_fortune_estime: Math.round(estimation.impotFortuneEstime),
+        impot_estime: Math.round(estimation.impotTotalEstime),
+        optimisation_potentielle: Math.round(
+          estimation.optimisationPotentielle
+        ),
+        niveau_optimisation: estimation.niveauOptimisation,
+        difference_possible: Math.round(estimation.differencePossible),
 
         statut_dossier: "a_relire",
       };
@@ -558,6 +765,22 @@ export default function DeclarationImpots() {
     return <p className={errorTextClass}>{fieldErrors[field]}</p>;
   };
 
+  const openCalendly = () => {
+    window.open(
+      "https://calendly.com/contact-monfideleconseiller/30min",
+      "_blank",
+      "noopener,noreferrer"
+    );
+  };
+
+  const openWhatsApp = () => {
+    window.open(
+      "https://wa.me/41797896193?text=Bonjour%20M%20Kinda%2C%20j%27ai%20une%20question",
+      "_blank",
+      "noopener,noreferrer"
+    );
+  };
+
   if (saveSuccess) {
     return (
       <div
@@ -579,69 +802,70 @@ export default function DeclarationImpots() {
             </h1>
 
             <p className="mx-auto mt-4 max-w-2xl text-center text-slate-600">
-              Votre dossier fiscal a bien été transmis. S’il y avait des
-              justificatifs joints, ils ont également été enregistrés.
+              Votre demande a bien été transmise avec votre estimation fiscale
+              et vos justificatifs éventuels.
             </p>
 
             <div className="mt-8 grid gap-4 md:grid-cols-3">
               <div className="rounded-2xl border border-slate-200 bg-slate-50 p-5">
                 <p className="text-sm font-semibold text-slate-900">Étape 1</p>
                 <p className="mt-1 text-sm text-slate-600">
-                  Dossier créé dans la base
+                  Estimation sauvegardée
                 </p>
               </div>
 
               <div className="rounded-2xl border border-slate-200 bg-slate-50 p-5">
                 <p className="text-sm font-semibold text-slate-900">Étape 2</p>
                 <p className="mt-1 text-sm text-slate-600">
-                  Informations fiscales enregistrées
+                  Dossier prêt pour analyse
                 </p>
               </div>
 
               <div className="rounded-2xl border border-slate-200 bg-slate-50 p-5">
                 <p className="text-sm font-semibold text-slate-900">Étape 3</p>
                 <p className="mt-1 text-sm text-slate-600">
-                  Dossier prêt pour relecture
+                  Conseiller peut vous recontacter
                 </p>
               </div>
             </div>
 
             <div className="mt-8 rounded-2xl border border-orange-200 bg-orange-50 p-5">
               <p className="text-sm font-semibold text-orange-800">
-                Information importante
+                Pourquoi prendre rendez-vous maintenant
               </p>
               <p className="mt-2 text-sm leading-6 text-orange-700">
-                L’estimation affichée reste indicative. La validation finale
-                dépend de votre situation complète, des justificatifs transmis
-                et de la relecture professionnelle.
+                Votre estimation est indicative. Selon votre situation, une
+                analyse DRIS, TOU ou une vérification complète peut révéler des
+                déductions oubliées, des écarts d’imposition ou des solutions
+                d’optimisation.
               </p>
             </div>
 
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <button
                 type="button"
+                onClick={openCalendly}
+                className="rounded-2xl bg-orange-600 px-6 py-3.5 text-sm font-semibold text-white transition hover:bg-orange-700"
+              >
+                Prendre rendez-vous
+              </button>
+
+              <button
+                type="button"
+                onClick={openWhatsApp}
+                className="rounded-2xl border border-slate-300 bg-white px-6 py-3.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+              >
+                Parler à un conseiller
+              </button>
+            </div>
+
+            <div className="mt-4 flex flex-col gap-3 sm:flex-row">
+              <button
+                type="button"
                 onClick={() => {
                   setSaveSuccess(false);
                   setCurrentStep(1);
-                  setFormData({
-                    canton: "Genève",
-                    statut: "Frontalier",
-                    situationFamiliale: "Célibataire",
-                    enfants: 0,
-                    nomComplet: "",
-                    email: "",
-                    telephone: "",
-                    salaireAnnuel: "",
-                    autresRevenus: "",
-                    troisiemePilier: "",
-                    assuranceMaladie: "",
-                    fraisTransport: "",
-                    fraisGarde: "",
-                    avoirsBancaires: "",
-                    titres: "",
-                    immobilier: "",
-                    dettes: "",
-                  });
+                  setFormData(initialFormData);
                   setFieldErrors({});
                   setTouchedFields({});
                   setSaveError("");
@@ -654,7 +878,7 @@ export default function DeclarationImpots() {
               <button
                 type="button"
                 onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-                className="rounded-2xl bg-orange-600 px-6 py-3.5 text-sm font-semibold text-white transition hover:bg-orange-700"
+                className="rounded-2xl border border-slate-300 bg-white px-6 py-3.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
               >
                 Revenir en haut
               </button>
@@ -675,16 +899,46 @@ export default function DeclarationImpots() {
               initial={{ opacity: 0, y: 24 }}
               animate={{ opacity: 1, y: 0 }}
             >
-              Préparez votre déclaration d’impôts
+              Simulateur impôts
               <span className="mt-1 block text-orange-600">
-                Genève & Vaud en ligne
+                Genève, Vaud, TOU & DRIS
               </span>
             </motion.h1>
 
             <p className="mx-auto mt-5 max-w-3xl text-base leading-7 text-slate-600 md:text-lg">
-              Préparez votre dossier fiscal, obtenez une estimation simple et
-              transmettez vos justificatifs pour une relecture professionnelle.
+              Estimez votre impôt, visualisez votre potentiel d’optimisation et
+              préparez votre dossier pour une analyse par un conseiller.
             </p>
+          </div>
+
+          <div className="mt-8 grid gap-4 lg:grid-cols-3">
+            <div className="rounded-3xl border border-slate-200 bg-slate-50 p-5">
+              <p className="text-sm font-semibold text-slate-900">
+                Estimation rapide
+              </p>
+              <p className="mt-2 text-sm text-slate-600">
+                Obtenez un montant indicatif en quelques étapes.
+              </p>
+            </div>
+
+            <div className="rounded-3xl border border-orange-200 bg-orange-50 p-5">
+              <p className="text-sm font-semibold text-orange-800">
+                Parcours TOU / DRIS
+              </p>
+              <p className="mt-2 text-sm text-orange-700">
+                Vérifiez si une rectification ou une analyse plus poussée peut
+                être utile.
+              </p>
+            </div>
+
+            <div className="rounded-3xl border border-green-200 bg-green-50 p-5">
+              <p className="text-sm font-semibold text-green-800">
+                Conseiller fiscal
+              </p>
+              <p className="mt-2 text-sm text-green-700">
+                Identifiez les déductions oubliées et les pistes d’optimisation.
+              </p>
+            </div>
           </div>
 
           <div className="mt-8 rounded-3xl border border-slate-200 bg-slate-50 p-4 lg:hidden">
@@ -724,7 +978,7 @@ export default function DeclarationImpots() {
                         ? "bg-green-500 text-white"
                         : isActive
                         ? "bg-orange-600 text-white"
-                        : "bg-white text-slate-600 border border-slate-200"
+                        : "border border-slate-200 bg-white text-slate-600"
                     }`}
                     title={step}
                   >
@@ -746,11 +1000,11 @@ export default function DeclarationImpots() {
                   Progression
                 </p>
                 <h2 className="mt-2 text-2xl font-bold text-slate-900">
-                  Votre dossier fiscal
+                  Votre estimation fiscale
                 </h2>
                 <p className="mt-2 text-sm text-slate-500">
-                  Remplissez chaque étape pour transmettre un dossier clair et
-                  complet.
+                  Complétez votre situation pour obtenir une estimation et un
+                  niveau d’opportunité d’optimisation.
                 </p>
               </div>
 
@@ -794,15 +1048,13 @@ export default function DeclarationImpots() {
                 })}
               </div>
 
-              <div className="mt-8 rounded-2xl border border-slate-200 bg-white p-5">
-                <p className="text-sm text-slate-500">
-                  Relecture professionnelle
-                </p>
+              <div className="mt-8 rounded-2xl border border-orange-200 bg-white p-5">
+                <p className="text-sm text-slate-500">Potentiel détecté</p>
                 <div className="mt-1 text-3xl font-black text-orange-600">
-                  50 CHF
+                  {estimation.niveauOptimisation}
                 </div>
                 <p className="mt-2 text-sm text-slate-600">
-                  Vérification finale du dossier par un professionnel.
+                  Une relecture par un conseiller peut affiner le résultat.
                 </p>
               </div>
 
@@ -813,6 +1065,15 @@ export default function DeclarationImpots() {
                 <p className="mt-2 text-sm text-slate-600">
                   PDF, JPG, PNG, WEBP — jusqu’à {MAX_FILES} fichiers,{" "}
                   {MAX_FILE_SIZE_MB} Mo max par document.
+                </p>
+              </div>
+
+              <div className="mt-4 rounded-2xl border border-green-200 bg-green-50 p-5">
+                <p className="text-sm font-semibold text-green-800">
+                  Analyse conseiller
+                </p>
+                <p className="mt-2 text-sm text-green-700">
+                  Idéal pour comparer source, TOU, DRIS et déductions oubliées.
                 </p>
               </div>
             </div>
@@ -834,7 +1095,7 @@ export default function DeclarationImpots() {
                     </h3>
                     <p className="mt-2 text-slate-600">
                       Renseignez vos informations principales pour démarrer
-                      votre dossier.
+                      l’estimation.
                     </p>
 
                     <div className="mt-8 grid gap-6 md:grid-cols-2">
@@ -945,6 +1206,7 @@ export default function DeclarationImpots() {
                           <option>Célibataire</option>
                           <option>Marié</option>
                           <option>Divorcé</option>
+                          <option>Parent seul</option>
                         </select>
                       </div>
 
@@ -973,11 +1235,128 @@ export default function DeclarationImpots() {
                 {currentStep === 2 && (
                   <div>
                     <h3 className="text-2xl font-bold text-slate-900 md:text-3xl">
-                      Étape 2 — Revenus
+                      Étape 2 — Situation fiscale
+                    </h3>
+                    <p className="mt-2 text-slate-600">
+                      Sélectionnez le type de parcours pour personnaliser
+                      l’estimation.
+                    </p>
+
+                    <div className="mt-8 grid gap-6 md:grid-cols-2">
+                      <div>
+                        <label
+                          htmlFor="modeImposition"
+                          className={labelClassName}
+                        >
+                          Mode d’imposition
+                        </label>
+                        <select
+                          id="modeImposition"
+                          className={getInputClassName("modeImposition")}
+                          value={formData.modeImposition}
+                          onChange={(e) =>
+                            updateField("modeImposition", e.target.value)
+                          }
+                          onBlur={() => handleBlur("modeImposition")}
+                        >
+                          <option>Impôt à la source</option>
+                          <option>Ordinaire</option>
+                        </select>
+                        {renderFieldError("modeImposition")}
+                      </div>
+
+                      <div>
+                        <label
+                          htmlFor="parcoursFiscal"
+                          className={labelClassName}
+                        >
+                          Parcours fiscal
+                        </label>
+                        <select
+                          id="parcoursFiscal"
+                          className={getInputClassName("parcoursFiscal")}
+                          value={formData.parcoursFiscal}
+                          onChange={(e) =>
+                            updateField("parcoursFiscal", e.target.value)
+                          }
+                          onBlur={() => handleBlur("parcoursFiscal")}
+                        >
+                          <option>DRIS</option>
+                          <option>TOU</option>
+                          <option>Estimation simple</option>
+                        </select>
+                        {renderFieldError("parcoursFiscal")}
+                      </div>
+
+                      <div>
+                        <label htmlFor="commune" className={labelClassName}>
+                          Commune
+                        </label>
+                        <input
+                          id="commune"
+                          type="text"
+                          className={getInputClassName("commune")}
+                          value={formData.commune}
+                          onChange={(e) =>
+                            updateField("commune", e.target.value)
+                          }
+                          onBlur={() => handleBlur("commune")}
+                          placeholder="Ex : Genève / Nyon / Lausanne"
+                        />
+                      </div>
+
+                      <div>
+                        <label
+                          htmlFor="quasiResident"
+                          className={labelClassName}
+                        >
+                          Quasi-résident
+                        </label>
+                        <select
+                          id="quasiResident"
+                          className={getInputClassName("quasiResident")}
+                          value={formData.quasiResident}
+                          onChange={(e) =>
+                            updateField("quasiResident", e.target.value)
+                          }
+                          onBlur={() => handleBlur("quasiResident")}
+                        >
+                          <option>Non</option>
+                          <option>Oui</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <div className="mt-8 grid gap-4 md:grid-cols-3">
+                      <SummaryCard
+                        label="Parcours choisi"
+                        value={formData.parcoursFiscal}
+                        tone="orange"
+                        subtext="Le moteur adapte le résultat selon le scénario sélectionné."
+                      />
+                      <SummaryCard
+                        label="Mode"
+                        value={formData.modeImposition}
+                        subtext="Permet une estimation plus cohérente avec votre situation."
+                      />
+                      <SummaryCard
+                        label="Opportunité"
+                        value={estimation.niveauOptimisation}
+                        tone="green"
+                        subtext="Un conseiller peut confirmer si une optimisation est possible."
+                      />
+                    </div>
+                  </div>
+                )}
+
+                {currentStep === 3 && (
+                  <div>
+                    <h3 className="text-2xl font-bold text-slate-900 md:text-3xl">
+                      Étape 3 — Revenus
                     </h3>
                     <p className="mt-2 text-slate-600">
                       Indiquez vos revenus annuels pour obtenir une estimation
-                      simple.
+                      personnalisée.
                     </p>
 
                     <div className="mt-8 grid gap-6 md:grid-cols-2">
@@ -1024,21 +1403,65 @@ export default function DeclarationImpots() {
                         />
                         {renderFieldError("autresRevenus")}
                         <p className={helperTextClass}>
-                          Exemple : revenus accessoires, revenus indépendants,
-                          autres entrées déclarables.
+                          Exemple : revenus accessoires, indemnités, activité
+                          secondaire.
                         </p>
+                      </div>
+
+                      <div>
+                        <label
+                          htmlFor="treiziemeSalaire"
+                          className={labelClassName}
+                        >
+                          13e salaire
+                        </label>
+                        <select
+                          id="treiziemeSalaire"
+                          className={getInputClassName("treiziemeSalaire")}
+                          value={formData.treiziemeSalaire}
+                          onChange={(e) =>
+                            updateField("treiziemeSalaire", e.target.value)
+                          }
+                          onBlur={() => handleBlur("treiziemeSalaire")}
+                        >
+                          <option>Oui</option>
+                          <option>Non</option>
+                        </select>
+                      </div>
+
+                      <div>
+                        <label
+                          htmlFor="revenuConjoint"
+                          className={labelClassName}
+                        >
+                          Revenu du conjoint (CHF)
+                        </label>
+                        <input
+                          id="revenuConjoint"
+                          type="number"
+                          min="0"
+                          className={getInputClassName("revenuConjoint")}
+                          value={formData.revenuConjoint}
+                          onChange={(e) =>
+                            updateField("revenuConjoint", e.target.value)
+                          }
+                          onBlur={() => handleBlur("revenuConjoint")}
+                          placeholder="Ex : 45000"
+                        />
+                        {renderFieldError("revenuConjoint")}
                       </div>
                     </div>
                   </div>
                 )}
 
-                {currentStep === 3 && (
+                {currentStep === 4 && (
                   <div>
                     <h3 className="text-2xl font-bold text-slate-900 md:text-3xl">
-                      Étape 3 — Déductions
+                      Étape 4 — Déductions
                     </h3>
                     <p className="mt-2 text-slate-600">
-                      Ajoutez vos principales déductions connues.
+                      Ajoutez vos principales déductions et, si besoin, une
+                      estimation de votre fortune.
                     </p>
 
                     <div className="mt-8 grid gap-6 md:grid-cols-2">
@@ -1126,110 +1549,178 @@ export default function DeclarationImpots() {
                         />
                         {renderFieldError("fraisGarde")}
                       </div>
-                    </div>
-                  </div>
-                )}
 
-                {currentStep === 4 && (
-                  <div>
-                    <h3 className="text-2xl font-bold text-slate-900 md:text-3xl">
-                      Étape 4 — Fortune
-                    </h3>
-                    <p className="mt-2 text-slate-600">
-                      Renseignez une estimation simple de votre patrimoine.
-                    </p>
-
-                    <div className="mt-8 grid gap-6 md:grid-cols-2">
                       <div>
                         <label
-                          htmlFor="avoirsBancaires"
+                          htmlFor="pensionsAlimentaires"
                           className={labelClassName}
                         >
-                          Avoirs bancaires (CHF)
+                          Pensions alimentaires (CHF)
                         </label>
                         <input
-                          id="avoirsBancaires"
+                          id="pensionsAlimentaires"
                           type="number"
                           min="0"
-                          className={getInputClassName("avoirsBancaires")}
-                          value={formData.avoirsBancaires}
+                          className={getInputClassName("pensionsAlimentaires")}
+                          value={formData.pensionsAlimentaires}
                           onChange={(e) =>
-                            updateField("avoirsBancaires", e.target.value)
+                            updateField("pensionsAlimentaires", e.target.value)
                           }
-                          onBlur={() => handleBlur("avoirsBancaires")}
-                          placeholder="Ex : 15000"
+                          onBlur={() => handleBlur("pensionsAlimentaires")}
+                          placeholder="Ex : 3600"
                         />
-                        {renderFieldError("avoirsBancaires")}
+                        {renderFieldError("pensionsAlimentaires")}
                       </div>
 
                       <div>
-                        <label htmlFor="titres" className={labelClassName}>
-                          Titres / actions (CHF)
+                        <label
+                          htmlFor="fraisFormation"
+                          className={labelClassName}
+                        >
+                          Frais de formation (CHF)
                         </label>
                         <input
-                          id="titres"
+                          id="fraisFormation"
                           type="number"
                           min="0"
-                          className={getInputClassName("titres")}
-                          value={formData.titres}
+                          className={getInputClassName("fraisFormation")}
+                          value={formData.fraisFormation}
                           onChange={(e) =>
-                            updateField("titres", e.target.value)
+                            updateField("fraisFormation", e.target.value)
                           }
-                          onBlur={() => handleBlur("titres")}
-                          placeholder="Ex : 5000"
+                          onBlur={() => handleBlur("fraisFormation")}
+                          placeholder="Ex : 900"
                         />
-                        {renderFieldError("titres")}
+                        {renderFieldError("fraisFormation")}
                       </div>
 
                       <div>
-                        <label htmlFor="immobilier" className={labelClassName}>
-                          Immobilier (CHF)
+                        <label
+                          htmlFor="interetsDette"
+                          className={labelClassName}
+                        >
+                          Intérêts de dette (CHF)
                         </label>
                         <input
-                          id="immobilier"
+                          id="interetsDette"
                           type="number"
                           min="0"
-                          className={getInputClassName("immobilier")}
-                          value={formData.immobilier}
+                          className={getInputClassName("interetsDette")}
+                          value={formData.interetsDette}
                           onChange={(e) =>
-                            updateField("immobilier", e.target.value)
+                            updateField("interetsDette", e.target.value)
                           }
-                          onBlur={() => handleBlur("immobilier")}
-                          placeholder="Ex : 300000"
+                          onBlur={() => handleBlur("interetsDette")}
+                          placeholder="Ex : 1200"
                         />
-                        {renderFieldError("immobilier")}
-                      </div>
-
-                      <div>
-                        <label htmlFor="dettes" className={labelClassName}>
-                          Dettes (CHF)
-                        </label>
-                        <input
-                          id="dettes"
-                          type="number"
-                          min="0"
-                          className={getInputClassName("dettes")}
-                          value={formData.dettes}
-                          onChange={(e) =>
-                            updateField("dettes", e.target.value)
-                          }
-                          onBlur={() => handleBlur("dettes")}
-                          placeholder="Ex : 180000"
-                        />
-                        {renderFieldError("dettes")}
+                        {renderFieldError("interetsDette")}
                       </div>
                     </div>
 
-                    <div className="mt-8 grid gap-4 md:grid-cols-2">
-                      <SummaryCard
-                        label="Fortune brute estimée"
-                        value={formatCurrency(estimation.fortuneBrute)}
-                      />
-                      <SummaryCard
-                        label="Fortune nette estimée"
-                        value={formatCurrency(estimation.fortuneNette)}
-                        tone="green"
-                      />
+                    <div className="mt-10">
+                      <h4 className="text-lg font-bold text-slate-900">
+                        Fortune estimative
+                      </h4>
+                      <p className="mt-2 text-sm text-slate-600">
+                        Facultatif, mais utile pour affiner l’estimation si vous
+                        êtes concerné.
+                      </p>
+
+                      <div className="mt-6 grid gap-6 md:grid-cols-2">
+                        <div>
+                          <label
+                            htmlFor="avoirsBancaires"
+                            className={labelClassName}
+                          >
+                            Avoirs bancaires (CHF)
+                          </label>
+                          <input
+                            id="avoirsBancaires"
+                            type="number"
+                            min="0"
+                            className={getInputClassName("avoirsBancaires")}
+                            value={formData.avoirsBancaires}
+                            onChange={(e) =>
+                              updateField("avoirsBancaires", e.target.value)
+                            }
+                            onBlur={() => handleBlur("avoirsBancaires")}
+                            placeholder="Ex : 15000"
+                          />
+                          {renderFieldError("avoirsBancaires")}
+                        </div>
+
+                        <div>
+                          <label htmlFor="titres" className={labelClassName}>
+                            Titres / actions (CHF)
+                          </label>
+                          <input
+                            id="titres"
+                            type="number"
+                            min="0"
+                            className={getInputClassName("titres")}
+                            value={formData.titres}
+                            onChange={(e) =>
+                              updateField("titres", e.target.value)
+                            }
+                            onBlur={() => handleBlur("titres")}
+                            placeholder="Ex : 5000"
+                          />
+                          {renderFieldError("titres")}
+                        </div>
+
+                        <div>
+                          <label
+                            htmlFor="immobilier"
+                            className={labelClassName}
+                          >
+                            Immobilier (CHF)
+                          </label>
+                          <input
+                            id="immobilier"
+                            type="number"
+                            min="0"
+                            className={getInputClassName("immobilier")}
+                            value={formData.immobilier}
+                            onChange={(e) =>
+                              updateField("immobilier", e.target.value)
+                            }
+                            onBlur={() => handleBlur("immobilier")}
+                            placeholder="Ex : 300000"
+                          />
+                          {renderFieldError("immobilier")}
+                        </div>
+
+                        <div>
+                          <label htmlFor="dettes" className={labelClassName}>
+                            Dettes (CHF)
+                          </label>
+                          <input
+                            id="dettes"
+                            type="number"
+                            min="0"
+                            className={getInputClassName("dettes")}
+                            value={formData.dettes}
+                            onChange={(e) =>
+                              updateField("dettes", e.target.value)
+                            }
+                            onBlur={() => handleBlur("dettes")}
+                            placeholder="Ex : 180000"
+                          />
+                          {renderFieldError("dettes")}
+                        </div>
+                      </div>
+
+                      <div className="mt-8 grid gap-4 md:grid-cols-2">
+                        <SummaryCard
+                          label="Fortune brute estimée"
+                          value={formatCurrency(estimation.fortuneBrute)}
+                        />
+                        <SummaryCard
+                          label="Fortune nette estimée"
+                          value={formatCurrency(estimation.fortuneNette)}
+                          tone="green"
+                        />
+                      </div>
                     </div>
                   </div>
                 )}
@@ -1240,11 +1731,11 @@ export default function DeclarationImpots() {
                       Étape 5 — Résumé
                     </h3>
                     <p className="mt-2 text-slate-600">
-                      Voici une estimation simple de votre situation et la zone
-                      de dépôt des justificatifs.
+                      Voici votre estimation indicative et votre potentiel
+                      d’optimisation.
                     </p>
 
-                    <div className="mt-8 grid gap-4 md:grid-cols-2">
+                    <div className="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
                       <SummaryCard
                         label="Total revenus"
                         value={formatCurrency(estimation.totalRevenus)}
@@ -1259,12 +1750,82 @@ export default function DeclarationImpots() {
                         tone="orange"
                       />
                       <SummaryCard
-                        label="Impôt estimé"
+                        label="Impôt revenu estimé"
                         value={formatCurrency(
-                          Math.round(estimation.impotEstime)
+                          Math.round(estimation.impotRevenuEstime)
+                        )}
+                      />
+                      <SummaryCard
+                        label="Impôt fortune estimé"
+                        value={formatCurrency(
+                          Math.round(estimation.impotFortuneEstime)
+                        )}
+                      />
+                      <SummaryCard
+                        label="Impôt total estimé"
+                        value={formatCurrency(
+                          Math.round(estimation.impotTotalEstime)
                         )}
                         tone="green"
                       />
+                    </div>
+
+                    <div className="mt-8 grid gap-4 md:grid-cols-3">
+                      <SummaryCard
+                        label="Potentiel d’optimisation"
+                        value={formatCurrency(
+                          Math.round(estimation.optimisationPotentielle)
+                        )}
+                        tone="orange"
+                        subtext="Montant indicatif pouvant être amélioré selon votre situation complète."
+                      />
+                      <SummaryCard
+                        label="Niveau d’opportunité"
+                        value={estimation.niveauOptimisation}
+                        tone={
+                          estimation.niveauOptimisation === "Élevé"
+                            ? "green"
+                            : estimation.niveauOptimisation === "Moyen"
+                            ? "orange"
+                            : "default"
+                        }
+                        subtext="Plus ce niveau est élevé, plus un rendez-vous est pertinent."
+                      />
+                      <SummaryCard
+                        label="Écart possible"
+                        value={formatCurrency(
+                          Math.round(estimation.differencePossible)
+                        )}
+                        tone="red"
+                        subtext="Différence potentielle entre estimation et situation réelle ou source."
+                      />
+                    </div>
+
+                    <div className="mt-8 rounded-3xl border border-orange-200 bg-orange-50 p-5 md:p-6">
+                      <h4 className="text-lg font-bold text-slate-900">
+                        Ce que cela signifie pour vous
+                      </h4>
+                      <p className="mt-2 text-sm leading-6 text-slate-700">
+                        {estimation.recommandation}
+                      </p>
+
+                      <div className="mt-5 flex flex-col gap-3 sm:flex-row">
+                        <button
+                          type="button"
+                          onClick={openCalendly}
+                          className="rounded-2xl bg-orange-600 px-5 py-3 text-sm font-bold text-white transition hover:bg-orange-700"
+                        >
+                          Prendre rendez-vous avec un conseiller
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={openWhatsApp}
+                          className="rounded-2xl border border-orange-300 bg-white px-5 py-3 text-sm font-semibold text-orange-700 transition hover:bg-orange-100"
+                        >
+                          Demander une analyse rapide
+                        </button>
+                      </div>
                     </div>
 
                     <div className="mt-8 rounded-3xl border border-slate-200 p-5 md:p-6">
@@ -1274,7 +1835,8 @@ export default function DeclarationImpots() {
                             Justificatifs
                           </h4>
                           <p className="mt-2 text-slate-600">
-                            Ajoutez vos documents fiscaux avant la relecture.
+                            Ajoutez vos documents fiscaux pour permettre une
+                            analyse plus précise.
                           </p>
                         </div>
 
@@ -1336,13 +1898,15 @@ export default function DeclarationImpots() {
                       )}
                     </div>
 
-                    <div className="mt-6 rounded-3xl border border-orange-200 bg-orange-50 p-5 md:p-6">
+                    <div className="mt-6 rounded-3xl border border-green-200 bg-green-50 p-5 md:p-6">
                       <h4 className="text-lg font-bold text-slate-900">
-                        Relecture professionnelle
+                        Pourquoi réserver un rendez-vous
                       </h4>
-                      <p className="mt-2 text-slate-700">
-                        Votre dossier pourra être vérifié par un professionnel
-                        pour 50 CHF après analyse.
+                      <p className="mt-2 text-sm leading-6 text-slate-700">
+                        Le simulateur donne une estimation. Un conseiller peut
+                        vérifier les déductions réelles admises, comparer DRIS
+                        ou TOU selon votre situation et identifier les solutions
+                        concrètes pour optimiser vos impôts.
                       </p>
                     </div>
 
@@ -1353,8 +1917,9 @@ export default function DeclarationImpots() {
                       <p className="mt-2 text-sm leading-6 text-slate-600">
                         Cette estimation est donnée à titre informatif. Le
                         montant réel dépend de votre situation complète, des
-                        règles fiscales applicables, des déductions admises et
-                        des justificatifs fournis.
+                        règles fiscales applicables, des déductions admises, des
+                        justificatifs fournis et du traitement final par les
+                        autorités.
                       </p>
                     </div>
                   </div>
