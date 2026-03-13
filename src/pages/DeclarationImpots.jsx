@@ -1,5 +1,26 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import {
+  Sparkles,
+  ShieldCheck,
+  Upload,
+  ChevronRight,
+  ChevronLeft,
+  Phone,
+  Mail,
+  Calendar,
+  CheckCircle2,
+  FileText,
+  Lock,
+  Bot,
+  Wand2,
+  Coins,
+  MapPin,
+  Landmark,
+  PiggyBank,
+  Home,
+  MessageCircle,
+} from "lucide-react";
 import { supabase } from "@/lib/supabase";
 
 const steps = [
@@ -7,7 +28,7 @@ const steps = [
   "Situation fiscale",
   "Revenus",
   "Déductions",
-  "Résumé",
+  "Validation",
 ];
 
 const MAX_FILES = 10;
@@ -33,47 +54,6 @@ const fadeUp = {
     transition: { duration: 0.2 },
   },
 };
-
-function SummaryCard({ label, value, tone = "default", subtext = "" }) {
-  const toneClass =
-    tone === "orange"
-      ? "border-orange-200 bg-orange-50"
-      : tone === "green"
-      ? "border-green-200 bg-green-50"
-      : tone === "red"
-      ? "border-red-200 bg-red-50"
-      : "border-slate-200 bg-slate-50";
-
-  const valueClass =
-    tone === "orange"
-      ? "text-orange-700"
-      : tone === "green"
-      ? "text-green-700"
-      : tone === "red"
-      ? "text-red-700"
-      : "text-slate-900";
-
-  const labelClass =
-    tone === "orange"
-      ? "text-orange-700"
-      : tone === "green"
-      ? "text-green-700"
-      : tone === "red"
-      ? "text-red-700"
-      : "text-slate-500";
-
-  return (
-    <div className={`rounded-2xl border p-5 md:p-6 ${toneClass}`}>
-      <p className={`text-sm ${labelClass}`}>{label}</p>
-      <div className={`mt-2 text-2xl md:text-3xl font-black ${valueClass}`}>
-        {value}
-      </div>
-      {subtext ? (
-        <p className="mt-2 text-xs leading-5 text-slate-600">{subtext}</p>
-      ) : null}
-    </div>
-  );
-}
 
 const initialFormData = {
   canton: "Genève",
@@ -109,11 +89,150 @@ const initialFormData = {
   dettes: "",
 };
 
+function SummaryCard({ label, value, tone = "default", subtext = "", icon = null }) {
+  const toneClass =
+    tone === "orange"
+      ? "border-orange-200 bg-orange-50"
+      : tone === "green"
+      ? "border-green-200 bg-green-50"
+      : tone === "red"
+      ? "border-red-200 bg-red-50"
+      : "border-slate-200 bg-slate-50";
+
+  const valueClass =
+    tone === "orange"
+      ? "text-orange-700"
+      : tone === "green"
+      ? "text-green-700"
+      : tone === "red"
+      ? "text-red-700"
+      : "text-slate-900";
+
+  const labelClass =
+    tone === "orange"
+      ? "text-orange-700"
+      : tone === "green"
+      ? "text-green-700"
+      : tone === "red"
+      ? "text-red-700"
+      : "text-slate-500";
+
+  return (
+    <div className={`rounded-3xl border p-5 md:p-6 ${toneClass}`}>
+      <div className="flex items-start justify-between gap-3">
+        <p className={`text-sm ${labelClass}`}>{label}</p>
+        {icon ? <div className="text-slate-400">{icon}</div> : null}
+      </div>
+      <div className={`mt-2 text-2xl font-black md:text-3xl ${valueClass}`}>
+        {value}
+      </div>
+      {subtext ? <p className="mt-2 text-xs leading-5 text-slate-600">{subtext}</p> : null}
+    </div>
+  );
+}
+
+function SectionTitle({ eyebrow, title, description }) {
+  return (
+    <div>
+      {eyebrow ? (
+        <p className="text-xs font-bold uppercase tracking-[0.2em] text-orange-600">{eyebrow}</p>
+      ) : null}
+      <h3 className="mt-2 text-2xl font-black text-slate-900 md:text-3xl">{title}</h3>
+      {description ? <p className="mt-2 max-w-3xl text-slate-600">{description}</p> : null}
+    </div>
+  );
+}
+
+function SmartHint({ children }) {
+  if (!children) return null;
+
+  return (
+    <div className="mt-4 rounded-2xl border border-orange-200 bg-orange-50 px-4 py-3 text-sm text-orange-800">
+      <div className="flex items-start gap-2">
+        <Bot className="mt-0.5 h-4 w-4 shrink-0" />
+        <p className="leading-6">{children}</p>
+      </div>
+    </div>
+  );
+}
+
+function ChoicePill({ active, onClick, children }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={`rounded-full border px-4 py-2 text-sm font-semibold transition ${
+        active
+          ? "border-orange-300 bg-orange-50 text-orange-700 ring-4 ring-orange-100"
+          : "border-slate-200 bg-white text-slate-700 hover:border-orange-200 hover:text-orange-700"
+      }`}
+    >
+      {children}
+    </button>
+  );
+}
+
+function OptionCard({ active, title, description, onClick, icon = null }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={`w-full rounded-3xl border p-4 text-left transition ${
+        active
+          ? "border-orange-300 bg-orange-50 ring-4 ring-orange-100"
+          : "border-slate-200 bg-white hover:border-orange-200 hover:bg-slate-50"
+      }`}
+    >
+      <div className="flex items-start gap-3">
+        {icon ? (
+          <div
+            className={`flex h-10 w-10 items-center justify-center rounded-2xl ${
+              active ? "bg-white text-orange-600" : "bg-slate-100 text-slate-500"
+            }`}
+          >
+            {icon}
+          </div>
+        ) : null}
+        <div>
+          <div className="text-sm font-bold text-slate-900">{title}</div>
+          <div className="mt-1 text-xs leading-5 text-slate-600">{description}</div>
+        </div>
+      </div>
+    </button>
+  );
+}
+
+function SuggestionChips({ title, suggestions = [], onPick }) {
+  if (!suggestions.length) return null;
+
+  return (
+    <div className="mt-3 rounded-2xl border border-slate-200 bg-slate-50 p-3">
+      <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">{title}</p>
+      <div className="mt-2 flex flex-wrap gap-2">
+        {suggestions.map((item) => (
+          <button
+            key={item.label}
+            type="button"
+            onClick={() => onPick?.(item)}
+            className="rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 transition hover:border-orange-300 hover:text-orange-700"
+          >
+            {item.label}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export default function DeclarationImpots() {
   const [currentStep, setCurrentStep] = useState(1);
   const [isSaving, setIsSaving] = useState(false);
   const [saveError, setSaveError] = useState("");
   const [saveSuccess, setSaveSuccess] = useState(false);
+  const [showResultsAfterSave, setShowResultsAfterSave] = useState(false);
+  const [contactPreference, setContactPreference] = useState("Rappel téléphonique");
+  const [consentContact, setConsentContact] = useState(true);
+  const [showFortuneFields, setShowFortuneFields] = useState(false);
 
   const [uploadedFiles, setUploadedFiles] = useState([]);
   const [fileErrors, setFileErrors] = useState([]);
@@ -121,10 +240,19 @@ export default function DeclarationImpots() {
   const [touchedFields, setTouchedFields] = useState({});
 
   const topRef = useRef(null);
-
   const [formData, setFormData] = useState(initialFormData);
 
   const stepProgress = Math.round((currentStep / steps.length) * 100);
+
+  const inputBaseClass =
+    "mt-2 w-full rounded-2xl border bg-white px-4 py-3.5 text-sm text-slate-900 outline-none transition placeholder:text-slate-400";
+  const inputNormalClass =
+    "border-slate-300 focus:border-orange-500 focus:ring-4 focus:ring-orange-100";
+  const inputErrorClass =
+    "border-red-400 focus:border-red-500 focus:ring-4 focus:ring-red-100";
+  const labelClassName = "text-sm font-semibold text-slate-800";
+  const helperTextClass = "mt-1 text-xs text-slate-500";
+  const errorTextClass = "mt-1 text-xs font-medium text-red-600";
 
   const scrollToTop = () => {
     if (topRef.current) {
@@ -144,13 +272,9 @@ export default function DeclarationImpots() {
     return Number.isNaN(n) ? 0 : n;
   };
 
-  const formatCurrency = (value) => {
-    return `${Math.round(value).toLocaleString("fr-CH")} CHF`;
-  };
+  const formatCurrency = (value) => `${Math.round(value).toLocaleString("fr-CH")} CHF`;
 
-  const isValidEmail = (email) => {
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test((email || "").trim());
-  };
+  const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test((email || "").trim());
 
   const isValidPhone = (phone) => {
     const cleaned = (phone || "").replace(/[^\d+]/g, "");
@@ -179,11 +303,7 @@ export default function DeclarationImpots() {
   const getFileCategory = (fileName = "") => {
     const name = fileName.toLowerCase();
 
-    if (
-      name.includes("salaire") ||
-      name.includes("salary") ||
-      name.includes("certificat")
-    ) {
+    if (name.includes("salaire") || name.includes("salary") || name.includes("certificat")) {
       return "certificat_salaire";
     }
 
@@ -191,24 +311,68 @@ export default function DeclarationImpots() {
       return "troisieme_pilier";
     }
 
-    if (
-      name.includes("assurance") ||
-      name.includes("lamal") ||
-      name.includes("maladie")
-    ) {
+    if (name.includes("assurance") || name.includes("lamal") || name.includes("maladie")) {
       return "assurance_maladie";
     }
 
-    if (
-      name.includes("source") ||
-      name.includes("dris") ||
-      name.includes("tou")
-    ) {
+    if (name.includes("source") || name.includes("dris") || name.includes("tou")) {
       return "impot_source";
     }
 
     return "autre_document";
   };
+
+  const communeSuggestions = useMemo(() => {
+    const byCanton = {
+      Genève: ["Genève", "Meyrin", "Vernier", "Carouge", "Lancy"],
+      Vaud: ["Lausanne", "Nyon", "Morges", "Montreux", "Yverdon"],
+    };
+
+    return (byCanton[formData.canton] || []).map((city) => ({
+      label: city,
+      value: city,
+    }));
+  }, [formData.canton]);
+
+  const salarySuggestions = useMemo(() => {
+    const byStatus = formData.statut === "Résident" ? [70000, 90000, 110000, 130000] : [60000, 80000, 100000, 120000];
+    return byStatus.map((amount) => ({
+      label: amount.toLocaleString("fr-CH"),
+      value: String(amount),
+    }));
+  }, [formData.statut]);
+
+  const deductionSuggestions = [
+    { label: "3e pilier 7 056", field: "troisiemePilier", value: "7056" },
+    { label: "LAMal 4 200", field: "assuranceMaladie", value: "4200" },
+    { label: "Transport 1 200", field: "fraisTransport", value: "1200" },
+    { label: "Formation 900", field: "fraisFormation", value: "900" },
+  ];
+
+  const completionStats = useMemo(() => {
+    const importantFields = [
+      "nomComplet",
+      "email",
+      "telephone",
+      "canton",
+      "statut",
+      "situationFamiliale",
+      "modeImposition",
+      "parcoursFiscal",
+      "salaireAnnuel",
+    ];
+
+    const completed = importantFields.filter((field) => {
+      const value = formData[field];
+      return value !== "" && value !== null && value !== undefined;
+    }).length;
+
+    return {
+      completed,
+      total: importantFields.length,
+      percentage: Math.round((completed / importantFields.length) * 100),
+    };
+  }, [formData]);
 
   const estimation = useMemo(() => {
     const salaire = parseNumber(formData.salaireAnnuel);
@@ -244,22 +408,12 @@ export default function DeclarationImpots() {
     if (formData.canton === "Vaud") tauxBase = 0.102;
     if (formData.modeImposition === "Ordinaire") tauxBase += 0.01;
     if (formData.statut === "Résident") tauxBase += 0.008;
-
     if (formData.situationFamiliale === "Marié") tauxBase -= 0.008;
     if (parseNumber(formData.enfants) >= 1) tauxBase -= 0.006;
     if (parseNumber(formData.enfants) >= 2) tauxBase -= 0.004;
-
-    if (formData.parcoursFiscal === "TOU") {
-      tauxBase += 0.004;
-    }
-
-    if (formData.parcoursFiscal === "DRIS") {
-      tauxBase -= 0.002;
-    }
-
-    if (formData.quasiResident === "Oui") {
-      tauxBase -= 0.004;
-    }
+    if (formData.parcoursFiscal === "TOU") tauxBase += 0.004;
+    if (formData.parcoursFiscal === "DRIS") tauxBase -= 0.002;
+    if (formData.quasiResident === "Oui") tauxBase -= 0.004;
 
     const impotEstime = Math.max(revenuImposableEstime * tauxBase, 0);
 
@@ -268,57 +422,33 @@ export default function DeclarationImpots() {
       parseNumber(formData.titres) +
       parseNumber(formData.immobilier);
 
-    const fortuneNette = Math.max(
-      fortuneBrute - parseNumber(formData.dettes),
-      0
-    );
+    const fortuneNette = Math.max(fortuneBrute - parseNumber(formData.dettes), 0);
 
     let impotFortuneEstime = 0;
     if (fortuneNette > 0) {
-      if (formData.canton === "Genève") {
-        impotFortuneEstime = fortuneNette * 0.0018;
-      } else {
-        impotFortuneEstime = fortuneNette * 0.0012;
-      }
+      impotFortuneEstime = formData.canton === "Genève" ? fortuneNette * 0.0018 : fortuneNette * 0.0012;
     }
 
     const impotTotalEstime = impotEstime + impotFortuneEstime;
 
     let optimisationPotentielle = totalDeductions * 0.12;
 
-    if (formData.parcoursFiscal === "DRIS") {
-      optimisationPotentielle += 250;
-    }
+    if (formData.parcoursFiscal === "DRIS") optimisationPotentielle += 250;
+    if (formData.parcoursFiscal === "TOU") optimisationPotentielle += 350;
 
-    if (formData.parcoursFiscal === "TOU") {
-      optimisationPotentielle += 350;
-    }
-
-    if (
-      formData.troisiemePilier === "" ||
-      parseNumber(formData.troisiemePilier) === 0
-    ) {
+    if (formData.troisiemePilier === "" || parseNumber(formData.troisiemePilier) === 0) {
       optimisationPotentielle += 400;
     }
 
-    if (
-      formData.assuranceMaladie === "" ||
-      parseNumber(formData.assuranceMaladie) === 0
-    ) {
+    if (formData.assuranceMaladie === "" || parseNumber(formData.assuranceMaladie) === 0) {
       optimisationPotentielle += 250;
     }
 
-    if (
-      formData.fraisTransport === "" ||
-      parseNumber(formData.fraisTransport) === 0
-    ) {
+    if (formData.fraisTransport === "" || parseNumber(formData.fraisTransport) === 0) {
       optimisationPotentielle += 180;
     }
 
-    if (formData.situationFamiliale === "Marié") {
-      optimisationPotentielle += 220;
-    }
-
+    if (formData.situationFamiliale === "Marié") optimisationPotentielle += 220;
     if (parseNumber(formData.enfants) > 0) {
       optimisationPotentielle += parseNumber(formData.enfants) * 180;
     }
@@ -329,9 +459,7 @@ export default function DeclarationImpots() {
     );
 
     const impotSourceTheorique = Math.max(impotTotalEstime * 0.96, 0);
-    const differencePossible = Math.abs(
-      impotTotalEstime - impotSourceTheorique
-    );
+    const differencePossible = Math.abs(impotTotalEstime - impotSourceTheorique);
 
     let niveauOptimisation = "Faible";
     if (optimisationPotentielle >= 700) niveauOptimisation = "Moyen";
@@ -368,20 +496,52 @@ export default function DeclarationImpots() {
     };
   }, [formData]);
 
-  const inputBaseClass =
-    "mt-2 w-full rounded-2xl border bg-white px-4 py-3.5 text-sm text-slate-900 outline-none transition placeholder:text-slate-400";
-  const inputNormalClass =
-    "border-slate-300 focus:border-orange-500 focus:ring-4 focus:ring-orange-100";
-  const inputErrorClass =
-    "border-red-400 focus:border-red-500 focus:ring-4 focus:ring-red-100";
-  const labelClassName = "text-sm font-semibold text-slate-800";
-  const helperTextClass = "mt-1 text-xs text-slate-500";
-  const errorTextClass = "mt-1 text-xs font-medium text-red-600";
+  const smartProfileHint = useMemo(() => {
+    if (formData.statut === "Frontalier" && formData.canton === "Genève") {
+      return "Vous êtes frontalier sur Genève : le parcours DRIS ou une vérification de l’impôt à la source est souvent pertinent selon vos déductions réelles.";
+    }
+    if (formData.statut === "Résident") {
+      return "En tant que résident, l’estimation gagne en pertinence si vous renseignez aussi vos avoirs, dettes et votre situation familiale exacte.";
+    }
+    return "Remplissez d’abord vos coordonnées : la suite sera plus rapide et l’enregistrement de dossier plus fluide.";
+  }, [formData.statut, formData.canton]);
+
+  const smartTaxHint = useMemo(() => {
+    if (formData.parcoursFiscal === "TOU") {
+      return "TOU est utile quand on veut comparer l’impôt prélevé avec une taxation ordinaire complète.";
+    }
+    if (formData.parcoursFiscal === "DRIS") {
+      return "DRIS est pertinent pour corriger ou compléter certaines déductions si vous êtes imposé à la source.";
+    }
+    return "Choisissez simplement le parcours qui vous paraît le plus proche. Le conseiller confirmera ensuite la meilleure voie.";
+  }, [formData.parcoursFiscal]);
+
+  const smartIncomeHint = useMemo(() => {
+    const salaire = parseNumber(formData.salaireAnnuel);
+    if (salaire >= 120000) {
+      return "Avec un revenu plus élevé, une vérification précise des déductions et du bon parcours fiscal devient encore plus utile.";
+    }
+    if (salaire > 0 && formData.treiziemeSalaire === "Oui") {
+      return "Pensez à saisir votre revenu annuel global, 13e salaire compris, pour éviter une estimation faussée.";
+    }
+    return "Vous pouvez cliquer sur un montant prérempli pour aller plus vite, puis ajuster si nécessaire.";
+  }, [formData.salaireAnnuel, formData.treiziemeSalaire]);
+
+  const smartDeductionHint = useMemo(() => {
+    const totalDed =
+      parseNumber(formData.troisiemePilier) +
+      parseNumber(formData.assuranceMaladie) +
+      parseNumber(formData.fraisTransport);
+
+    if (totalDed === 0) {
+      return "Même sans montant exact, une estimation simple améliore beaucoup la pertinence du dossier. Utilisez les suggestions préremplies ci-dessous.";
+    }
+
+    return "Très bien. Quelques documents ou montants clés suffisent déjà à rendre le dossier plus qualifié.";
+  }, [formData.troisiemePilier, formData.assuranceMaladie, formData.fraisTransport]);
 
   const getInputClassName = (field) =>
-    `${inputBaseClass} ${
-      fieldErrors[field] ? inputErrorClass : inputNormalClass
-    }`;
+    `${inputBaseClass} ${fieldErrors[field] ? inputErrorClass : inputNormalClass}`;
 
   const validateStep = (step) => {
     const errors = {};
@@ -415,19 +575,16 @@ export default function DeclarationImpots() {
       if (!formData.nomComplet.trim()) {
         errors.nomComplet = "Le nom complet est obligatoire.";
       }
-
       if (!formData.email.trim()) {
         errors.email = "L’email est obligatoire.";
       } else if (!isValidEmail(formData.email)) {
         errors.email = "Veuillez entrer un email valide.";
       }
-
       if (!formData.telephone.trim()) {
         errors.telephone = "Le téléphone est obligatoire.";
       } else if (!isValidPhone(formData.telephone)) {
         errors.telephone = "Veuillez entrer un numéro valide.";
       }
-
       if (parseNumber(formData.enfants) < 0) {
         errors.enfants = "Le nombre d’enfants doit être positif.";
       }
@@ -437,25 +594,18 @@ export default function DeclarationImpots() {
       if (!formData.modeImposition) {
         errors.modeImposition = "Veuillez sélectionner un mode d’imposition.";
       }
-
       if (!formData.parcoursFiscal) {
         errors.parcoursFiscal = "Veuillez sélectionner un parcours fiscal.";
       }
-
       if (!formData.canton) {
         errors.canton = "Veuillez sélectionner un canton.";
       }
     }
 
     if (step === 3) {
-      if (
-        formData.salaireAnnuel === "" ||
-        parseNumber(formData.salaireAnnuel) <= 0
-      ) {
-        errors.salaireAnnuel =
-          "Veuillez renseigner un salaire annuel supérieur à 0.";
+      if (formData.salaireAnnuel === "" || parseNumber(formData.salaireAnnuel) <= 0) {
+        errors.salaireAnnuel = "Veuillez renseigner un salaire annuel supérieur à 0.";
       }
-
       if (
         formData.situationFamiliale === "Marié" &&
         formData.revenuConjoint !== "" &&
@@ -476,8 +626,13 @@ export default function DeclarationImpots() {
         parseNumber(formData.interetsDette) > 0;
 
       if (!hasAnyValue) {
-        errors.troisiemePilier =
-          "Ajoutez au moins une déduction connue ou laissez 0 si aucune.";
+        errors.troisiemePilier = "Ajoutez au moins une déduction connue ou laissez 0 si aucune.";
+      }
+    }
+
+    if (step === 5) {
+      if (!consentContact) {
+        errors.consentContact = "Vous devez accepter d’être recontacté pour valider votre dossier.";
       }
     }
 
@@ -497,12 +652,7 @@ export default function DeclarationImpots() {
         "enfants",
       ],
       2: ["modeImposition", "parcoursFiscal", "commune", "quasiResident"],
-      3: [
-        "salaireAnnuel",
-        "autresRevenus",
-        "revenuConjoint",
-        "treiziemeSalaire",
-      ],
+      3: ["salaireAnnuel", "autresRevenus", "revenuConjoint", "treiziemeSalaire"],
       4: [
         "troisiemePilier",
         "assuranceMaladie",
@@ -512,7 +662,7 @@ export default function DeclarationImpots() {
         "fraisFormation",
         "interetsDette",
       ],
-      5: [],
+      5: ["consentContact"],
     };
 
     const nextTouched = { ...touchedFields };
@@ -524,10 +674,7 @@ export default function DeclarationImpots() {
 
   const nextStep = () => {
     markStepFieldsTouched(currentStep);
-
-    if (!validateStep(currentStep)) {
-      return;
-    }
+    if (!validateStep(currentStep)) return;
 
     if (currentStep < steps.length) {
       setCurrentStep((prev) => prev + 1);
@@ -559,8 +706,7 @@ export default function DeclarationImpots() {
 
     const existingKeys = new Set(
       uploadedFiles.map(
-        (item) =>
-          `${item.file.name}-${item.file.size}-${item.file.lastModified}`
+        (item) => `${item.file.name}-${item.file.size}-${item.file.lastModified}`
       )
     );
 
@@ -594,9 +740,7 @@ export default function DeclarationImpots() {
 
       validNewFiles.push({
         file,
-        id: `${file.name}-${file.lastModified}-${Math.random()
-          .toString(36)
-          .slice(2, 8)}`,
+        id: `${file.name}-${file.lastModified}-${Math.random().toString(36).slice(2, 8)}`,
       });
     }
 
@@ -624,22 +768,18 @@ export default function DeclarationImpots() {
         });
 
       if (uploadError) {
-        throw new Error(
-          `Upload impossible pour ${file.name} : ${uploadError.message}`
-        );
+        throw new Error(`Upload impossible pour ${file.name} : ${uploadError.message}`);
       }
 
-      const { error: insertDocError } = await supabase
-        .from("tax_documents")
-        .insert([
-          {
-            declaration_id: declarationId,
-            file_name: file.name,
-            file_path: filePath,
-            file_type: file.type || null,
-            category: getFileCategory(file.name),
-          },
-        ]);
+      const { error: insertDocError } = await supabase.from("tax_documents").insert([
+        {
+          declaration_id: declarationId,
+          file_name: file.name,
+          file_path: filePath,
+          file_type: file.type || null,
+          category: getFileCategory(file.name),
+        },
+      ]);
 
       if (insertDocError) {
         throw new Error(
@@ -657,16 +797,16 @@ export default function DeclarationImpots() {
     markStepFieldsTouched(2);
     markStepFieldsTouched(3);
     markStepFieldsTouched(4);
+    markStepFieldsTouched(5);
 
     const step1Valid = validateStep(1);
     const step2Valid = validateStep(2);
     const step3Valid = validateStep(3);
     const step4Valid = validateStep(4);
+    const step5Valid = validateStep(5);
 
-    if (!step1Valid || !step2Valid || !step3Valid || !step4Valid) {
-      setSaveError(
-        "Veuillez corriger les champs obligatoires avant l’enregistrement."
-      );
+    if (!step1Valid || !step2Valid || !step3Valid || !step4Valid || !step5Valid) {
+      setSaveError("Veuillez corriger les champs obligatoires avant l’enregistrement.");
       return;
     }
 
@@ -712,9 +852,7 @@ export default function DeclarationImpots() {
         impot_revenu_estime: Math.round(estimation.impotRevenuEstime),
         impot_fortune_estime: Math.round(estimation.impotFortuneEstime),
         impot_estime: Math.round(estimation.impotTotalEstime),
-        optimisation_potentielle: Math.round(
-          estimation.optimisationPotentielle
-        ),
+        optimisation_potentielle: Math.round(estimation.optimisationPotentielle),
         niveau_optimisation: estimation.niveauOptimisation,
         difference_possible: Math.round(estimation.differencePossible),
 
@@ -728,22 +866,19 @@ export default function DeclarationImpots() {
         .single();
 
       if (error) {
-        setSaveError(
-          `Erreur lors de l’enregistrement du dossier : ${error.message}`
-        );
+        setSaveError(`Erreur lors de l’enregistrement du dossier : ${error.message}`);
         return;
       }
 
       if (!data?.id) {
-        setSaveError(
-          "Dossier créé, mais impossible de récupérer son identifiant."
-        );
+        setSaveError("Dossier créé, mais impossible de récupérer son identifiant.");
         return;
       }
 
       await uploadDocuments(data.id);
 
       setUploadedFiles([]);
+      setShowResultsAfterSave(true);
       setSaveSuccess(true);
       scrollToTop();
     } catch (err) {
@@ -781,107 +916,176 @@ export default function DeclarationImpots() {
     );
   };
 
-  if (saveSuccess) {
+  if (saveSuccess && showResultsAfterSave) {
     return (
       <div
         ref={topRef}
-        className="min-h-screen bg-gradient-to-b from-white to-orange-50/40 px-4 py-20 sm:px-6"
+        className="min-h-screen bg-gradient-to-b from-white via-orange-50/30 to-white px-4 py-20 sm:px-6"
       >
-        <div className="mx-auto max-w-3xl">
+        <div className="mx-auto max-w-5xl">
           <motion.div
-            className="rounded-[28px] border border-orange-100 bg-white p-8 shadow-[0_20px_60px_rgba(15,23,42,0.08)] md:p-10"
+            className="overflow-hidden rounded-[32px] border border-orange-100 bg-white shadow-[0_20px_60px_rgba(15,23,42,0.08)]"
             initial={{ opacity: 0, y: 18 }}
             animate={{ opacity: 1, y: 0 }}
           >
-            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-green-100 text-2xl">
-              ✅
-            </div>
-
-            <h1 className="mt-6 text-center text-3xl font-black text-slate-900 md:text-4xl">
-              Dossier enregistré avec succès
-            </h1>
-
-            <p className="mx-auto mt-4 max-w-2xl text-center text-slate-600">
-              Votre demande a bien été transmise avec votre estimation fiscale
-              et vos justificatifs éventuels.
-            </p>
-
-            <div className="mt-8 grid gap-4 md:grid-cols-3">
-              <div className="rounded-2xl border border-slate-200 bg-slate-50 p-5">
-                <p className="text-sm font-semibold text-slate-900">Étape 1</p>
-                <p className="mt-1 text-sm text-slate-600">
-                  Estimation sauvegardée
-                </p>
-              </div>
-
-              <div className="rounded-2xl border border-slate-200 bg-slate-50 p-5">
-                <p className="text-sm font-semibold text-slate-900">Étape 2</p>
-                <p className="mt-1 text-sm text-slate-600">
-                  Dossier prêt pour analyse
-                </p>
-              </div>
-
-              <div className="rounded-2xl border border-slate-200 bg-slate-50 p-5">
-                <p className="text-sm font-semibold text-slate-900">Étape 3</p>
-                <p className="mt-1 text-sm text-slate-600">
-                  Conseiller peut vous recontacter
-                </p>
+            <div className="border-b border-orange-100 bg-gradient-to-r from-orange-500 to-orange-600 px-6 py-8 text-white md:px-10">
+              <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                <div>
+                  <div className="inline-flex items-center gap-2 rounded-full bg-white/15 px-3 py-1 text-xs font-bold uppercase tracking-wide text-white">
+                    <CheckCircle2 className="h-4 w-4" />
+                    Dossier enregistré
+                  </div>
+                  <h1 className="mt-4 text-3xl font-black md:text-4xl">
+                    Merci, votre estimation détaillée est maintenant disponible
+                  </h1>
+                  <p className="mt-3 max-w-2xl text-sm leading-6 text-orange-50 md:text-base">
+                    Votre dossier est bien enregistré. Vous pouvez consulter votre estimation indicative ci-dessous, puis choisir un rendez-vous ou un échange rapide avec un conseiller.
+                  </p>
+                </div>
+                <div className="rounded-3xl bg-white/10 p-4 backdrop-blur">
+                  <p className="text-xs uppercase tracking-wide text-orange-100">Suivi préféré</p>
+                  <p className="mt-1 text-lg font-bold text-white">{contactPreference}</p>
+                </div>
               </div>
             </div>
 
-            <div className="mt-8 rounded-2xl border border-orange-200 bg-orange-50 p-5">
-              <p className="text-sm font-semibold text-orange-800">
-                Pourquoi prendre rendez-vous maintenant
-              </p>
-              <p className="mt-2 text-sm leading-6 text-orange-700">
-                Votre estimation est indicative. Selon votre situation, une
-                analyse DRIS, TOU ou une vérification complète peut révéler des
-                déductions oubliées, des écarts d’imposition ou des solutions
-                d’optimisation.
-              </p>
-            </div>
+            <div className="px-6 py-8 md:px-10 md:py-10">
+              <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+                <SummaryCard
+                  label="Total revenus"
+                  value={formatCurrency(estimation.totalRevenus)}
+                  icon={<Coins className="h-5 w-5" />}
+                />
+                <SummaryCard
+                  label="Total déductions"
+                  value={formatCurrency(estimation.totalDeductions)}
+                  icon={<Wand2 className="h-5 w-5" />}
+                />
+                <SummaryCard
+                  label="Revenu imposable estimé"
+                  value={formatCurrency(estimation.revenuImposableEstime)}
+                  tone="orange"
+                  icon={<FileText className="h-5 w-5" />}
+                />
+                <SummaryCard
+                  label="Impôt total estimé"
+                  value={formatCurrency(Math.round(estimation.impotTotalEstime))}
+                  tone="green"
+                  icon={<ShieldCheck className="h-5 w-5" />}
+                />
+              </div>
 
-            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-              <button
-                type="button"
-                onClick={openCalendly}
-                className="rounded-2xl bg-orange-600 px-6 py-3.5 text-sm font-semibold text-white transition hover:bg-orange-700"
-              >
-                Prendre rendez-vous
-              </button>
+              <div className="mt-4 grid gap-4 md:grid-cols-3">
+                <SummaryCard
+                  label="Potentiel d’optimisation"
+                  value={formatCurrency(Math.round(estimation.optimisationPotentielle))}
+                  tone="orange"
+                  subtext="Montant indicatif pouvant être amélioré selon votre situation complète."
+                />
+                <SummaryCard
+                  label="Niveau d’opportunité"
+                  value={estimation.niveauOptimisation}
+                  tone={
+                    estimation.niveauOptimisation === "Élevé"
+                      ? "green"
+                      : estimation.niveauOptimisation === "Moyen"
+                      ? "orange"
+                      : "default"
+                  }
+                  subtext="Plus ce niveau est élevé, plus un rendez-vous est pertinent."
+                />
+                <SummaryCard
+                  label="Écart possible"
+                  value={formatCurrency(Math.round(estimation.differencePossible))}
+                  tone="red"
+                  subtext="Différence potentielle entre estimation et situation réelle ou source."
+                />
+              </div>
 
-              <button
-                type="button"
-                onClick={openWhatsApp}
-                className="rounded-2xl border border-slate-300 bg-white px-6 py-3.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
-              >
-                Parler à un conseiller
-              </button>
-            </div>
+              <div className="mt-8 grid gap-6 lg:grid-cols-[1.3fr_0.9fr]">
+                <div className="rounded-3xl border border-orange-200 bg-orange-50 p-6">
+                  <h2 className="text-xl font-black text-slate-900">Ce que cela signifie pour vous</h2>
+                  <p className="mt-3 text-sm leading-6 text-slate-700">{estimation.recommandation}</p>
 
-            <div className="mt-4 flex flex-col gap-3 sm:flex-row">
-              <button
-                type="button"
-                onClick={() => {
-                  setSaveSuccess(false);
-                  setCurrentStep(1);
-                  setFormData(initialFormData);
-                  setFieldErrors({});
-                  setTouchedFields({});
-                  setSaveError("");
-                }}
-                className="rounded-2xl border border-slate-300 bg-white px-6 py-3.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
-              >
-                Créer un nouveau dossier
-              </button>
+                  <div className="mt-5 grid gap-3 sm:grid-cols-2">
+                    <div className="rounded-2xl border border-orange-200 bg-white p-4">
+                      <p className="text-xs font-semibold uppercase tracking-wide text-orange-600">Ce que le conseiller vérifie</p>
+                      <ul className="mt-3 space-y-2 text-sm text-slate-700">
+                        <li>• cohérence DRIS / TOU / ordinaire</li>
+                        <li>• déductions réellement admises</li>
+                        <li>• pistes d’optimisation concrètes</li>
+                      </ul>
+                    </div>
+                    <div className="rounded-2xl border border-orange-200 bg-white p-4">
+                      <p className="text-xs font-semibold uppercase tracking-wide text-orange-600">Prochaine étape</p>
+                      <p className="mt-3 text-sm leading-6 text-slate-700">
+                        Votre dossier peut maintenant être rappelé, relu puis transformé en rendez-vous utile si nécessaire.
+                      </p>
+                    </div>
+                  </div>
+                </div>
 
-              <button
-                type="button"
-                onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-                className="rounded-2xl border border-slate-300 bg-white px-6 py-3.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
-              >
-                Revenir en haut
-              </button>
+                <div className="rounded-3xl border border-slate-200 bg-slate-50 p-6">
+                  <h2 className="text-xl font-black text-slate-900">Actions rapides</h2>
+                  <div className="mt-5 flex flex-col gap-3">
+                    <button
+                      type="button"
+                      onClick={openCalendly}
+                      className="inline-flex items-center justify-center gap-2 rounded-2xl bg-orange-600 px-5 py-3.5 text-sm font-bold text-white transition hover:bg-orange-700"
+                    >
+                      <Calendar className="h-4 w-4" />
+                      Prendre rendez-vous
+                    </button>
+                    <button
+                      type="button"
+                      onClick={openWhatsApp}
+                      className="inline-flex items-center justify-center gap-2 rounded-2xl border border-slate-300 bg-white px-5 py-3.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-100"
+                    >
+                      <MessageCircle className="h-4 w-4" />
+                      Parler à un conseiller
+                    </button>
+                    <div className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-600">
+                      Coordonnées enregistrées : <span className="font-semibold text-slate-900">{formData.email}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-8 rounded-3xl border border-slate-200 bg-slate-50 p-6">
+                <h2 className="text-xl font-black text-slate-900">Estimation indicative</h2>
+                <p className="mt-3 text-sm leading-6 text-slate-600">
+                  Cette estimation est donnée à titre informatif. Le montant réel dépend de votre situation complète, des règles fiscales applicables, des justificatifs fournis et du traitement final par les autorités.
+                </p>
+              </div>
+
+              <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSaveSuccess(false);
+                    setShowResultsAfterSave(false);
+                    setCurrentStep(1);
+                    setFormData(initialFormData);
+                    setFieldErrors({});
+                    setTouchedFields({});
+                    setSaveError("");
+                    setContactPreference("Rappel téléphonique");
+                    setConsentContact(true);
+                    setShowFortuneFields(false);
+                  }}
+                  className="rounded-2xl border border-slate-300 bg-white px-6 py-3.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+                >
+                  Créer un nouveau dossier
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+                  className="rounded-2xl border border-slate-300 bg-white px-6 py-3.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+                >
+                  Revenir en haut
+                </button>
+              </div>
             </div>
           </motion.div>
         </div>
@@ -900,56 +1104,67 @@ export default function DeclarationImpots() {
               animate={{ opacity: 1, y: 0 }}
             >
               Simulateur impôts
-              <span className="mt-1 block text-orange-600">
-                Genève, Vaud, TOU & DRIS
-              </span>
+              <span className="mt-1 block text-orange-600">Genève, Vaud, Taxe ordinaire & Impôt à la source</span>
             </motion.h1>
 
             <p className="mx-auto mt-5 max-w-3xl text-base leading-7 text-slate-600 md:text-lg">
-              Estimez votre impôt, visualisez votre potentiel d’optimisation et
-              préparez votre dossier pour une analyse par un conseiller.
+              Un parcours plus ludique, plus simple et plus rapide. Cliquez sur des choix préremplis, complétez l’essentiel, puis enregistrez le dossier pour voir votre estimation détaillée.
             </p>
           </div>
 
           <div className="mt-8 grid gap-4 lg:grid-cols-3">
             <div className="rounded-3xl border border-slate-200 bg-slate-50 p-5">
-              <p className="text-sm font-semibold text-slate-900">
-                Estimation rapide
-              </p>
+              <p className="text-sm font-semibold text-slate-900">Simple à remplir</p>
               <p className="mt-2 text-sm text-slate-600">
-                Obtenez un montant indicatif en quelques étapes.
+                Choix cliquables, montants suggérés et étapes courtes.
               </p>
             </div>
 
             <div className="rounded-3xl border border-orange-200 bg-orange-50 p-5">
-              <p className="text-sm font-semibold text-orange-800">
-                Parcours TOU / DRIS
+              <p className="flex items-center gap-2 text-sm font-semibold text-orange-800">
+                <Sparkles className="h-4 w-4" />
+                Plus ludique
               </p>
               <p className="mt-2 text-sm text-orange-700">
-                Vérifiez si une rectification ou une analyse plus poussée peut
-                être utile.
+                Le formulaire guide naturellement sans complication.
               </p>
             </div>
 
             <div className="rounded-3xl border border-green-200 bg-green-50 p-5">
-              <p className="text-sm font-semibold text-green-800">
-                Conseiller fiscal
-              </p>
+              <p className="text-sm font-semibold text-green-800">Evaluation de qualité</p>
               <p className="mt-2 text-sm text-green-700">
-                Identifiez les déductions oubliées et les pistes d’optimisation.
+              Le dossier est enregistré avant l’affichage du résultat détaillé.
               </p>
+            </div>
+          </div>
+
+          <div className="mt-8 rounded-[28px] border border-slate-200 bg-gradient-to-r from-slate-50 to-white p-5 lg:p-6">
+            <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+              <div>
+                <p className="text-xs font-bold uppercase tracking-[0.2em] text-orange-600">
+                  Parcours intelligent
+                </p>
+                <h2 className="mt-2 text-xl font-black text-slate-900 md:text-2xl">
+                  Votre dossier se complete rapidement en moins de 2 minutes 
+                </h2>
+                <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-600">
+                  Les suggestions, les boutons cliquables et les aides contextuelles rendent le remplissage plus simple.
+                </p>
+              </div>
+
+              <div className="rounded-3xl border border-orange-200 bg-orange-50 px-5 py-4">
+                <p className="text-xs font-semibold uppercase tracking-wide text-orange-700">Dossier complété</p>
+                <div className="mt-1 text-3xl font-black text-orange-600">{completionStats.percentage}%</div>
+              </div>
             </div>
           </div>
 
           <div className="mt-8 rounded-3xl border border-slate-200 bg-slate-50 p-4 lg:hidden">
             <div className="flex items-center justify-between gap-4">
               <div>
-                <p className="text-xs font-semibold uppercase tracking-wide text-orange-600">
-                  Progression
-                </p>
+                <p className="text-xs font-semibold uppercase tracking-wide text-orange-600">Progression</p>
                 <p className="mt-1 text-sm font-semibold text-slate-900">
-                  Étape {currentStep} sur {steps.length} —{" "}
-                  {steps[currentStep - 1]}
+                  Étape {currentStep} sur {steps.length} — {steps[currentStep - 1]}
                 </p>
               </div>
               <div className="rounded-full bg-white px-3 py-1 text-sm font-bold text-slate-700">
@@ -996,15 +1211,10 @@ export default function DeclarationImpots() {
           <aside className="hidden lg:block">
             <div className="sticky top-24 rounded-[28px] border border-slate-200 bg-slate-50 p-6">
               <div className="mb-6">
-                <p className="text-sm font-semibold text-orange-600">
-                  Progression
-                </p>
-                <h2 className="mt-2 text-2xl font-bold text-slate-900">
-                  Votre estimation fiscale
-                </h2>
+                <p className="text-sm font-semibold text-orange-600">Progression</p>
+                <h2 className="mt-2 text-2xl font-bold text-slate-900">Votre dossier fiscal</h2>
                 <p className="mt-2 text-sm text-slate-500">
-                  Complétez votre situation pour obtenir une estimation et un
-                  niveau d’opportunité d’optimisation.
+                  Le résultat détaillé se débloque après enregistrement du dossier.
                 </p>
               </div>
 
@@ -1018,9 +1228,7 @@ export default function DeclarationImpots() {
                     <div
                       key={step}
                       className={`flex items-center gap-3 rounded-2xl px-4 py-3 transition ${
-                        isActive
-                          ? "border border-orange-200 bg-white shadow-sm"
-                          : "bg-transparent"
+                        isActive ? "border border-orange-200 bg-white shadow-sm" : "bg-transparent"
                       }`}
                     >
                       <div
@@ -1036,12 +1244,8 @@ export default function DeclarationImpots() {
                       </div>
 
                       <div>
-                        <div className="text-sm font-semibold text-slate-900">
-                          {step}
-                        </div>
-                        <div className="text-xs text-slate-500">
-                          Étape {stepNumber}
-                        </div>
+                        <div className="text-sm font-semibold text-slate-900">{step}</div>
+                        <div className="text-xs text-slate-500">Étape {stepNumber}</div>
                       </div>
                     </div>
                   );
@@ -1050,30 +1254,23 @@ export default function DeclarationImpots() {
 
               <div className="mt-8 rounded-2xl border border-orange-200 bg-white p-5">
                 <p className="text-sm text-slate-500">Potentiel détecté</p>
-                <div className="mt-1 text-3xl font-black text-orange-600">
-                  {estimation.niveauOptimisation}
-                </div>
+                <div className="mt-1 text-3xl font-black text-orange-600">{estimation.niveauOptimisation}</div>
                 <p className="mt-2 text-sm text-slate-600">
                   Une relecture par un conseiller peut affiner le résultat.
                 </p>
               </div>
 
               <div className="mt-4 rounded-2xl border border-slate-200 bg-white p-5">
-                <p className="text-sm font-semibold text-slate-900">
-                  Formats acceptés
-                </p>
+                <p className="text-sm font-semibold text-slate-900">Formats acceptés</p>
                 <p className="mt-2 text-sm text-slate-600">
-                  PDF, JPG, PNG, WEBP — jusqu’à {MAX_FILES} fichiers,{" "}
-                  {MAX_FILE_SIZE_MB} Mo max par document.
+                  PDF, JPG, PNG, WEBP — jusqu’à {MAX_FILES} fichiers, {MAX_FILE_SIZE_MB} Mo max par document.
                 </p>
               </div>
 
               <div className="mt-4 rounded-2xl border border-green-200 bg-green-50 p-5">
-                <p className="text-sm font-semibold text-green-800">
-                  Analyse conseiller
-                </p>
+                <p className="text-sm font-semibold text-green-800">Analyse conseiller</p>
                 <p className="mt-2 text-sm text-green-700">
-                  Idéal pour comparer source, TOU, DRIS et déductions oubliées.
+                  Idéal pour comparer source, TOU, DRIS et les déductions oubliées.
                 </p>
               </div>
             </div>
@@ -1090,13 +1287,13 @@ export default function DeclarationImpots() {
               >
                 {currentStep === 1 && (
                   <div>
-                    <h3 className="text-2xl font-bold text-slate-900 md:text-3xl">
-                      Étape 1 — Profil
-                    </h3>
-                    <p className="mt-2 text-slate-600">
-                      Renseignez vos informations principales pour démarrer
-                      l’estimation.
-                    </p>
+                    <SectionTitle
+                      eyebrow="Étape 1"
+                      title="Profil"
+                      description="On démarre par les informations de base. Tout est pensé pour être rapide à remplir."
+                    />
+
+                    <SmartHint>{smartProfileHint}</SmartHint>
 
                     <div className="mt-8 grid gap-6 md:grid-cols-2">
                       <div className="md:col-span-2">
@@ -1108,9 +1305,7 @@ export default function DeclarationImpots() {
                           type="text"
                           className={getInputClassName("nomComplet")}
                           value={formData.nomComplet}
-                          onChange={(e) =>
-                            updateField("nomComplet", e.target.value)
-                          }
+                          onChange={(e) => updateField("nomComplet", e.target.value)}
                           onBlur={() => handleBlur("nomComplet")}
                           placeholder="Votre nom et prénom"
                         />
@@ -1142,91 +1337,74 @@ export default function DeclarationImpots() {
                           type="tel"
                           className={getInputClassName("telephone")}
                           value={formData.telephone}
-                          onChange={(e) =>
-                            updateField("telephone", e.target.value)
-                          }
+                          onChange={(e) => updateField("telephone", e.target.value)}
                           onBlur={() => handleBlur("telephone")}
                           placeholder="+41 79 000 00 00"
                         />
                         {renderFieldError("telephone")}
                       </div>
+                    </div>
 
+                    <div className="mt-8 space-y-6">
                       <div>
-                        <label htmlFor="canton" className={labelClassName}>
-                          Canton
-                        </label>
-                        <select
-                          id="canton"
-                          className={getInputClassName("canton")}
-                          value={formData.canton}
-                          onChange={(e) =>
-                            updateField("canton", e.target.value)
-                          }
-                          onBlur={() => handleBlur("canton")}
-                        >
-                          <option>Genève</option>
-                          <option>Vaud</option>
-                        </select>
+                        <p className={labelClassName}>Canton</p>
+                        <div className="mt-3 flex flex-wrap gap-2">
+                          {["Genève", "Vaud"].map((option) => (
+                            <ChoicePill
+                              key={option}
+                              active={formData.canton === option}
+                              onClick={() => updateField("canton", option)}
+                            >
+                              {option}
+                            </ChoicePill>
+                          ))}
+                        </div>
                       </div>
 
                       <div>
-                        <label htmlFor="statut" className={labelClassName}>
-                          Statut
-                        </label>
-                        <select
-                          id="statut"
-                          className={getInputClassName("statut")}
-                          value={formData.statut}
-                          onChange={(e) =>
-                            updateField("statut", e.target.value)
-                          }
-                          onBlur={() => handleBlur("statut")}
-                        >
-                          <option>Frontalier</option>
-                          <option>Résident</option>
-                        </select>
+                        <p className={labelClassName}>Statut</p>
+                        <div className="mt-3 flex flex-wrap gap-2">
+                          {["Frontalier", "Résident"].map((option) => (
+                            <ChoicePill
+                              key={option}
+                              active={formData.statut === option}
+                              onClick={() => updateField("statut", option)}
+                            >
+                              {option}
+                            </ChoicePill>
+                          ))}
+                        </div>
                       </div>
 
                       <div>
-                        <label
-                          htmlFor="situationFamiliale"
-                          className={labelClassName}
-                        >
-                          Situation familiale
-                        </label>
-                        <select
-                          id="situationFamiliale"
-                          className={getInputClassName("situationFamiliale")}
-                          value={formData.situationFamiliale}
-                          onChange={(e) =>
-                            updateField("situationFamiliale", e.target.value)
-                          }
-                          onBlur={() => handleBlur("situationFamiliale")}
-                        >
-                          <option>Célibataire</option>
-                          <option>Marié</option>
-                          <option>Divorcé</option>
-                          <option>Parent seul</option>
-                        </select>
+                        <p className={labelClassName}>Situation familiale</p>
+                        <div className="mt-3 flex flex-wrap gap-2">
+                          {["Célibataire", "Marié", "Divorcé", "Parent seul"].map((option) => (
+                            <ChoicePill
+                              key={option}
+                              active={formData.situationFamiliale === option}
+                              onClick={() => updateField("situationFamiliale", option)}
+                            >
+                              {option}
+                            </ChoicePill>
+                          ))}
+                        </div>
                       </div>
 
                       <div>
-                        <label htmlFor="enfants" className={labelClassName}>
-                          Nombre d’enfants
-                        </label>
-                        <input
-                          id="enfants"
-                          type="number"
-                          min="0"
-                          className={getInputClassName("enfants")}
-                          value={formData.enfants}
-                          onChange={(e) =>
-                            updateField("enfants", e.target.value)
-                          }
-                          onBlur={() => handleBlur("enfants")}
-                          placeholder="0"
-                        />
-                        {renderFieldError("enfants")}
+                        <p className={labelClassName}>Nombre d’enfants</p>
+                        <div className="mt-3 flex flex-wrap gap-2">
+                          {[0, 1, 2, 3].map((option) => (
+                            <ChoicePill
+                              key={option}
+                              active={parseNumber(formData.enfants) === option}
+                              onClick={() => updateField("enfants", option)}
+                            >
+                              {option === 3 ? "3+" : option}
+                            </ChoicePill>
+                          ))}
+                        </div>
+                        <p className={helperTextClass}>Vous pouvez cliquer sur une valeur directement.</p>
                       </div>
                     </div>
                   </div>
@@ -1234,60 +1412,61 @@ export default function DeclarationImpots() {
 
                 {currentStep === 2 && (
                   <div>
-                    <h3 className="text-2xl font-bold text-slate-900 md:text-3xl">
-                      Étape 2 — Situation fiscale
-                    </h3>
-                    <p className="mt-2 text-slate-600">
-                      Sélectionnez le type de parcours pour personnaliser
-                      l’estimation.
-                    </p>
+                    <SectionTitle
+                      eyebrow="Étape 2"
+                      title="Situation fiscale"
+                      description="Choisissez simplement le cadre qui vous correspond."
+                    />
+
+                    <SmartHint>{smartTaxHint}</SmartHint>
+
+                    <div className="mt-8 grid gap-4 md:grid-cols-2">
+                      <OptionCard
+                        active={formData.modeImposition === "Impôt à la source"}
+                        onClick={() => updateField("modeImposition", "Impôt à la source")}
+                        title="Impôt à la source"
+                        description="Cas le plus fréquent pour un frontalier ou un salarié imposé directement."
+                        icon={<Landmark className="h-5 w-5" />}
+                      />
+                      <OptionCard
+                        active={formData.modeImposition === "Ordinaire"}
+                        onClick={() => updateField("modeImposition", "Ordinaire")}
+                        title="Ordinaire"
+                        description="Adapté si vous êtes taxé de manière ordinaire ou souhaitez comparer votre situation."
+                        icon={<FileText className="h-5 w-5" />}
+                      />
+                    </div>
+                    {renderFieldError("modeImposition")}
+
+                    <div className="mt-8">
+                      <p className={labelClassName}>Parcours fiscal</p>
+                      <div className="mt-3 grid gap-4 md:grid-cols-3">
+                        <OptionCard
+                          active={formData.parcoursFiscal === "DRIS"}
+                          onClick={() => updateField("parcoursFiscal", "DRIS")}
+                          title="DRIS"
+                          description="Pour corriger ou compléter certaines déductions à la source."
+                          icon={<Sparkles className="h-5 w-5" />}
+                        />
+                        <OptionCard
+                          active={formData.parcoursFiscal === "TOU"}
+                          onClick={() => updateField("parcoursFiscal", "TOU")}
+                          title="TOU"
+                          description="Pour comparer l’impôt source et une taxation plus complète."
+                          icon={<ShieldCheck className="h-5 w-5" />}
+                        />
+                        <OptionCard
+                          active={formData.parcoursFiscal === "Estimation simple"}
+                          onClick={() => updateField("parcoursFiscal", "Estimation simple")}
+                          title="Estimation simple"
+                          description="Pour obtenir une première lecture rapide de votre situation."
+                          icon={<Bot className="h-5 w-5" />}
+                        />
+                      </div>
+                      {renderFieldError("parcoursFiscal")}
+                    </div>
 
                     <div className="mt-8 grid gap-6 md:grid-cols-2">
-                      <div>
-                        <label
-                          htmlFor="modeImposition"
-                          className={labelClassName}
-                        >
-                          Mode d’imposition
-                        </label>
-                        <select
-                          id="modeImposition"
-                          className={getInputClassName("modeImposition")}
-                          value={formData.modeImposition}
-                          onChange={(e) =>
-                            updateField("modeImposition", e.target.value)
-                          }
-                          onBlur={() => handleBlur("modeImposition")}
-                        >
-                          <option>Impôt à la source</option>
-                          <option>Ordinaire</option>
-                        </select>
-                        {renderFieldError("modeImposition")}
-                      </div>
-
-                      <div>
-                        <label
-                          htmlFor="parcoursFiscal"
-                          className={labelClassName}
-                        >
-                          Parcours fiscal
-                        </label>
-                        <select
-                          id="parcoursFiscal"
-                          className={getInputClassName("parcoursFiscal")}
-                          value={formData.parcoursFiscal}
-                          onChange={(e) =>
-                            updateField("parcoursFiscal", e.target.value)
-                          }
-                          onBlur={() => handleBlur("parcoursFiscal")}
-                        >
-                          <option>DRIS</option>
-                          <option>TOU</option>
-                          <option>Estimation simple</option>
-                        </select>
-                        {renderFieldError("parcoursFiscal")}
-                      </div>
-
                       <div>
                         <label htmlFor="commune" className={labelClassName}>
                           Commune
@@ -1297,33 +1476,30 @@ export default function DeclarationImpots() {
                           type="text"
                           className={getInputClassName("commune")}
                           value={formData.commune}
-                          onChange={(e) =>
-                            updateField("commune", e.target.value)
-                          }
+                          onChange={(e) => updateField("commune", e.target.value)}
                           onBlur={() => handleBlur("commune")}
                           placeholder="Ex : Genève / Nyon / Lausanne"
+                        />
+                        <SuggestionChips
+                          title="Suggestions rapides"
+                          suggestions={communeSuggestions}
+                          onPick={(item) => updateField("commune", item.value)}
                         />
                       </div>
 
                       <div>
-                        <label
-                          htmlFor="quasiResident"
-                          className={labelClassName}
-                        >
-                          Quasi-résident
-                        </label>
-                        <select
-                          id="quasiResident"
-                          className={getInputClassName("quasiResident")}
-                          value={formData.quasiResident}
-                          onChange={(e) =>
-                            updateField("quasiResident", e.target.value)
-                          }
-                          onBlur={() => handleBlur("quasiResident")}
-                        >
-                          <option>Non</option>
-                          <option>Oui</option>
-                        </select>
+                        <p className={labelClassName}>Quasi-résident</p>
+                        <div className="mt-3 flex flex-wrap gap-2">
+                          {["Non", "Oui"].map((option) => (
+                            <ChoicePill
+                              key={option}
+                              active={formData.quasiResident === option}
+                              onClick={() => updateField("quasiResident", option)}
+                            >
+                              {option}
+                            </ChoicePill>
+                          ))}
+                        </div>
                       </div>
                     </div>
 
@@ -1332,7 +1508,7 @@ export default function DeclarationImpots() {
                         label="Parcours choisi"
                         value={formData.parcoursFiscal}
                         tone="orange"
-                        subtext="Le moteur adapte le résultat selon le scénario sélectionné."
+                        subtext="Le moteur adapte le scénario sélectionné."
                       />
                       <SummaryCard
                         label="Mode"
@@ -1343,7 +1519,7 @@ export default function DeclarationImpots() {
                         label="Opportunité"
                         value={estimation.niveauOptimisation}
                         tone="green"
-                        subtext="Un conseiller peut confirmer si une optimisation est possible."
+                        subtext="Le conseiller pourra confirmer le meilleur levier."
                       />
                     </div>
                   </div>
@@ -1351,20 +1527,17 @@ export default function DeclarationImpots() {
 
                 {currentStep === 3 && (
                   <div>
-                    <h3 className="text-2xl font-bold text-slate-900 md:text-3xl">
-                      Étape 3 — Revenus
-                    </h3>
-                    <p className="mt-2 text-slate-600">
-                      Indiquez vos revenus annuels pour obtenir une estimation
-                      personnalisée.
-                    </p>
+                    <SectionTitle
+                      eyebrow="Étape 3"
+                      title="Revenus"
+                      description="Utilisez les montants suggérés pour aller vite, puis ajustez si besoin."
+                    />
+
+                    <SmartHint>{smartIncomeHint}</SmartHint>
 
                     <div className="mt-8 grid gap-6 md:grid-cols-2">
                       <div>
-                        <label
-                          htmlFor="salaireAnnuel"
-                          className={labelClassName}
-                        >
+                        <label htmlFor="salaireAnnuel" className={labelClassName}>
                           Salaire annuel brut (CHF) *
                         </label>
                         <input
@@ -1373,20 +1546,20 @@ export default function DeclarationImpots() {
                           min="0"
                           className={getInputClassName("salaireAnnuel")}
                           value={formData.salaireAnnuel}
-                          onChange={(e) =>
-                            updateField("salaireAnnuel", e.target.value)
-                          }
+                          onChange={(e) => updateField("salaireAnnuel", e.target.value)}
                           onBlur={() => handleBlur("salaireAnnuel")}
                           placeholder="Ex : 85000"
                         />
                         {renderFieldError("salaireAnnuel")}
+                        <SuggestionChips
+                          title="Montants fréquents"
+                          suggestions={salarySuggestions}
+                          onPick={(item) => updateField("salaireAnnuel", item.value)}
+                        />
                       </div>
 
                       <div>
-                        <label
-                          htmlFor="autresRevenus"
-                          className={labelClassName}
-                        >
+                        <label htmlFor="autresRevenus" className={labelClassName}>
                           Autres revenus (CHF)
                         </label>
                         <input
@@ -1395,45 +1568,35 @@ export default function DeclarationImpots() {
                           min="0"
                           className={getInputClassName("autresRevenus")}
                           value={formData.autresRevenus}
-                          onChange={(e) =>
-                            updateField("autresRevenus", e.target.value)
-                          }
+                          onChange={(e) => updateField("autresRevenus", e.target.value)}
                           onBlur={() => handleBlur("autresRevenus")}
                           placeholder="Ex : 5000"
                         />
                         {renderFieldError("autresRevenus")}
                         <p className={helperTextClass}>
-                          Exemple : revenus accessoires, indemnités, activité
-                          secondaire.
+                          Exemple : revenus accessoires, indemnités, activité secondaire.
                         </p>
                       </div>
+                    </div>
 
+                    <div className="mt-8 grid gap-6 md:grid-cols-2">
                       <div>
-                        <label
-                          htmlFor="treiziemeSalaire"
-                          className={labelClassName}
-                        >
-                          13e salaire
-                        </label>
-                        <select
-                          id="treiziemeSalaire"
-                          className={getInputClassName("treiziemeSalaire")}
-                          value={formData.treiziemeSalaire}
-                          onChange={(e) =>
-                            updateField("treiziemeSalaire", e.target.value)
-                          }
-                          onBlur={() => handleBlur("treiziemeSalaire")}
-                        >
-                          <option>Oui</option>
-                          <option>Non</option>
-                        </select>
+                        <p className={labelClassName}>13e salaire</p>
+                        <div className="mt-3 flex flex-wrap gap-2">
+                          {["Oui", "Non"].map((option) => (
+                            <ChoicePill
+                              key={option}
+                              active={formData.treiziemeSalaire === option}
+                              onClick={() => updateField("treiziemeSalaire", option)}
+                            >
+                              {option}
+                            </ChoicePill>
+                          ))}
+                        </div>
                       </div>
 
                       <div>
-                        <label
-                          htmlFor="revenuConjoint"
-                          className={labelClassName}
-                        >
+                        <label htmlFor="revenuConjoint" className={labelClassName}>
                           Revenu du conjoint (CHF)
                         </label>
                         <input
@@ -1442,34 +1605,68 @@ export default function DeclarationImpots() {
                           min="0"
                           className={getInputClassName("revenuConjoint")}
                           value={formData.revenuConjoint}
-                          onChange={(e) =>
-                            updateField("revenuConjoint", e.target.value)
-                          }
+                          onChange={(e) => updateField("revenuConjoint", e.target.value)}
                           onBlur={() => handleBlur("revenuConjoint")}
                           placeholder="Ex : 45000"
                         />
                         {renderFieldError("revenuConjoint")}
                       </div>
                     </div>
+
+                    <div className="mt-8 grid gap-4 md:grid-cols-3">
+                      <SummaryCard
+                        label="Revenus saisis"
+                        value={formatCurrency(estimation.totalRevenus)}
+                        tone="orange"
+                        subtext="Montant provisoire calculé selon vos réponses."
+                        icon={<Coins className="h-5 w-5" />}
+                      />
+                      <SummaryCard
+                        label="Situation"
+                        value={formData.situationFamiliale}
+                        subtext="Le calcul s’adapte automatiquement à votre statut familial."
+                      />
+                      <SummaryCard
+                        label="Dossier"
+                        value="En bonne voie"
+                        tone="green"
+                        subtext="Encore quelques éléments et votre dossier sera prêt à être enregistré."
+                      />
+                    </div>
                   </div>
                 )}
 
                 {currentStep === 4 && (
                   <div>
-                    <h3 className="text-2xl font-bold text-slate-900 md:text-3xl">
-                      Étape 4 — Déductions
-                    </h3>
-                    <p className="mt-2 text-slate-600">
-                      Ajoutez vos principales déductions et, si besoin, une
-                      estimation de votre fortune.
-                    </p>
+                    <SectionTitle
+                      eyebrow="Étape 4"
+                      title="Déductions"
+                      description="Ajoutez quelques montants clés. Même une estimation simple suffit pour rendre le dossier utile."
+                    />
+
+                    <SmartHint>{smartDeductionHint}</SmartHint>
+
+                    <div className="mt-6 rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                      <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                        Aide au remplissage rapide
+                      </p>
+                      <div className="mt-3 flex flex-wrap gap-2">
+                        {deductionSuggestions.map((item) => (
+                          <button
+                            key={item.label}
+                            type="button"
+                            onClick={() => updateField(item.field, item.value)}
+                            className="rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 transition hover:border-orange-300 hover:text-orange-700"
+                          >
+                            {item.label}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
 
                     <div className="mt-8 grid gap-6 md:grid-cols-2">
                       <div>
-                        <label
-                          htmlFor="troisiemePilier"
-                          className={labelClassName}
-                        >
+                        <label htmlFor="troisiemePilier" className={labelClassName}>
                           3e pilier (CHF)
                         </label>
                         <input
@@ -1478,9 +1675,7 @@ export default function DeclarationImpots() {
                           min="0"
                           className={getInputClassName("troisiemePilier")}
                           value={formData.troisiemePilier}
-                          onChange={(e) =>
-                            updateField("troisiemePilier", e.target.value)
-                          }
+                          onChange={(e) => updateField("troisiemePilier", e.target.value)}
                           onBlur={() => handleBlur("troisiemePilier")}
                           placeholder="Ex : 7056"
                         />
@@ -1488,10 +1683,7 @@ export default function DeclarationImpots() {
                       </div>
 
                       <div>
-                        <label
-                          htmlFor="assuranceMaladie"
-                          className={labelClassName}
-                        >
+                        <label htmlFor="assuranceMaladie" className={labelClassName}>
                           Assurance maladie (CHF)
                         </label>
                         <input
@@ -1500,9 +1692,7 @@ export default function DeclarationImpots() {
                           min="0"
                           className={getInputClassName("assuranceMaladie")}
                           value={formData.assuranceMaladie}
-                          onChange={(e) =>
-                            updateField("assuranceMaladie", e.target.value)
-                          }
+                          onChange={(e) => updateField("assuranceMaladie", e.target.value)}
                           onBlur={() => handleBlur("assuranceMaladie")}
                           placeholder="Ex : 4200"
                         />
@@ -1510,10 +1700,7 @@ export default function DeclarationImpots() {
                       </div>
 
                       <div>
-                        <label
-                          htmlFor="fraisTransport"
-                          className={labelClassName}
-                        >
+                        <label htmlFor="fraisTransport" className={labelClassName}>
                           Frais de transport (CHF)
                         </label>
                         <input
@@ -1522,9 +1709,7 @@ export default function DeclarationImpots() {
                           min="0"
                           className={getInputClassName("fraisTransport")}
                           value={formData.fraisTransport}
-                          onChange={(e) =>
-                            updateField("fraisTransport", e.target.value)
-                          }
+                          onChange={(e) => updateField("fraisTransport", e.target.value)}
                           onBlur={() => handleBlur("fraisTransport")}
                           placeholder="Ex : 1200"
                         />
@@ -1541,9 +1726,7 @@ export default function DeclarationImpots() {
                           min="0"
                           className={getInputClassName("fraisGarde")}
                           value={formData.fraisGarde}
-                          onChange={(e) =>
-                            updateField("fraisGarde", e.target.value)
-                          }
+                          onChange={(e) => updateField("fraisGarde", e.target.value)}
                           onBlur={() => handleBlur("fraisGarde")}
                           placeholder="Ex : 2500"
                         />
@@ -1551,10 +1734,7 @@ export default function DeclarationImpots() {
                       </div>
 
                       <div>
-                        <label
-                          htmlFor="pensionsAlimentaires"
-                          className={labelClassName}
-                        >
+                        <label htmlFor="pensionsAlimentaires" className={labelClassName}>
                           Pensions alimentaires (CHF)
                         </label>
                         <input
@@ -1563,9 +1743,7 @@ export default function DeclarationImpots() {
                           min="0"
                           className={getInputClassName("pensionsAlimentaires")}
                           value={formData.pensionsAlimentaires}
-                          onChange={(e) =>
-                            updateField("pensionsAlimentaires", e.target.value)
-                          }
+                          onChange={(e) => updateField("pensionsAlimentaires", e.target.value)}
                           onBlur={() => handleBlur("pensionsAlimentaires")}
                           placeholder="Ex : 3600"
                         />
@@ -1573,10 +1751,7 @@ export default function DeclarationImpots() {
                       </div>
 
                       <div>
-                        <label
-                          htmlFor="fraisFormation"
-                          className={labelClassName}
-                        >
+                        <label htmlFor="fraisFormation" className={labelClassName}>
                           Frais de formation (CHF)
                         </label>
                         <input
@@ -1585,9 +1760,7 @@ export default function DeclarationImpots() {
                           min="0"
                           className={getInputClassName("fraisFormation")}
                           value={formData.fraisFormation}
-                          onChange={(e) =>
-                            updateField("fraisFormation", e.target.value)
-                          }
+                          onChange={(e) => updateField("fraisFormation", e.target.value)}
                           onBlur={() => handleBlur("fraisFormation")}
                           placeholder="Ex : 900"
                         />
@@ -1595,10 +1768,7 @@ export default function DeclarationImpots() {
                       </div>
 
                       <div>
-                        <label
-                          htmlFor="interetsDette"
-                          className={labelClassName}
-                        >
+                        <label htmlFor="interetsDette" className={labelClassName}>
                           Intérêts de dette (CHF)
                         </label>
                         <input
@@ -1607,9 +1777,7 @@ export default function DeclarationImpots() {
                           min="0"
                           className={getInputClassName("interetsDette")}
                           value={formData.interetsDette}
-                          onChange={(e) =>
-                            updateField("interetsDette", e.target.value)
-                          }
+                          onChange={(e) => updateField("interetsDette", e.target.value)}
                           onBlur={() => handleBlur("interetsDette")}
                           placeholder="Ex : 1200"
                         />
@@ -1617,108 +1785,106 @@ export default function DeclarationImpots() {
                       </div>
                     </div>
 
-                    <div className="mt-10">
-                      <h4 className="text-lg font-bold text-slate-900">
-                        Fortune estimative
-                      </h4>
-                      <p className="mt-2 text-sm text-slate-600">
-                        Facultatif, mais utile pour affiner l’estimation si vous
-                        êtes concerné.
-                      </p>
-
-                      <div className="mt-6 grid gap-6 md:grid-cols-2">
+                    <div className="mt-8 rounded-3xl border border-slate-200 bg-slate-50 p-5">
+                      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                         <div>
-                          <label
-                            htmlFor="avoirsBancaires"
-                            className={labelClassName}
-                          >
-                            Avoirs bancaires (CHF)
-                          </label>
-                          <input
-                            id="avoirsBancaires"
-                            type="number"
-                            min="0"
-                            className={getInputClassName("avoirsBancaires")}
-                            value={formData.avoirsBancaires}
-                            onChange={(e) =>
-                              updateField("avoirsBancaires", e.target.value)
-                            }
-                            onBlur={() => handleBlur("avoirsBancaires")}
-                            placeholder="Ex : 15000"
-                          />
-                          {renderFieldError("avoirsBancaires")}
+                          <h4 className="text-lg font-bold text-slate-900">Fortune estimative</h4>
+                          <p className="mt-1 text-sm text-slate-600">
+                            Facultatif, uniquement si vous souhaitez affiner l’estimation.
+                          </p>
                         </div>
-
-                        <div>
-                          <label htmlFor="titres" className={labelClassName}>
-                            Titres / actions (CHF)
-                          </label>
-                          <input
-                            id="titres"
-                            type="number"
-                            min="0"
-                            className={getInputClassName("titres")}
-                            value={formData.titres}
-                            onChange={(e) =>
-                              updateField("titres", e.target.value)
-                            }
-                            onBlur={() => handleBlur("titres")}
-                            placeholder="Ex : 5000"
-                          />
-                          {renderFieldError("titres")}
-                        </div>
-
-                        <div>
-                          <label
-                            htmlFor="immobilier"
-                            className={labelClassName}
-                          >
-                            Immobilier (CHF)
-                          </label>
-                          <input
-                            id="immobilier"
-                            type="number"
-                            min="0"
-                            className={getInputClassName("immobilier")}
-                            value={formData.immobilier}
-                            onChange={(e) =>
-                              updateField("immobilier", e.target.value)
-                            }
-                            onBlur={() => handleBlur("immobilier")}
-                            placeholder="Ex : 300000"
-                          />
-                          {renderFieldError("immobilier")}
-                        </div>
-
-                        <div>
-                          <label htmlFor="dettes" className={labelClassName}>
-                            Dettes (CHF)
-                          </label>
-                          <input
-                            id="dettes"
-                            type="number"
-                            min="0"
-                            className={getInputClassName("dettes")}
-                            value={formData.dettes}
-                            onChange={(e) =>
-                              updateField("dettes", e.target.value)
-                            }
-                            onBlur={() => handleBlur("dettes")}
-                            placeholder="Ex : 180000"
-                          />
-                          {renderFieldError("dettes")}
-                        </div>
+                        <button
+                          type="button"
+                          onClick={() => setShowFortuneFields((prev) => !prev)}
+                          className="rounded-2xl border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100"
+                        >
+                          {showFortuneFields ? "Masquer" : "Ajouter la fortune"}
+                        </button>
                       </div>
 
-                      <div className="mt-8 grid gap-4 md:grid-cols-2">
+                      {showFortuneFields ? (
+                        <div className="mt-6 grid gap-6 md:grid-cols-2">
+                          <div>
+                            <label htmlFor="avoirsBancaires" className={labelClassName}>
+                              Avoirs bancaires (CHF)
+                            </label>
+                            <input
+                              id="avoirsBancaires"
+                              type="number"
+                              min="0"
+                              className={getInputClassName("avoirsBancaires")}
+                              value={formData.avoirsBancaires}
+                              onChange={(e) => updateField("avoirsBancaires", e.target.value)}
+                              onBlur={() => handleBlur("avoirsBancaires")}
+                              placeholder="Ex : 15000"
+                            />
+                            {renderFieldError("avoirsBancaires")}
+                          </div>
+
+                          <div>
+                            <label htmlFor="titres" className={labelClassName}>
+                              Titres / actions (CHF)
+                            </label>
+                            <input
+                              id="titres"
+                              type="number"
+                              min="0"
+                              className={getInputClassName("titres")}
+                              value={formData.titres}
+                              onChange={(e) => updateField("titres", e.target.value)}
+                              onBlur={() => handleBlur("titres")}
+                              placeholder="Ex : 5000"
+                            />
+                            {renderFieldError("titres")}
+                          </div>
+
+                          <div>
+                            <label htmlFor="immobilier" className={labelClassName}>
+                              Immobilier (CHF)
+                            </label>
+                            <input
+                              id="immobilier"
+                              type="number"
+                              min="0"
+                              className={getInputClassName("immobilier")}
+                              value={formData.immobilier}
+                              onChange={(e) => updateField("immobilier", e.target.value)}
+                              onBlur={() => handleBlur("immobilier")}
+                              placeholder="Ex : 300000"
+                            />
+                            {renderFieldError("immobilier")}
+                          </div>
+
+                          <div>
+                            <label htmlFor="dettes" className={labelClassName}>
+                              Dettes (CHF)
+                            </label>
+                            <input
+                              id="dettes"
+                              type="number"
+                              min="0"
+                              className={getInputClassName("dettes")}
+                              value={formData.dettes}
+                              onChange={(e) => updateField("dettes", e.target.value)}
+                              onBlur={() => handleBlur("dettes")}
+                              placeholder="Ex : 180000"
+                            />
+                            {renderFieldError("dettes")}
+                          </div>
+                        </div>
+                      ) : null}
+
+                      <div className="mt-6 grid gap-4 md:grid-cols-2">
                         <SummaryCard
                           label="Fortune brute estimée"
                           value={formatCurrency(estimation.fortuneBrute)}
+                          icon={<Home className="h-5 w-5" />}
                         />
                         <SummaryCard
                           label="Fortune nette estimée"
                           value={formatCurrency(estimation.fortuneNette)}
                           tone="green"
+                          icon={<PiggyBank className="h-5 w-5" />}
                         />
                       </div>
                     </div>
@@ -1727,199 +1893,199 @@ export default function DeclarationImpots() {
 
                 {currentStep === 5 && (
                   <div>
-                    <h3 className="text-2xl font-bold text-slate-900 md:text-3xl">
-                      Étape 5 — Résumé
-                    </h3>
-                    <p className="mt-2 text-slate-600">
-                      Voici votre estimation indicative et votre potentiel
-                      d’optimisation.
-                    </p>
+                    <SectionTitle
+                      eyebrow="Étape 5"
+                      title="Validation du dossier"
+                      description=""
+                    />
 
-                    <div className="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-                      <SummaryCard
-                        label="Total revenus"
-                        value={formatCurrency(estimation.totalRevenus)}
-                      />
-                      <SummaryCard
-                        label="Total déductions"
-                        value={formatCurrency(estimation.totalDeductions)}
-                      />
-                      <SummaryCard
-                        label="Revenu imposable estimé"
-                        value={formatCurrency(estimation.revenuImposableEstime)}
-                        tone="orange"
-                      />
-                      <SummaryCard
-                        label="Impôt revenu estimé"
-                        value={formatCurrency(
-                          Math.round(estimation.impotRevenuEstime)
-                        )}
-                      />
-                      <SummaryCard
-                        label="Impôt fortune estimé"
-                        value={formatCurrency(
-                          Math.round(estimation.impotFortuneEstime)
-                        )}
-                      />
-                      <SummaryCard
-                        label="Impôt total estimé"
-                        value={formatCurrency(
-                          Math.round(estimation.impotTotalEstime)
-                        )}
-                        tone="green"
-                      />
-                    </div>
-
-                    <div className="mt-8 grid gap-4 md:grid-cols-3">
-                      <SummaryCard
-                        label="Potentiel d’optimisation"
-                        value={formatCurrency(
-                          Math.round(estimation.optimisationPotentielle)
-                        )}
-                        tone="orange"
-                        subtext="Montant indicatif pouvant être amélioré selon votre situation complète."
-                      />
-                      <SummaryCard
-                        label="Niveau d’opportunité"
-                        value={estimation.niveauOptimisation}
-                        tone={
-                          estimation.niveauOptimisation === "Élevé"
-                            ? "green"
-                            : estimation.niveauOptimisation === "Moyen"
-                            ? "orange"
-                            : "default"
-                        }
-                        subtext="Plus ce niveau est élevé, plus un rendez-vous est pertinent."
-                      />
-                      <SummaryCard
-                        label="Écart possible"
-                        value={formatCurrency(
-                          Math.round(estimation.differencePossible)
-                        )}
-                        tone="red"
-                        subtext="Différence potentielle entre estimation et situation réelle ou source."
-                      />
-                    </div>
-
-                    <div className="mt-8 rounded-3xl border border-orange-200 bg-orange-50 p-5 md:p-6">
-                      <h4 className="text-lg font-bold text-slate-900">
-                        Ce que cela signifie pour vous
-                      </h4>
-                      <p className="mt-2 text-sm leading-6 text-slate-700">
-                        {estimation.recommandation}
-                      </p>
-
-                      <div className="mt-5 flex flex-col gap-3 sm:flex-row">
-                        <button
-                          type="button"
-                          onClick={openCalendly}
-                          className="rounded-2xl bg-orange-600 px-5 py-3 text-sm font-bold text-white transition hover:bg-orange-700"
-                        >
-                          Prendre rendez-vous avec un conseiller
-                        </button>
-
-                        <button
-                          type="button"
-                          onClick={openWhatsApp}
-                          className="rounded-2xl border border-orange-300 bg-white px-5 py-3 text-sm font-semibold text-orange-700 transition hover:bg-orange-100"
-                        >
-                          Demander une analyse rapide
-                        </button>
+                    <div className="mt-6 rounded-3xl border border-orange-200 bg-orange-50 p-5 md:p-6">
+                      <div className="flex items-start gap-3">
+                        <Sparkles className="mt-0.5 h-5 w-5 text-orange-600" />
+                        <div>
+                          <h4 className="text-lg font-bold text-slate-900">
+                            Résultat détaillé débloqué après l’enregistrement
+                          </h4>
+                          <p className="mt-2 text-sm leading-6 text-slate-700">
+                            Avant la validation, vous voyez simplement que le dossier est prêt. Après l’enregistrement, le montant détaillé s’affiche immédiatement avec les options de prise de rendez-vous.
+                          </p>
+                        </div>
                       </div>
                     </div>
 
-                    <div className="mt-8 rounded-3xl border border-slate-200 p-5 md:p-6">
-                      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-                        <div>
-                          <h4 className="text-lg font-bold text-slate-900">
-                            Justificatifs
-                          </h4>
-                          <p className="mt-2 text-slate-600">
-                            Ajoutez vos documents fiscaux pour permettre une
-                            analyse plus précise.
+                    <div className="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+                      <SummaryCard
+                        label="Dossier"
+                        value={completionStats.percentage >= 90 ? "Prêt" : "À finaliser"}
+                        tone={completionStats.percentage >= 90 ? "green" : "orange"}
+                        subtext="Vos informations sont presque complètes."
+                        icon={<CheckCircle2 className="h-5 w-5" />}
+                      />
+                      <SummaryCard
+                        label="Parcours"
+                        value={formData.parcoursFiscal}
+                        subtext="Le scénario sélectionné est bien pris en compte."
+                        icon={<FileText className="h-5 w-5" />}
+                      />
+                      <SummaryCard
+                        label="Potentiel détecté"
+                        value={estimation.niveauOptimisation}
+                        tone="orange"
+                        subtext="Le détail chiffré s’affichera juste après validation."
+                        icon={<Sparkles className="h-5 w-5" />}
+                      />
+                      <SummaryCard
+                        label="Lecture professionnelle"
+                        value="Disponible"
+                        tone="green"
+                        subtext="Un conseiller peut ensuite affiner le dossier."
+                        icon={<ShieldCheck className="h-5 w-5" />}
+                      />
+                    </div>
+
+                    <div className="mt-8 grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
+                      <div className="rounded-3xl border border-slate-200 p-5 md:p-6">
+                        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                          <div>
+                            <h4 className="text-lg font-bold text-slate-900">Justificatifs</h4>
+                            <p className="mt-2 text-slate-600">
+                              Ajoutez vos documents fiscaux si vous les avez déjà. Cela améliore la qualité de la relecture.
+                            </p>
+                          </div>
+
+                          <div className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-2 text-xs font-medium text-slate-600">
+                            Max {MAX_FILES} fichiers • {MAX_FILE_SIZE_MB} Mo / fichier
+                          </div>
+                        </div>
+
+                        <div className="mt-5 rounded-2xl border border-dashed border-slate-300 bg-slate-50 p-4">
+                          <div className="mb-3 flex items-center gap-2 text-sm font-semibold text-slate-700">
+                            <Upload className="h-4 w-4" />
+                            Déposer les justificatifs
+                          </div>
+
+                          <input
+                            type="file"
+                            multiple
+                            accept=".pdf,.jpg,.jpeg,.png,.webp"
+                            onChange={handleFileChange}
+                            className="block w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-700 file:mr-4 file:rounded-xl file:border-0 file:bg-orange-50 file:px-4 file:py-2.5 file:text-sm file:font-semibold file:text-orange-700 hover:file:bg-orange-100"
+                          />
+                          <p className="mt-3 text-xs text-slate-500">
+                            Formats acceptés : PDF, JPG, PNG, WEBP.
                           </p>
                         </div>
 
-                        <div className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-2 text-xs font-medium text-slate-600">
-                          Max {MAX_FILES} fichiers • {MAX_FILE_SIZE_MB} Mo /
-                          fichier
-                        </div>
-                      </div>
+                        {fileErrors.length > 0 && (
+                          <div className="mt-4 space-y-2 rounded-2xl border border-red-200 bg-red-50 p-4">
+                            {fileErrors.map((error, index) => (
+                              <p key={index} className="text-sm text-red-700">
+                                • {error}
+                              </p>
+                            ))}
+                          </div>
+                        )}
 
-                      <div className="mt-5 rounded-2xl border border-dashed border-slate-300 bg-slate-50 p-4">
-                        <input
-                          type="file"
-                          multiple
-                          accept=".pdf,.jpg,.jpeg,.png,.webp"
-                          onChange={handleFileChange}
-                          className="block w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-700 file:mr-4 file:rounded-xl file:border-0 file:bg-orange-50 file:px-4 file:py-2.5 file:text-sm file:font-semibold file:text-orange-700 hover:file:bg-orange-100"
-                        />
-                        <p className="mt-3 text-xs text-slate-500">
-                          Formats acceptés : PDF, JPG, PNG, WEBP.
-                        </p>
-                      </div>
-
-                      {fileErrors.length > 0 && (
-                        <div className="mt-4 space-y-2 rounded-2xl border border-red-200 bg-red-50 p-4">
-                          {fileErrors.map((error, index) => (
-                            <p key={index} className="text-sm text-red-700">
-                              • {error}
-                            </p>
-                          ))}
-                        </div>
-                      )}
-
-                      {uploadedFiles.length > 0 && (
-                        <div className="mt-5 space-y-3">
-                          {uploadedFiles.map((item) => (
-                            <div
-                              key={item.id}
-                              className="flex items-center justify-between gap-4 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3"
-                            >
-                              <div className="min-w-0">
-                                <p className="truncate text-sm font-semibold text-slate-900">
-                                  {item.file.name}
-                                </p>
-                                <p className="text-xs text-slate-500">
-                                  {(item.file.size / 1024 / 1024).toFixed(2)} Mo
-                                </p>
-                              </div>
-
-                              <button
-                                type="button"
-                                onClick={() => removeFile(item.id)}
-                                className="shrink-0 rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs font-semibold text-slate-600 transition hover:bg-slate-100"
+                        {uploadedFiles.length > 0 && (
+                          <div className="mt-5 space-y-3">
+                            {uploadedFiles.map((item) => (
+                              <div
+                                key={item.id}
+                                className="flex items-center justify-between gap-4 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3"
                               >
-                                Retirer
-                              </button>
-                            </div>
+                                <div className="min-w-0">
+                                  <p className="truncate text-sm font-semibold text-slate-900">
+                                    {item.file.name}
+                                  </p>
+                                  <p className="text-xs text-slate-500">
+                                    {(item.file.size / 1024 / 1024).toFixed(2)} Mo
+                                  </p>
+                                </div>
+
+                                <button
+                                  type="button"
+                                  onClick={() => removeFile(item.id)}
+                                  className="shrink-0 rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs font-semibold text-slate-600 transition hover:bg-slate-100"
+                                >
+                                  Retirer
+                                </button>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+
+                      <div className="rounded-3xl border border-slate-200 bg-slate-50 p-5 md:p-6">
+                        <h4 className="text-lg font-bold text-slate-900">Préférence de contact</h4>
+                        <p className="mt-2 text-sm leading-6 text-slate-600">
+                          Choisissez le mode de suivi qui vous convient le mieux.
+                        </p>
+
+                        <div className="mt-6 grid gap-3">
+                          {[
+                            "Rappel téléphonique",
+                            "Email",
+                            "WhatsApp",
+                            "Rendez-vous direct",
+                          ].map((option) => (
+                            <button
+                              key={option}
+                              type="button"
+                              onClick={() => setContactPreference(option)}
+                              className={`rounded-2xl border px-4 py-3 text-left text-sm font-semibold transition ${
+                                contactPreference === option
+                                  ? "border-orange-300 bg-white text-orange-700 ring-4 ring-orange-100"
+                                  : "border-slate-200 bg-white text-slate-700 hover:border-orange-200"
+                              }`}
+                            >
+                              {option}
+                            </button>
                           ))}
                         </div>
-                      )}
-                    </div>
 
-                    <div className="mt-6 rounded-3xl border border-green-200 bg-green-50 p-5 md:p-6">
-                      <h4 className="text-lg font-bold text-slate-900">
-                        Pourquoi réserver un rendez-vous
-                      </h4>
-                      <p className="mt-2 text-sm leading-6 text-slate-700">
-                        Le simulateur donne une estimation. Un conseiller peut
-                        vérifier les déductions réelles admises, comparer DRIS
-                        ou TOU selon votre situation et identifier les solutions
-                        concrètes pour optimiser vos impôts.
-                      </p>
+                        <div className="mt-6 rounded-2xl border border-slate-200 bg-white p-4">
+                          <label className="flex items-start gap-3">
+                            <input
+                              type="checkbox"
+                              checked={consentContact}
+                              onChange={(e) => {
+                                setConsentContact(e.target.checked);
+                                if (fieldErrors.consentContact) {
+                                  setFieldErrors((prev) => {
+                                    const next = { ...prev };
+                                    delete next.consentContact;
+                                    return next;
+                                  });
+                                }
+                              }}
+                              onBlur={() =>
+                                setTouchedFields((prev) => ({
+                                  ...prev,
+                                  consentContact: true,
+                                }))
+                              }
+                              className="mt-1 h-4 w-4 rounded border-slate-300 text-orange-600 focus:ring-orange-500"
+                            />
+                            <span className="text-sm leading-6 text-slate-700">
+                              J’accepte d’être recontacté pour le suivi de mon dossier et, si besoin, une proposition d’analyse adaptée à ma situation.
+                            </span>
+                          </label>
+                          {renderFieldError("consentContact")}
+                        </div>
+
+                        <div className="mt-6 rounded-2xl border border-green-200 bg-green-50 p-4">
+                          <p className="text-sm font-semibold text-green-800">Parcours plus logique</p>
+                          <p className="mt-2 text-sm leading-6 text-green-700">
+                            Une fois le dossier validé, la simulation est visible.
+                          </p>
+                        </div>
+                      </div>
                     </div>
 
                     <div className="mt-6 rounded-3xl border border-slate-200 bg-slate-50 p-5 md:p-6">
-                      <h4 className="text-lg font-bold text-slate-900">
-                        Estimation indicative
-                      </h4>
+                      <h4 className="text-lg font-bold text-slate-900">Estimation indicative</h4>
                       <p className="mt-2 text-sm leading-6 text-slate-600">
-                        Cette estimation est donnée à titre informatif. Le
-                        montant réel dépend de votre situation complète, des
-                        règles fiscales applicables, des déductions admises, des
-                        justificatifs fournis et du traitement final par les
-                        autorités.
+                        L’estimation détaillée affichée après validation reste informative. Le montant réel dépend de la situation complète, des justificatifs fournis et du traitement final par les autorités.
                       </p>
                     </div>
                   </div>
@@ -1941,12 +2107,13 @@ export default function DeclarationImpots() {
                 type="button"
                 onClick={prevStep}
                 disabled={currentStep === 1 || isSaving}
-                className={`rounded-2xl px-5 py-3 text-sm font-semibold transition ${
+                className={`inline-flex items-center gap-2 rounded-2xl px-5 py-3 text-sm font-semibold transition ${
                   currentStep === 1 || isSaving
                     ? "cursor-not-allowed bg-slate-100 text-slate-400"
                     : "border border-slate-300 bg-white text-slate-700 hover:bg-slate-100"
                 }`}
               >
+                <ChevronLeft className="h-4 w-4" />
                 Retour
               </button>
 
@@ -1959,28 +2126,27 @@ export default function DeclarationImpots() {
                   type="button"
                   onClick={saveDeclaration}
                   disabled={isSaving}
-                  className={`rounded-2xl px-6 py-3 text-sm font-bold text-white transition ${
+                  className={`inline-flex items-center gap-2 rounded-2xl px-6 py-3 text-sm font-bold text-white transition ${
                     isSaving
                       ? "cursor-not-allowed bg-orange-300"
                       : "bg-orange-600 hover:bg-orange-700"
                   }`}
                 >
-                  {isSaving
-                    ? "Enregistrement en cours..."
-                    : "Enregistrer mon dossier"}
+                  {isSaving ? "Enregistrement en cours..." : "Enregistrer et voir mon résultat"}
                 </button>
               ) : (
                 <button
                   type="button"
                   onClick={nextStep}
                   disabled={isSaving}
-                  className={`rounded-2xl px-5 py-3 text-sm font-semibold transition ${
+                  className={`inline-flex items-center gap-2 rounded-2xl px-5 py-3 text-sm font-semibold transition ${
                     isSaving
                       ? "cursor-not-allowed bg-orange-300 text-white"
                       : "bg-orange-600 text-white hover:bg-orange-700"
                   }`}
                 >
                   Continuer
+                  <ChevronRight className="h-4 w-4" />
                 </button>
               )}
             </div>
@@ -1994,12 +2160,13 @@ export default function DeclarationImpots() {
             type="button"
             onClick={prevStep}
             disabled={currentStep === 1 || isSaving}
-            className={`flex-1 rounded-2xl px-4 py-3 text-sm font-semibold transition ${
+            className={`flex flex-1 items-center justify-center gap-2 rounded-2xl px-4 py-3 text-sm font-semibold transition ${
               currentStep === 1 || isSaving
                 ? "cursor-not-allowed bg-slate-100 text-slate-400"
                 : "border border-slate-300 bg-white text-slate-700"
             }`}
           >
+            <ChevronLeft className="h-4 w-4" />
             Retour
           </button>
 
@@ -2008,20 +2175,20 @@ export default function DeclarationImpots() {
               type="button"
               onClick={saveDeclaration}
               disabled={isSaving}
-              className={`flex-[1.4] rounded-2xl px-4 py-3 text-sm font-bold text-white transition ${
+              className={`flex-[1.5] rounded-2xl px-4 py-3 text-sm font-bold text-white transition ${
                 isSaving
                   ? "cursor-not-allowed bg-orange-300"
                   : "bg-orange-600 hover:bg-orange-700"
               }`}
             >
-              {isSaving ? "Enregistrement..." : "Enregistrer"}
+              {isSaving ? "Enregistrement..." : "Voir mon résultat"}
             </button>
           ) : (
             <button
               type="button"
               onClick={nextStep}
               disabled={isSaving}
-              className={`flex-[1.4] rounded-2xl px-4 py-3 text-sm font-bold text-white transition ${
+              className={`flex-[1.5] rounded-2xl px-4 py-3 text-sm font-bold text-white transition ${
                 isSaving
                   ? "cursor-not-allowed bg-orange-300"
                   : "bg-orange-600 hover:bg-orange-700"
