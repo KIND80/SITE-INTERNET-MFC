@@ -11,6 +11,7 @@ const insurancePages = {
           ctaText: "Comparer mon Offre",
           path: "/comparateur/assurance-maladie", // Lien vers le comparateur
           image: {
+            src: "/prime.jpg", // <= ajoute l'image
             alt: "Stéthoscope posé sur un formulaire d'assurance maladie suisse",
           },
         },
@@ -26,6 +27,7 @@ const insurancePages = {
           ctaText: "Comparer les primes", // Texte mis à jour
           path: "/comparateur/assurance-maladie", // Lien vers le comparateur
           image: {
+            src: "/prime.jpg", // <= même image ici (ou remplace si tu veux un autre visuel)
             alt: "Graphique montrant des économies sur les primes d'assurance maladie",
           },
         },
@@ -48,7 +50,7 @@ const insurancePages = {
     },
     entreprise: {
       // Pages pour les entreprises
-    }
+    },
   },
 };
 

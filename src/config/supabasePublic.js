@@ -1,0 +1,3 @@
+export const SUPABASE_URL = "https://ecmhdjdagviniddizdrh.supabase.co";
+export const SUPABASE_ANON_KEY =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVjbWhkamRhZ3ZpbmlkZGl6ZHJoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY4MTg5MTYsImV4cCI6MjA3MjM5NDkxNn0.LGobeUowwFLlPF0CVjG-Ig4VR-gGBg3wINcjyRgoZg8";

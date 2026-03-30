@@ -1,23 +1,40 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { Button } from '@/components/ui/button';
-import { ArrowRight, CheckCircle } from 'lucide-react';
-import siteConfig from '@/config/siteConfig';
-import { openMailto, CONTACT_EMAIL } from '@/lib/mailto';
+import React from "react";
+import { motion } from "framer-motion";
+import { Button } from "@/components/ui/button";
+import { ArrowRight, CheckCircle } from "lucide-react";
+import siteConfig from "@/config/siteConfig";
+import { openMailto, CONTACT_EMAIL } from "@/lib/mailto";
 
 const Hero = () => {
   const { heroSection } = siteConfig.homePage;
 
+  // Chemin attendu dans /public/img/
+  const HERO_IMG = "/lac-leman.jpg";
+  const FALLBACK_IMG = "/intro.jpg"; // présent chez toi
+
+  const handleImgError = (e) => {
+    console.error(
+      "[Hero] Image introuvable :",
+      HERO_IMG,
+      "→ fallback appliqué."
+    );
+    e.currentTarget.src = FALLBACK_IMG;
+  };
+
   return (
-    <section id="accueil" className="relative pt-32 pb-20 lg:pt-48 lg:pb-28 hero-gradient overflow-hidden">
+    <section
+      id="accueil"
+      className="relative pt-32 pb-20 lg:pt-48 lg:pb-28 hero-gradient overflow-hidden"
+    >
       <div className="absolute inset-0 bg-dots opacity-30"></div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
+          {/* Texte */}
           <motion.div
             initial={{ opacity: 0, x: -50 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8, ease: 'easeOut' }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
             className="space-y-8 text-center lg:text-left"
           >
             <motion.h1
@@ -36,7 +53,7 @@ const Hero = () => {
               {heroSection.subtitle}
             </motion.p>
 
-            {/* CTA → email */}
+            {/* CTA */}
             <motion.div
               className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start"
               initial={{ opacity: 0, y: 20 }}
@@ -45,13 +62,17 @@ const Hero = () => {
             >
               <Button
                 size="lg"
-                onClick={() => openMailto(CONTACT_EMAIL, 'Obtenir une offre gratuite')}
+                onClick={() =>
+                  openMailto(CONTACT_EMAIL, "Obtenir une offre gratuite")
+                }
                 className="btn-primary rounded-full font-semibold shadow-lg hover:shadow-xl transition-all hover:scale-105 px-8 py-6 text-base w-full sm:w-auto"
               >
-                {heroSection.ctaButtonText} <ArrowRight className="ml-2 h-5 w-5 inline" />
+                {heroSection.ctaButtonText}{" "}
+                <ArrowRight className="ml-2 h-5 w-5 inline" />
               </Button>
             </motion.div>
 
+            {/* Points forts */}
             <motion.div
               className="flex flex-wrap gap-x-6 gap-y-2 justify-center lg:justify-start text-gray-600"
               initial={{ opacity: 0, y: 20 }}
@@ -67,19 +88,25 @@ const Hero = () => {
             </motion.div>
           </motion.div>
 
+          {/* Image */}
           <motion.div
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.8, delay: 0.3, ease: 'easeOut' }}
+            transition={{ duration: 0.8, delay: 0.3, ease: "easeOut" }}
             className="relative"
           >
-            <div className="relative z-10 p-2 bg-white/50 backdrop-blur-sm rounded-2xl shadow-2xl">
+            <div className="relative z-10 overflow-hidden rounded-2xl shadow-2xl">
               <img
-                className="rounded-xl w-full h-auto object-cover"
+                className="rounded-2xl w-full h-auto object-cover"
                 alt={heroSection.image.alt}
-                src="https://images.unsplash.com/photo-1649215636705-1084bd6df97a"
+                src={HERO_IMG}
+                onError={handleImgError}
               />
+              {/* Dégradé rouge par-dessus l’image */}
+              <div className="absolute inset-0 bg-gradient-to-r from-red-600/40 via-red-400/30 to-transparent mix-blend-multiply rounded-2xl" />
             </div>
+
+            {/* Effets lumineux */}
             <div className="absolute -top-8 -right-8 w-40 h-40 bg-orange-300/50 rounded-full filter blur-3xl -z-10 animate-pulse"></div>
             <div className="absolute -bottom-12 -left-12 w-56 h-56 bg-blue-300/50 rounded-full filter blur-3xl -z-10 animate-pulse animation-delay-2000"></div>
           </motion.div>

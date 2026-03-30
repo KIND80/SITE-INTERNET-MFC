@@ -1,159 +1,145 @@
+import lacLeman from "../../assets/images/lac-leman.jpg";
+
 const homePage = {
   newHero: {
     title: "Votre Assurance, Simplifiée & Optimisée.",
     subtitle:
-      "Conseils experts à Genève et Vaud pour des économies maximales. Votre tranquillité d'esprit est notre priorité.",
-    primaryCta: {
-      text: "Obtenir une Offre Gratuite",
-      path: "#contact",
-    },
+      "Conseils experts à Genève et Vaud pour des économies maximales. Comparez, optimisez et payez enfin le juste prix.",
     secondaryCta: {
-      text: "Comparer complémentaire",
+      text: "Comparer mon assurance",
       path: "comparateur/assurance-maladie",
     },
     image: {
+      src: lacLeman,
       alt: "Vue sur le lac Léman et Genève",
-      text: "Vue panoramique sur Genève, le Jet d'Eau et le lac Léman",
+      text: "Vue panoramique sur Genève et le lac Léman",
     },
   },
+
   intro: {
     title: "L'expertise d'un courtier local, la force d'un réseau national.",
     description:
-      "Basés à Genève, nous sommes vos alliés pour naviguer dans le monde complexe des assurances. Indépendants, nous travaillons pour vous, pas pour les compagnies. Notre mission : vous garantir les meilleures couvertures aux meilleurs prix.",
+      "Basés à Genève, nous vous accompagnons pour simplifier et optimiser toutes vos assurances. Indépendants, nous travaillons uniquement dans votre intérêt pour vous garantir les meilleures couvertures au meilleur prix.",
     image: {
-      alt: "Conseiller souriant dans un bureau moderne à Genève",
-      text: "Un conseiller en assurance dans un bureau lumineux avec la ville de Genève en arrière-plan",
+      src: "conseiller-geneve.jpg",
+      alt: "Conseiller en assurance à Genève",
+      text: "Un conseiller en assurance dans un bureau moderne à Genève",
     },
   },
+
   servicesSection: {
     tagline: "Nos Domaines d'Expertise",
     title: "Une solution sur-mesure pour chaque besoin",
-    description: "Que vous soyez un particulier, une famille ou une entreprise, nous maîtrisons tous les aspects de votre protection.",
+    description:
+      "Particuliers, familles ou entreprises : nous couvrons tous vos besoins en assurance et prévoyance.",
     services: [
       {
         icon: "HeartHandshake",
         title: "Assurance Maladie (LAMal)",
-        description: "Économisez sur vos primes sans sacrifier votre couverture. Nous comparons toutes les caisses pour vous.",
+        description:
+          "Comparez toutes les caisses et réduisez vos primes sans compromis.",
         linkText: "Assurance maladie",
-        path: "assurances/particulier/assurance-maladie" // AJOUT
+        path: "assurances/particulier/assurance-maladie",
       },
       {
         icon: "Users",
         title: "Prévoyance & 3ème Pilier",
-        description: "Construisez votre avenir en toute sérénité. Nos stratégies de prévoyance sont fiscalement avantageuses.",
+        description:
+          "Optimisez votre fiscalité et préparez votre avenir efficacement.",
         linkText: "Préparer ma retraite",
-        path: "assurances/particulier/3eme-pilier" // AJOUT
+        path: "assurances/particulier/3eme-pilier",
       },
       {
         icon: "Building",
         title: "Assurances Entreprise",
-        description: "De la RC Pro à la LPP, protégez votre activité et vos collaborateurs avec des solutions adaptées.",
+        description:
+          "Protégez votre activité et vos collaborateurs avec des solutions adaptées.",
         linkText: "Protéger mon business",
-        path: "assurances/entreprise/rc-professionnelle" // AJOUT
+        path: "assurances/entreprise/rc-professionnelle",
       },
       {
         icon: "Home",
         title: "Hypothèque & Habitat",
-        description: "Accédez à la propriété ou assurez votre bien. Nous négocions les meilleures conditions pour vous.",
+        description:
+          "Accédez à la propriété avec les meilleures conditions du marché.",
         linkText: "Mon projet immobilier",
-        path: "assurances/habitat/assurance-batiment" // AJOUT
+        path: "assurances/habitat/assurance-batiment",
       },
       {
         icon: "ShieldCheck",
         title: "Protection & Patrimoine",
-        description: "Assurance vie, protection juridique... Sécurisez ce qui compte le plus pour vous et vos proches.",
+        description:
+          "Sécurisez votre famille et votre patrimoine efficacement.",
         linkText: "Sécuriser ma famille",
-        path: "assurances/particulier/assurance-automobile" // AJOUT
+        path: "assurances/particulier/assurance-automobile",
       },
       {
         icon: "Car",
         title: "Véhicules & Mobilité",
-        description: "Auto, moto, bateau... Obtenez les meilleures garanties pour tous vos véhicules au tarif le plus juste.",
+        description:
+          "Assurez vos véhicules au meilleur tarif avec les bonnes garanties.",
         linkText: "Assurer mon véhicule",
-        path: "assurances/particulier/assurance-automobile" // AJOUT
+        path: "assurances/particulier/assurance-automobile",
       },
     ],
   },
+
   partnersSection: {
     title: "Notre indépendance, votre avantage",
     description:
-      "Nous collaborons avec toutes les compagnies d'assurance majeures en Suisse pour vous garantir une objectivité totale et les offres les plus compétitives.",
+      "Nous collaborons avec les principales compagnies d’assurance en Suisse pour vous garantir les meilleures offres.",
     linkText: "Découvrir tous nos partenaires",
     logos: [
-      {
-        name: "Allianz",
-        src: "https://horizons-cdn.hostinger.com/ef8bc239-7c6e-4d4c-8761-3b9aebb7bc3e/8770e989d3cab95d3034ec6e9998c52a.png",
-      },
-      {
-        name: "AXA",
-        src: "https://horizons-cdn.hostinger.com/ef8bc239-7c6e-4d4c-8761-3b9aebb7bc3e/b47b098cd15329475a36a2b91b3be8a2.png",
-      },
-      {
-        name: "Generali",
-        src: "https://horizons-cdn.hostinger.com/ef8bc239-7c6e-4d4c-8761-3b9aebb7bc3e/67e770273d2279691af02049ccda9adb.png",
-      },
-      {
-        name: "Helsana",
-        src: "https://horizons-cdn.hostinger.com/ef8bc239-7c6e-4d4c-8761-3b9aebb7bc3e/46a82c005979458b96be52eddb04277c.png",
-      },
-      {
-        name: "Groupe Mutuel",
-        src: "https://horizons-cdn.hostinger.com/ef8bc239-7c6e-4d4c-8761-3b9aebb7bc3e/65d8bca760808d612fe35dc1261a47c2.png",
-      },
-      {
-        name: "Visana",
-        src: "https://horizons-cdn.hostinger.com/ef8bc239-7c6e-4d4c-8761-3b9aebb7bc3e/1438d3779ecf3d96794ada8644ddb4f1.png",
-      },
-      {
-        name: "Swica",
-        src: "https://horizons-cdn.hostinger.com/ef8bc239-7c6e-4d4c-8761-3b9aebb7bc3e/8d9aec73b30f9f6052d26db5e1dd4409.png",
-      },
-      {
-        name: "Sanitas",
-        src: "https://horizons-cdn.hostinger.com/ef8bc239-7c6e-4d4c-8761-3b9aebb7bc3e/2e77ad6c2cfc0b52ae0eee67ecafbd7d.png",
-      },
+      { name: "Assura", src: "/partners/assura.png" },
+      { name: "AXA", src: "/partners/axa.png" },
+      { name: "Generali", src: "/partners/generali.png" },
+      { name: "Groupe Mutuel", src: "/partners/groupe-mutuel.jpg" },
+      { name: "Helsana", src: "/partners/helsana.png" },
+      { name: "Sanitas", src: "/partners/Sanitas.png" },
+      { name: "Swica", src: "/partners/swica.png" },
+      { name: "Visana", src: "/partners/visana.png" },
+      { name: "Zugerberg", src: "/partners/Zugerberg.png" },
     ],
   },
+
   testimonialsSection: {
     tagline: "La parole à nos clients",
-    title: "Ceux qui parlent le mieux de nous, ce sont eux.",
+    title: "Ils nous font confiance",
     description:
-      "La confiance et la satisfaction de nos clients à Genève, Lausanne et dans tout le canton de Vaud sont notre plus grande fierté.",
+      "Nos clients en Suisse romande nous recommandent pour notre efficacité et notre transparence.",
     testimonials: [
       {
         name: "Céline B.",
         role: "Architecte, Genève",
-        content:
-          "Une efficacité redoutable ! Mon Fidele Conseiller a restructuré toutes mes assurances et m'a fait économiser plus de 1200 CHF par an. Un service client irréprochable.",
+        content: "+1200 CHF économisés par an. Service rapide et efficace.",
         rating: 5,
       },
       {
         name: "Julien M.",
-        role: "Fondateur de startup, Lausanne",
-        content:
-          "En tant qu'entrepreneur, mon temps est précieux. Ils ont tout géré pour mes assurances professionnelles et privées. Simple, rapide, et des économies à la clé. Je recommande à 100%.",
+        role: "Entrepreneur, Lausanne",
+        content: "Simple, rapide, efficace. Tout a été optimisé sans effort.",
         rating: 5,
       },
       {
         name: "Famille Rossi",
-        role: "Nyon, Vaud",
-        content:
-          "Nous pensions être bien assurés... jusqu'à leur analyse gratuite. Ils ont trouvé de meilleures garanties pour un prix inférieur. Indispensable pour toute famille en Suisse romande !",
+        role: "Nyon",
+        content: "De meilleures garanties pour moins cher. Indispensable.",
         rating: 5,
       },
     ],
   },
+
   ctaSection: {
-    title: "Prêt à payer le juste prix pour vos assurances ?",
+    title: "Comparez et économisez dès maintenant",
     description:
-      "Ne laissez plus l'argent sur la table. Demandez votre analyse de portefeuille gratuite. Notre expertise à votre service, sans engagement.",
-    buttonText: "Je demande mon analyse gratuite",
+      "Accédez aux meilleures offres en quelques clics et optimisez vos assurances.",
+    buttonText: "Comparer mes assurances",
   },
+
   contactSection: {
     tagline: "Contactez un expert",
-    title: "Parlons de vos besoins. C'est simple et gratuit.",
-    description:
-      "Que ce soit pour une simple question ou une analyse complète, notre équipe d'experts basés à Genève est à votre écoute. Réponse rapide garantie.",
+    title: "Une question ? Nous sommes disponibles",
+    description: "Notre équipe vous répond rapidement par email ou WhatsApp.",
     form: {
       firstName: { label: "Prénom", placeholder: "Votre prénom" },
       lastName: { label: "Nom", placeholder: "Votre nom" },
@@ -161,7 +147,6 @@ const homePage = {
       insuranceType: {
         label: "Sujet de votre demande",
         options: [
-          "Analyse Gratuite de Portefeuille",
           "Assurance Maladie (LAMal)",
           "Prévoyance & 3ème Pilier",
           "Hypothèque",
@@ -170,10 +155,11 @@ const homePage = {
         ],
       },
       message: {
-        label: "Votre message (facultatif)",
-        placeholder: "Décrivez brièvement votre situation ou votre question...",
+        label: "Message + Téléphone",
+        placeholder:
+          "Décrivez votre besoin et laissez votre numéro pour être recontacté rapidement...",
       },
-      submitButtonText: "Envoyer et recevoir mon analyse",
+      submitButtonText: "Être contacté rapidement",
     },
   },
 };

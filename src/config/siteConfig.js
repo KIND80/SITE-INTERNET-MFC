@@ -15,15 +15,23 @@ const siteConfig = {
   theme,
   meta,
   contactInfo: contact,
-  logoUrl: "https://horizons-cdn.hostinger.com/ef8bc239-7c6e-4d4c-8761-3b9aebb7bc3e/440242d1aed8f24e34fdc6e0e7ef03aa.png",
+
+  // 🖼️ Logo mis à jour
+  logoUrl: "/logo.png", // <-- le fichier que tu as ajouté dans ton dossier public (public/logo.png)
+
+  // 💬 WhatsApp
   whatsapp: {
     enabled: true,
-    phone: "41797896193",
+    phone: "+41797896193",
     message: "Bonjour ! J'aimerais obtenir un conseil en assurance.",
     ariaLabel: "Contacter sur WhatsApp"
   },
+
+  // 🧭 Navigation & pied de page
   nav,
   footer,
+
+  // 📚 Pages
   homePage,
   aboutPage,
   engagementPage,
