@@ -162,12 +162,21 @@ export default function AdminFiscalDashboard() {
             </p>
           </div>
 
-          <button
-            onClick={fetchDossiers}
-            className="rounded-xl bg-orange-600 px-5 py-3 text-sm font-bold text-white transition hover:bg-orange-700"
-          >
-            Actualiser
-          </button>
+          <div className="flex flex-col gap-3 sm:flex-row">
+            <button
+              onClick={() => navigate("/admin/comparateur")}
+              className="rounded-xl border border-slate-300 bg-white px-5 py-3 text-sm font-bold text-slate-700 transition hover:bg-slate-100"
+            >
+              Leads comparateur
+            </button>
+
+            <button
+              onClick={fetchDossiers}
+              className="rounded-xl bg-orange-600 px-5 py-3 text-sm font-bold text-white transition hover:bg-orange-700"
+            >
+              Actualiser
+            </button>
+          </div>
         </div>
 
         <div className="mb-8 grid gap-4 md:grid-cols-2 xl:grid-cols-5">

@@ -17,8 +17,6 @@ import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import ScrollToTop from "@/components/layout/ScrollToTop";
 import WhatsAppButton from "@/components/layout/WhatsAppButton";
-
-// Popup lead capture global
 import LeadCapturePopup from "@/components/layout/LeadCapturePopup";
 
 import Home from "@/pages/Home";
@@ -31,6 +29,7 @@ import CollectiveDiscountPage from "@/pages/CollectiveDiscountPage";
 import DeclarationImpots from "@/pages/DeclarationImpots";
 import AdminFiscalDashboard from "@/pages/AdminFiscalDashboard";
 import AdminFiscalDetail from "@/pages/AdminFiscalDetail";
+import AdminComparatorDashboard from "@/pages/AdminComparatorDashboard";
 import CabinetLogin from "@/pages/CabinetLogin";
 
 const ThemeInjector = () => {
@@ -76,7 +75,7 @@ const ProtectedAdminRoute = ({ children }) => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-[60vh] text-sm text-gray-500">
+      <div className="flex min-h-[60vh] items-center justify-center text-sm text-gray-500">
         Chargement...
       </div>
     );
@@ -121,12 +120,12 @@ const PageLayout = () => {
         <meta property="og:locale" content="fr_CH" />
       </Helmet>
 
-      <div className="min-h-screen bg-white text-gray-800 flex flex-col">
+      <div className="flex min-h-screen flex-col bg-white text-gray-800">
         <Header showToast={showToast} />
 
         <LeadCapturePopup
           delayMs={10000}
-          storageKey="mfc_lead_popup_dismissed_v1"
+          storageKey="mfc_lead_popup_dismissed_v2"
         />
 
         <main className="flex-grow pt-20">
@@ -145,6 +144,7 @@ const PageLayout = () => {
                 element={<DeclarationImpots />}
               />
               <Route path="/cabinet-login" element={<CabinetLogin />} />
+
               <Route
                 path="/admin/dossiers-fiscaux"
                 element={
@@ -161,6 +161,15 @@ const PageLayout = () => {
                   </ProtectedAdminRoute>
                 }
               />
+              <Route
+                path="/admin/comparateur"
+                element={
+                  <ProtectedAdminRoute>
+                    <AdminComparatorDashboard />
+                  </ProtectedAdminRoute>
+                }
+              />
+
               <Route
                 path="/comparateur/:type"
                 element={<ComparatorPage showToast={showToast} />}

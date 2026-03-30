@@ -96,9 +96,13 @@ const WhatsAppButton = () => {
           {!dismissed && showHelp && (
             <motion.div
               key="help"
-              initial={shouldReduceMotion ? false : { opacity: 0, y: 16, scale: 0.96 }}
+              initial={
+                shouldReduceMotion ? false : { opacity: 0, y: 16, scale: 0.96 }
+              }
               animate={shouldReduceMotion ? {} : { opacity: 1, y: 0, scale: 1 }}
-              exit={shouldReduceMotion ? {} : { opacity: 0, y: 10, scale: 0.96 }}
+              exit={
+                shouldReduceMotion ? {} : { opacity: 0, y: 10, scale: 0.96 }
+              }
               transition={{ duration: 0.35 }}
               className="absolute bottom-24 right-0 w-[min(86vw,300px)] rounded-2xl border border-gray-200 bg-white px-4 py-3 text-gray-900 shadow-2xl"
             >
@@ -106,7 +110,8 @@ const WhatsAppButton = () => {
                 <div>
                   <div className="text-sm font-semibold">💬 Une question ?</div>
                   <div className="mt-1 text-xs leading-5 text-gray-600">
-                    Dites-moi ce que vous cherchez et je vous réponds rapidement.
+                    Dites-moi ce que vous cherchez et je vous réponds
+                    rapidement.
                   </div>
                 </div>
 
@@ -138,9 +143,13 @@ const WhatsAppButton = () => {
           {!dismissed && showHello && !showHelp && (
             <motion.div
               key="hello"
-              initial={shouldReduceMotion ? false : { opacity: 0, y: 16, scale: 0.96 }}
+              initial={
+                shouldReduceMotion ? false : { opacity: 0, y: 16, scale: 0.96 }
+              }
               animate={shouldReduceMotion ? {} : { opacity: 1, y: 0, scale: 1 }}
-              exit={shouldReduceMotion ? {} : { opacity: 0, y: 10, scale: 0.96 }}
+              exit={
+                shouldReduceMotion ? {} : { opacity: 0, y: 10, scale: 0.96 }
+              }
               transition={{ duration: 0.3 }}
               className="absolute bottom-24 right-0 w-[min(82vw,280px)] rounded-2xl border border-gray-200 bg-white px-4 py-3 text-gray-900 shadow-2xl"
             >
@@ -218,7 +227,7 @@ const WhatsAppButton = () => {
             />
 
             <span className="absolute -right-1 -top-1 flex h-5 min-w-[20px] items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-bold text-white shadow">
-              !
+              1
             </span>
 
             <FaWhatsapp className="relative z-10 h-7 w-7 sm:h-8 sm:w-8" />

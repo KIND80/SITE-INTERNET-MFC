@@ -1,11 +1,8 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
-
-// Import de notre moteur de calcul local
+import { supabase } from "@/lib/supabase";
 import { calculateTop3 } from "@/lib/scoringEngine";
-
-// Vos composants UI
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import PageTransition from "@/components/layout/PageTransition";
@@ -17,14 +14,11 @@ import {
   DialogDescription,
 } from "../components/ui/dialog.jsx";
 
-// (OPTIONNEL) remplace par ton numéro si pas de siteConfig global
 let WHATSAPP_PHONE = "41797896193";
 
-/* ----------------------- TopSheet (Portal, responsive) ------------------ */
 const TopSheet = ({ open, onClose, children, maxWidth = "md" }) => {
   if (typeof document === "undefined") return null;
 
-  // lock scroll du body quand ouvert
   useEffect(() => {
     if (!open) return;
     const prev = document.body.style.overflow;
@@ -34,7 +28,6 @@ const TopSheet = ({ open, onClose, children, maxWidth = "md" }) => {
     };
   }, [open]);
 
-  // fermer sur ESC
   useEffect(() => {
     if (!open) return;
     const onKey = (e) => e.key === "Escape" && onClose?.();
@@ -42,7 +35,6 @@ const TopSheet = ({ open, onClose, children, maxWidth = "md" }) => {
     return () => window.removeEventListener("keydown", onKey);
   }, [open, onClose]);
 
-  // Largeurs pour ≥ sm (desktop/tablette)
   const maxWClass =
     maxWidth === "lg"
       ? "sm:max-w-lg md:max-w-xl"
@@ -54,7 +46,6 @@ const TopSheet = ({ open, onClose, children, maxWidth = "md" }) => {
     <AnimatePresence>
       {open && (
         <>
-          {/* Backdrop */}
           <motion.div
             className="fixed inset-0 z-[999] bg-black/40"
             initial={{ opacity: 0 }}
@@ -62,15 +53,11 @@ const TopSheet = ({ open, onClose, children, maxWidth = "md" }) => {
             exit={{ opacity: 0 }}
             onClick={onClose}
           />
-
-          {/* Conteneur : plein écran sur mobile, feuille centrée sur ≥ sm */}
           <motion.div
             className={[
               "fixed z-[1000]",
-              // MOBILE: plein écran
               "inset-x-0 top-0 w-screen sm:w-auto",
               "sm:left-1/2 sm:-translate-x-1/2",
-              // petit offset de 12px en desktop pour l'effet "top sheet"
               "sm:top-0",
               maxWClass,
             ].join(" ")}
@@ -81,22 +68,18 @@ const TopSheet = ({ open, onClose, children, maxWidth = "md" }) => {
           >
             <div
               className={[
-                // MOBILE: plein écran + pas d'arrondis
-                "relative bg-white/85 dark:bg-neutral-900/75 backdrop-blur-xl shadow-2xl",
+                "relative bg-white/95 dark:bg-neutral-900/90 backdrop-blur-xl shadow-2xl",
                 "border border-border",
                 "sm:rounded-2xl sm:mx-0",
                 "rounded-none",
-                // Hauteurs et scroll internes
                 "max-h-[100dvh] sm:max-h-[calc(100dvh-24px)]",
                 "h-[100dvh] sm:h-auto",
                 "overflow-y-auto",
-                // Safe areas iOS
                 "pt-[max(env(safe-area-inset-top),16px)] pb-[max(env(safe-area-inset-bottom),16px)]",
                 "px-4 sm:px-0",
               ].join(" ")}
             >
-              {/* halo */}
-              <div className="pointer-events-none absolute -inset-1 sm:rounded-2xl bg-gradient-to-r from-primary/20 via-purple-500/20 to-emerald-400/20 blur-2xl" />
+              <div className="pointer-events-none absolute -inset-1 sm:rounded-2xl bg-gradient-to-r from-primary/15 via-primary/10 to-primary/5 blur-2xl" />
               <div className="relative p-5 sm:p-6">{children}</div>
             </div>
           </motion.div>
@@ -106,9 +89,7 @@ const TopSheet = ({ open, onClose, children, maxWidth = "md" }) => {
     document.body
   );
 };
-/* ----------------------------------------------------------------------- */
 
-// Icônes
 const CheckIcon = () => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
@@ -125,6 +106,7 @@ const CheckIcon = () => (
     />
   </svg>
 );
+
 const SparklesIcon = () => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
@@ -132,15 +114,16 @@ const SparklesIcon = () => (
     viewBox="0 0 24 24"
     strokeWidth={1.5}
     stroke="currentColor"
-    className="w-6 h-6 mr-2"
+    className="w-5 h-5 mr-2"
   >
     <path
       strokeLinecap="round"
       strokeLinejoin="round"
-      d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456zM16.898 20.623L17.25 21.75l-.352-1.127a3.375 3.375 0 00-2.456-2.456L13.5 18l1.127-.352a3.375 3.375 0 002.456-2.456L17.25 14.25l.352 1.127a3.375 3.375 0 00 2.456 2.456L21 18.375l-1.127.352a3.375 3.375 0 00-2.456 2.456z"
+      d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z"
     />
   </svg>
 );
+
 const WhatsIcon = () => (
   <svg viewBox="0 0 32 32" className="w-5 h-5 mr-2" aria-hidden>
     <path
@@ -150,34 +133,70 @@ const WhatsIcon = () => (
   </svg>
 );
 
-/* ----------------------------- Questions ------------------------------ */
-/**
- * ✅ Upgrade: groups + search + future scalability.
- * Tu peux enrichir la liste sans casser l’UI.
- */
 const questions = [
-  { id: "optique", label: "Lunettes ou lentilles", group: "Soins" },
-  { id: "med_alt", label: "Médecines alternatives", group: "Soins" },
-  { id: "meds_hors_base", label: "Médicaments hors base", group: "Soins" },
-  { id: "prevention", label: "Prévention (vaccins, check-up)", group: "Prévention" },
-  { id: "fitness", label: "Fitness / Sport", group: "Bien-être" },
-  { id: "voyage", label: "Voyages à l’étranger", group: "Voyage" },
-  { id: "hosp_semi", label: "Hospitalisation semi-privé", group: "Hospitalisation" },
-  { id: "hosp_privee", label: "Hospitalisation privé", group: "Hospitalisation" },
-  { id: "maternite", label: "Couverture maternité", group: "Famille" },
+  {
+    id: "optique",
+    label: "Lunettes ou lentilles",
+    group: "Soins",
+    desc: "Optique et correction visuelle",
+  },
+  {
+    id: "med_alt",
+    label: "Médecines alternatives",
+    group: "Soins",
+    desc: "Ostéopathie, acupuncture, etc.",
+  },
+  {
+    id: "meds_hors_base",
+    label: "Médicaments hors base",
+    group: "Soins",
+    desc: "Prise en charge élargie",
+  },
+  {
+    id: "prevention",
+    label: "Prévention",
+    group: "Prévention",
+    desc: "Vaccins, check-up, dépistage",
+  },
+  {
+    id: "fitness",
+    label: "Fitness / sport",
+    group: "Bien-être",
+    desc: "Abonnements et activités sportives",
+  },
+  {
+    id: "voyage",
+    label: "Voyages à l’étranger",
+    group: "Voyage",
+    desc: "Urgences et soins hors Suisse",
+  },
+  {
+    id: "hosp_semi",
+    label: "Hospitalisation semi-privée",
+    group: "Hospitalisation",
+    desc: "Chambre à deux lits",
+  },
+  {
+    id: "hosp_privee",
+    label: "Hospitalisation privée",
+    group: "Hospitalisation",
+    desc: "Chambre individuelle",
+  },
+  {
+    id: "maternite",
+    label: "Couverture maternité",
+    group: "Famille",
+    desc: "Prestations renforcées",
+  },
 ];
 
-/* ------------------------------- Helpers ------------------------------ */
 const encodeText = (s) => encodeURIComponent(s);
 
 function toLocalDatetimeInputValue(date) {
   const pad = (n) => String(n).padStart(2, "0");
-  const yyyy = date.getFullYear();
-  const mm = pad(date.getMonth() + 1);
-  const dd = pad(date.getDate());
-  const hh = pad(date.getHours());
-  const min = pad(date.getMinutes());
-  return `${yyyy}-${mm}-${dd}T${hh}:${min}`;
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(
+    date.getDate()
+  )}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
 }
 
 function getCoverageCount(result, choices) {
@@ -193,11 +212,11 @@ function getCoveragePct(result, selectedNeedsCount, choices) {
 
 function getTopStrengths(result, choices, limit = 3) {
   if (!Array.isArray(result?.prestations)) return [];
-  const matches = result.prestations
+  return result.prestations
     .filter((p) => choices[p.critere])
     .sort((a, b) => (b.score || 0) - (a.score || 0))
-    .slice(0, limit);
-  return matches.map((p) => p.critere);
+    .slice(0, limit)
+    .map((p) => p.critere);
 }
 
 function getWeakSpot(result, choices) {
@@ -215,9 +234,11 @@ function buildWhatsAppLink({
   top3,
   selectedNeeds,
   priority,
-  messageMode = "full", // "full" | "quick"
+  messageMode = "full",
 }) {
-  const dateText = datetimeISO ? new Date(datetimeISO).toLocaleString() : "à définir";
+  const dateText = datetimeISO
+    ? new Date(datetimeISO).toLocaleString()
+    : "à définir";
 
   const needsText = selectedNeeds.length
     ? selectedNeeds
@@ -233,79 +254,104 @@ function buildWhatsAppLink({
     priority === "budget"
       ? "Budget"
       : priority === "premium"
-      ? "Premium"
+      ? "Couverture maximale"
       : "Équilibré";
 
-  const msgQuick = `Bonjour 👋\n\nJe viens du comparateur et j’aimerais un avis rapide.\nPriorité: ${priorityText}\nBesoins: ${needsText}\n\nPouvez-vous me conseiller ? Merci !`;
+  const msgQuick = `Bonjour,
 
-  const msgFull = `Bonjour 👋, je viens de terminer ma comparaison et je souhaite prendre RDV.
+Je viens du comparateur de complémentaires et j’aimerais un avis rapide.
 
-• Raison: ${motif}
-• Créneau souhaité: ${dateText}
-• Priorité: ${priorityText}
-• Besoins principaux: ${needsText}
+Priorité : ${priorityText}
+Besoins : ${needsText}
 
-Mes résultats TOP 3:
+Pouvez-vous me conseiller ? Merci.`;
+
+  const msgFull = `Bonjour,
+
+Je viens de terminer ma comparaison et je souhaite être accompagné.
+
+Motif : ${motif}
+Créneau souhaité : ${dateText}
+Priorité : ${priorityText}
+Besoins principaux : ${needsText}
+
+Mes résultats TOP 3 :
 ${top3Text || "—"}
 
-Pouvez-vous me confirmer la disponibilité ? Merci !`;
+Pouvez-vous me confirmer la suite ? Merci.`;
 
-  return `https://wa.me/${phone}?text=${encodeText(messageMode === "quick" ? msgQuick : msgFull)}`;
+  return `https://wa.me/${phone}?text=${encodeText(
+    messageMode === "quick" ? msgQuick : msgFull
+  )}`;
 }
 
-/* --------------------------------------------------------------------- */
+const WizardStep = ({ number, title, active, done }) => (
+  <div className="flex items-center gap-3">
+    <div
+      className={`flex h-10 w-10 items-center justify-center rounded-full text-sm font-bold transition ${
+        done
+          ? "bg-primary text-white"
+          : active
+          ? "bg-primary/10 text-primary border border-primary/30"
+          : "bg-muted text-muted-foreground"
+      }`}
+    >
+      {done ? <CheckIcon /> : number}
+    </div>
+    <div>
+      <p
+        className={`text-sm font-semibold ${
+          active || done ? "text-foreground" : "text-muted-foreground"
+        }`}
+      >
+        {title}
+      </p>
+    </div>
+  </div>
+);
 
-const ComparatorPage = () => {
+export default function ComparatorPage() {
+  const [currentStep, setCurrentStep] = useState(1);
+
   const [choices, setChoices] = useState({});
   const [results, setResults] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedInsurance, setSelectedInsurance] = useState(null);
 
-  // ✅ NEW: UX options
   const [qSearch, setQSearch] = useState("");
-  const [openGroups, setOpenGroups] = useState({});
-  const [priority, setPriority] = useState("balanced"); // "budget" | "balanced" | "premium"
+  const [priority, setPriority] = useState("balanced");
   const [showAll, setShowAll] = useState(false);
-  const [sortMode, setSortMode] = useState("score"); // "score" | "coverage"
+  const [sortMode, setSortMode] = useState("score");
   const [compareOpen, setCompareOpen] = useState(false);
 
-  // Popup “Prendre RDV”
-  const [showBooking, setShowBooking] = useState(false);
-  const [bookingReason, setBookingReason] = useState("Obtenir un devis personnalisé");
-  const [bookingWhen, setBookingWhen] = useState("");
-  const [popupCountdown, setPopupCountdown] = useState(0); // affichage UX
+  const [showLeadCapture, setShowLeadCapture] = useState(false);
+  const [leadLoading, setLeadLoading] = useState(false);
+  const [leadForm, setLeadForm] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+  });
 
-  // Timers
+  const [showBooking, setShowBooking] = useState(false);
+  const [bookingReason, setBookingReason] = useState(
+    "Obtenir un devis personnalisé"
+  );
+  const [bookingWhen, setBookingWhen] = useState("");
+  const [popupCountdown, setPopupCountdown] = useState(0);
+
   const popupTimerRef = useRef(null);
   const popupIntervalRef = useRef(null);
-
-  // Scroll results
   const resultsRef = useRef(null);
 
   const { toast } = useToast();
 
-  // init choices + phone + restore
   useEffect(() => {
-    const initialChoices = questions.reduce((acc, q) => ({ ...acc, [q.id]: false }), {});
-    const storageKey = "mfc_comparator_state_v1";
+    const initialChoices = questions.reduce(
+      (acc, q) => ({ ...acc, [q.id]: false }),
+      {}
+    );
+    setChoices(initialChoices);
 
-    // Essaie restore
-    try {
-      const raw = localStorage.getItem(storageKey);
-      if (raw) {
-        const parsed = JSON.parse(raw);
-        setChoices({ ...initialChoices, ...(parsed.choices || {}) });
-        setPriority(parsed.priority || "balanced");
-        setShowAll(!!parsed.showAll);
-        setSortMode(parsed.sortMode || "score");
-      } else {
-        setChoices(initialChoices);
-      }
-    } catch {
-      setChoices(initialChoices);
-    }
-
-    // Essaie de lire window.siteConfig.whatsapp.phone si dispo
     try {
       const siteConfig = window && window.siteConfig;
       if (siteConfig?.whatsapp?.phone) {
@@ -314,27 +360,11 @@ const ComparatorPage = () => {
     } catch {}
   }, []);
 
-  // persist light (choices + options)
-  useEffect(() => {
-    const storageKey = "mfc_comparator_state_v1";
-    try {
-      localStorage.setItem(
-        storageKey,
-        JSON.stringify({ choices, priority, showAll, sortMode })
-      );
-    } catch {}
-  }, [choices, priority, showAll, sortMode]);
-
-  // Nettoyage des timers
   const clearPopupTimer = () => {
-    if (popupTimerRef.current) {
-      clearTimeout(popupTimerRef.current);
-      popupTimerRef.current = null;
-    }
-    if (popupIntervalRef.current) {
-      clearInterval(popupIntervalRef.current);
-      popupIntervalRef.current = null;
-    }
+    if (popupTimerRef.current) clearTimeout(popupTimerRef.current);
+    if (popupIntervalRef.current) clearInterval(popupIntervalRef.current);
+    popupTimerRef.current = null;
+    popupIntervalRef.current = null;
     setPopupCountdown(0);
   };
 
@@ -350,9 +380,11 @@ const ComparatorPage = () => {
     });
   };
 
-  const selectedNeeds = useMemo(() => Object.keys(choices).filter((k) => choices[k]), [choices]);
+  const selectedNeeds = useMemo(
+    () => Object.keys(choices).filter((k) => choices[k]),
+    [choices]
+  );
 
-  // Filter + group
   const filteredQuestions = useMemo(() => {
     const s = qSearch.trim().toLowerCase();
     if (!s) return questions;
@@ -369,7 +401,7 @@ const ComparatorPage = () => {
     return Array.from(map.entries());
   }, [filteredQuestions]);
 
-  const handleSubmit = async () => {
+  const runComparison = async () => {
     setIsLoading(true);
     setResults([]);
     clearPopupTimer();
@@ -377,27 +409,24 @@ const ComparatorPage = () => {
     await new Promise((resolve) => setTimeout(resolve, 100));
 
     try {
-      // ✅ compatible: si ton calculateTop3 accepte un 2e param, il l’utilise, sinon il ignore.
       const topResults = calculateTop3(choices, { priority });
       setResults(topResults);
+      setCurrentStep(3);
 
-      if (topResults.length > 0) {
-        toast({
-          title: "Comparaison réussie ✨",
-          description: "Voici vos meilleures correspondances.",
-        });
+      toast({
+        title: "Comparaison effectuée",
+        description:
+          "Voici les solutions les plus pertinentes selon vos critères.",
+      });
 
-        // scroll vers résultats
-        setTimeout(() => resultsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 120);
-      } else {
-        toast({
-          variant: "default",
-          title: "Aucun résultat spécifique",
-          description: "Essayez d’ajuster vos critères.",
+      setTimeout(() => {
+        resultsRef.current?.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
         });
-      }
+      }, 120);
     } catch (error) {
-      console.error("Erreur lors du calcul :", error);
+      console.error(error);
       toast({
         variant: "destructive",
         title: "Erreur",
@@ -408,15 +437,67 @@ const ComparatorPage = () => {
     }
   };
 
-  // Lance le pop 10s après l'affichage des résultats
+  const handleOpenLeadCapture = () => {
+    if (!leadForm.email) {
+      setShowLeadCapture(true);
+      return;
+    }
+    runComparison();
+  };
+
+  const handleLeadSubmit = async () => {
+    if (!leadForm.firstName || !leadForm.lastName || !leadForm.email) {
+      toast({
+        variant: "destructive",
+        title: "Champs requis",
+        description: "Merci de renseigner le prénom, le nom et l’email.",
+      });
+      return;
+    }
+
+    setLeadLoading(true);
+
+    try {
+      const previewResults = calculateTop3(choices, { priority });
+
+      const { error } = await supabase.from("comparator_leads").insert({
+        first_name: leadForm.firstName,
+        last_name: leadForm.lastName,
+        email: leadForm.email,
+        priority,
+        selected_needs: selectedNeeds,
+        results_json: previewResults,
+        status: "nouveau",
+      });
+
+      if (error) throw error;
+
+      setShowLeadCapture(false);
+      await runComparison();
+
+      toast({
+        title: "Informations enregistrées",
+        description: "Vos résultats ont bien été préparés.",
+      });
+    } catch (error) {
+      console.error(error);
+      toast({
+        variant: "destructive",
+        title: "Erreur",
+        description: "Impossible d’enregistrer vos informations.",
+      });
+    } finally {
+      setLeadLoading(false);
+    }
+  };
   useEffect(() => {
-    if (!results || results.length === 0 || showBooking) {
+    if (!results || results.length === 0 || showBooking || currentStep !== 3) {
       clearPopupTimer();
       return;
     }
 
-    setPopupCountdown(10);
-    let secs = 10;
+    setPopupCountdown(20);
+    let secs = 20;
 
     popupIntervalRef.current = setInterval(() => {
       secs -= 1;
@@ -430,39 +511,43 @@ const ComparatorPage = () => {
     popupTimerRef.current = setTimeout(() => {
       setShowBooking(true);
       setPopupCountdown(0);
-    }, 10000);
+    }, 20000);
 
     return () => clearPopupTimer();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [results, showBooking]);
+  }, [results, showBooking, currentStep]);
 
   const handleReset = () => {
-    const initialChoices = questions.reduce((acc, q) => ({ ...acc, [q.id]: false }), {});
+    const initialChoices = questions.reduce(
+      (acc, q) => ({ ...acc, [q.id]: false }),
+      {}
+    );
     setChoices(initialChoices);
     setResults([]);
-    setShowBooking(false);
     setSelectedInsurance(null);
     setCompareOpen(false);
     setQSearch("");
     setShowAll(false);
     setSortMode("score");
     setPriority("balanced");
+    setCurrentStep(1);
+    setShowLeadCapture(false);
+    setLeadForm({ firstName: "", lastName: "", email: "" });
     clearPopupTimer();
   };
 
   const getDialogDetails = () => {
     if (!selectedInsurance) return { matched: [], others: [] };
-    const matched = (selectedInsurance.prestations || []).filter((p) => choices[p.critere]);
+    const matched = (selectedInsurance.prestations || []).filter(
+      (p) => choices[p.critere]
+    );
     const others = (selectedInsurance.prestations || []).filter(
       (p) => !choices[p.critere] && p.score >= 2
     );
     return { matched, others };
   };
 
-  // Results display with sort + showAll
   const displayedResults = useMemo(() => {
     const list = [...(results || [])];
-
     const coverageOf = (r) => getCoverageCount(r, choices);
 
     list.sort((a, b) => {
@@ -473,57 +558,27 @@ const ComparatorPage = () => {
     return showAll ? list : list.slice(0, 3);
   }, [results, showAll, sortMode, choices]);
 
-  // Keep "top style" for top3 mode
   const top3StyledOrder = useMemo(() => {
     if (showAll) return displayedResults;
-    if (displayedResults.length === 3) return [displayedResults[1], displayedResults[0], displayedResults[2]];
+    if (displayedResults.length === 3) {
+      return [displayedResults[1], displayedResults[0], displayedResults[2]];
+    }
     return displayedResults;
   }, [displayedResults, showAll]);
 
-  // Progress ring (countdown)
-  const Ring = ({ value, max = 10, size = 36, stroke = 4 }) => {
-    const radius = (size - stroke) / 2;
-    const c = 2 * Math.PI * radius;
-    const offset = c - (value / max) * c;
-    return (
-      <svg width={size} height={size} className="shrink-0">
-        <circle
-          cx={size / 2}
-          cy={size / 2}
-          r={radius}
-          stroke="currentColor"
-          strokeOpacity="0.15"
-          strokeWidth={stroke}
-          fill="none"
-        />
-        <circle
-          cx={size / 2}
-          cy={size / 2}
-          r={radius}
-          stroke="currentColor"
-          strokeWidth={stroke}
-          fill="none"
-          strokeDasharray={c}
-          strokeDashoffset={offset}
-          className="transition-[stroke-dashoffset] duration-300 ease-linear"
-        />
-      </svg>
-    );
-  };
-
-  // Compare data
   const compareA = results?.[0] || null;
   const compareB = results?.[1] || null;
 
-  const buildCompareRows = (a, b) => {
+  const compareRows = useMemo(() => {
     const rows = [];
-
-    // d’abord besoins sélectionnés (meilleure UX)
     for (const id of selectedNeeds) {
       const label = questions.find((q) => q.id === id)?.label || id;
-
-      const pa = Array.isArray(a?.prestations) ? a.prestations.find((p) => p.critere === id) : null;
-      const pb = Array.isArray(b?.prestations) ? b.prestations.find((p) => p.critere === id) : null;
+      const pa = Array.isArray(compareA?.prestations)
+        ? compareA.prestations.find((p) => p.critere === id)
+        : null;
+      const pb = Array.isArray(compareB?.prestations)
+        ? compareB.prestations.find((p) => p.critere === id)
+        : null;
 
       rows.push({
         id,
@@ -535,574 +590,632 @@ const ComparatorPage = () => {
         selected: true,
       });
     }
-
-    // puis autres avantages (score >=2)
-    const union = new Set();
-    const addAdv = (r) => {
-      if (!Array.isArray(r?.prestations)) return;
-      r.prestations.forEach((p) => {
-        if ((p.score || 0) >= 2 && !choices[p.critere]) union.add(p.critere);
-      });
-    };
-    addAdv(a);
-    addAdv(b);
-
-    for (const id of Array.from(union)) {
-      const label = questions.find((q) => q.id === id)?.label || id;
-      const pa = Array.isArray(a?.prestations) ? a.prestations.find((p) => p.critere === id) : null;
-      const pb = Array.isArray(b?.prestations) ? b.prestations.find((p) => p.critere === id) : null;
-
-      rows.push({
-        id,
-        label,
-        aScore: pa?.score ?? 0,
-        bScore: pb?.score ?? 0,
-        aDesc: pa?.description || "",
-        bDesc: pb?.description || "",
-        selected: false,
-      });
-    }
-
     return rows;
-  };
-
-  const compareRows = useMemo(() => buildCompareRows(compareA, compareB), [compareA, compareB, selectedNeeds, choices]);
+  }, [compareA, compareB, selectedNeeds]);
 
   return (
     <PageTransition>
-      {/* fond “premium” */}
       <div className="relative min-h-[calc(100vh-80px)] bg-background text-foreground overflow-hidden">
         <div className="pointer-events-none absolute inset-0 opacity-40">
           <div className="absolute -top-24 -right-16 h-72 w-72 rounded-full bg-primary/20 blur-3xl" />
-          <div className="absolute bottom-0 -left-24 h-72 w-72 rounded-full bg-purple-500/20 blur-3xl" />
+          <div className="absolute bottom-0 -left-24 h-72 w-72 rounded-full bg-primary/10 blur-3xl" />
         </div>
 
         <div className="container py-10 md:py-16 relative">
-          {/* Titre */}
           <motion.div
             className="text-center mb-10"
             initial={{ opacity: 0, y: -18 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.45 }}
           >
-            <h1 className="text-4xl md:text-6xl font-black bg-clip-text text-transparent bg-gradient-to-r from-primary to-purple-500 uppercase">
-              Votre Assurance Sur-Mesure
+            <h1 className="text-4xl md:text-6xl font-black bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/70 uppercase">
+              Votre complémentaire sur mesure
             </h1>
             <p className="mt-4 text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto">
-              Cochez vos besoins, choisissez votre priorité, et obtenez des recommandations claires + comparables.
+              Un parcours simple, moderne et agréable pour comparer les
+              meilleures complémentaires.
             </p>
-
-            {/* mini info “le popup arrive dans …” */}
-            <AnimatePresence>
-              {popupCountdown > 0 && results.length > 0 && (
-                <motion.div
-                  initial={{ opacity: 0, y: -6 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -6 }}
-                  className="mx-auto mt-5 inline-flex items-center gap-2 rounded-full border border-border bg-card/70 backdrop-blur px-3 py-1 text-xs"
-                >
-                  <span className="opacity-70">Conseil gratuit dans</span>
-                  <div className="flex items-center gap-2 font-semibold">
-                    <Ring value={10 - popupCountdown} />
-                    <span>{popupCountdown}s</span>
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
           </motion.div>
 
-          {/* ✅ NEW: Priorité (impact énorme sur l’UX et la conversion) */}
-          <div className="max-w-4xl mx-auto mb-8">
-            <div className="rounded-2xl border border-border bg-card/70 backdrop-blur p-4 sm:p-5">
-              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-                <div>
-                  <p className="font-bold">Votre priorité</p>
-                  <p className="text-xs text-muted-foreground">Ça guide le classement (budget vs premium).</p>
-                </div>
-                <div className="flex gap-2">
-                  <button
-                    onClick={() => setPriority("budget")}
-                    className={`px-3 py-2 rounded-xl text-sm border transition ${
-                      priority === "budget"
-                        ? "border-transparent bg-gradient-to-r from-primary to-purple-500 text-white"
-                        : "border-border bg-background hover:border-primary/50"
-                    }`}
-                  >
-                    💸 Budget
-                  </button>
-                  <button
-                    onClick={() => setPriority("balanced")}
-                    className={`px-3 py-2 rounded-xl text-sm border transition ${
-                      priority === "balanced"
-                        ? "border-transparent bg-gradient-to-r from-primary to-purple-500 text-white"
-                        : "border-border bg-background hover:border-primary/50"
-                    }`}
-                  >
-                    ⚖️ Équilibre
-                  </button>
-                  <button
-                    onClick={() => setPriority("premium")}
-                    className={`px-3 py-2 rounded-xl text-sm border transition ${
-                      priority === "premium"
-                        ? "border-transparent bg-gradient-to-r from-primary to-purple-500 text-white"
-                        : "border-border bg-background hover:border-primary/50"
-                    }`}
-                  >
-                    👑 Premium
-                  </button>
-                </div>
-              </div>
-            </div>
+          <div className="mx-auto mb-10 flex max-w-4xl flex-col gap-4 rounded-2xl border border-border bg-card/70 p-5 backdrop-blur md:flex-row md:items-center md:justify-between">
+            <WizardStep
+              number={1}
+              title="Priorité"
+              active={currentStep === 1}
+              done={currentStep > 1}
+            />
+            <WizardStep
+              number={2}
+              title="Besoins"
+              active={currentStep === 2}
+              done={currentStep > 2}
+            />
+            <WizardStep
+              number={3}
+              title="Résultats"
+              active={currentStep === 3}
+              done={false}
+            />
           </div>
 
-          {/* ✅ NEW: Search + quick actions */}
-          <div className="max-w-4xl mx-auto mb-8">
-            <div className="flex flex-col sm:flex-row gap-3 items-stretch">
-              <input
-                value={qSearch}
-                onChange={(e) => setQSearch(e.target.value)}
-                placeholder="Rechercher un besoin… (optique, voyage, hospitalisation...)"
-                className="w-full rounded-xl border border-border bg-card/70 backdrop-blur px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
-              />
-              <div className="flex gap-2">
-                <Button variant="outline" onClick={() => setAll(true)}>
-                  Tout cocher
-                </Button>
-                <Button variant="outline" onClick={() => setAll(false)}>
-                  Tout décocher
-                </Button>
-              </div>
-            </div>
-
-            {/* Sticky mini summary mobile */}
-            <div className="mt-3 flex flex-wrap items-center justify-between gap-2 text-xs">
-              <div className="inline-flex items-center gap-2 rounded-full border border-border bg-card/70 backdrop-blur px-3 py-1">
-                <span className="opacity-70">Besoins sélectionnés</span>
-                <span className="font-bold">{selectedNeeds.length}</span>
-              </div>
-              <button
-                onClick={() => setQSearch("")}
-                className="underline opacity-70 hover:opacity-100"
+          <AnimatePresence mode="wait">
+            {currentStep === 1 && (
+              <motion.div
+                key="step-1"
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                className="mx-auto max-w-4xl"
               >
-                Réinitialiser la recherche
-              </button>
-            </div>
-          </div>
+                <div className="rounded-3xl border border-border bg-card/70 p-6 backdrop-blur sm:p-8">
+                  <div className="mb-8 text-center">
+                    <p className="text-sm font-semibold uppercase tracking-[0.2em] text-primary">
+                      Étape 1
+                    </p>
+                    <h2 className="mt-2 text-2xl font-bold sm:text-3xl">
+                      Quelle est votre priorité ?
+                    </h2>
+                  </div>
 
-          {/* ✅ NEW: Grouped checklist (scalable & premium) */}
-          <motion.div className="space-y-6 mb-10 max-w-6xl mx-auto" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-            {groupedQuestions.map(([group, items]) => {
-              const isOpen = openGroups[group] ?? true;
-              return (
-                <div
-                  key={group}
-                  className="rounded-2xl border border-border bg-card/60 backdrop-blur overflow-hidden"
-                >
-                  <button
-                    className="w-full flex items-center justify-between px-5 py-4"
-                    onClick={() => setOpenGroups((p) => ({ ...p, [group]: !isOpen }))}
-                  >
-                    <div className="text-left">
-                      <p className="font-bold">{group}</p>
-                      <p className="text-xs text-muted-foreground">{items.length} options</p>
+                  <div className="grid gap-4 md:grid-cols-3">
+                    {[
+                      {
+                        key: "budget",
+                        title: "Budget",
+                        description:
+                          "Une bonne couverture avec un niveau de coût maîtrisé.",
+                      },
+                      {
+                        key: "balanced",
+                        title: "Équilibré",
+                        description:
+                          "Le meilleur compromis entre garanties et budget.",
+                      },
+                      {
+                        key: "premium",
+                        title: "Couverture maximale",
+                        description: "Le niveau de prestations le plus élevé.",
+                      },
+                    ].map((item) => {
+                      const active = priority === item.key;
+                      return (
+                        <button
+                          key={item.key}
+                          onClick={() => setPriority(item.key)}
+                          className={`rounded-2xl border p-5 text-left transition ${
+                            active
+                              ? "border-primary bg-primary/10 shadow-lg shadow-primary/10"
+                              : "border-border bg-background hover:border-primary/40"
+                          }`}
+                        >
+                          <p className="text-lg font-bold">{item.title}</p>
+                          <p className="mt-2 text-sm text-muted-foreground">
+                            {item.description}
+                          </p>
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  <div className="mt-8 flex justify-end">
+                    <Button
+                      size="lg"
+                      className="px-8"
+                      onClick={() => setCurrentStep(2)}
+                    >
+                      Suivant
+                    </Button>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+
+            {currentStep === 2 && (
+              <motion.div
+                key="step-2"
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                className="mx-auto max-w-6xl"
+              >
+                <div className="rounded-3xl border border-border bg-card/70 p-6 backdrop-blur sm:p-8">
+                  <div className="mb-8 text-center">
+                    <p className="text-sm font-semibold uppercase tracking-[0.2em] text-primary">
+                      Étape 2
+                    </p>
+                    <h2 className="mt-2 text-2xl font-bold sm:text-3xl">
+                      Choisissez vos besoins
+                    </h2>
+                    <p className="mt-2 text-sm text-muted-foreground sm:text-base">
+                      Sélectionnez ce qui compte le plus pour vous.
+                    </p>
+                  </div>
+
+                  <div className="mb-8 flex flex-col sm:flex-row gap-3 items-stretch">
+                    <input
+                      value={qSearch}
+                      onChange={(e) => setQSearch(e.target.value)}
+                      placeholder="Rechercher un besoin..."
+                      className="w-full rounded-xl border border-border bg-background px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                    />
+                    <div className="flex gap-2">
+                      <Button variant="outline" onClick={() => setAll(true)}>
+                        Tout cocher
+                      </Button>
+                      <Button variant="outline" onClick={() => setAll(false)}>
+                        Tout décocher
+                      </Button>
                     </div>
-                    <span className="text-xs opacity-70">{isOpen ? "Masquer" : "Afficher"}</span>
-                  </button>
+                  </div>
 
-                  <AnimatePresence initial={false}>
-                    {isOpen && (
-                      <motion.div
-                        initial={{ height: 0, opacity: 0 }}
-                        animate={{ height: "auto", opacity: 1 }}
-                        exit={{ height: 0, opacity: 0 }}
-                        className="px-4 pb-4"
-                      >
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  <div className="space-y-8">
+                    {groupedQuestions.map(([group, items]) => (
+                      <div key={group}>
+                        <div className="mb-4 flex items-center justify-between">
+                          <div>
+                            <h3 className="text-lg font-bold">{group}</h3>
+                            <p className="text-sm text-muted-foreground">
+                              {items.length} options disponibles
+                            </p>
+                          </div>
+                        </div>
+
+                        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
                           {items.map((q) => {
                             const active = !!choices[q.id];
                             return (
-                              <label
+                              <button
                                 key={q.id}
-                                className={`group relative flex items-center justify-between w-full p-4 rounded-xl border-2 cursor-pointer transition-all duration-300 ${
+                                type="button"
+                                onClick={() => handleChoiceChange(q.id)}
+                                className={`relative overflow-hidden rounded-2xl border p-5 text-left transition-all ${
                                   active
-                                    ? "bg-primary/10 border-primary shadow-xl shadow-primary/10"
-                                    : "bg-background border-border hover:border-primary/50"
+                                    ? "border-primary bg-primary/10 shadow-xl shadow-primary/10"
+                                    : "border-border bg-background hover:border-primary/40 hover:shadow-lg"
                                 }`}
                               >
-                                <span className="font-semibold text-sm">{q.label}</span>
-                                <div
-                                  className={`flex items-center justify-center w-7 h-7 rounded-full transition-all duration-300 ${
-                                    active ? "bg-primary text-primary-foreground" : "bg-muted"
-                                  }`}
-                                >
-                                  {active && <CheckIcon />}
+                                <div className="flex items-start justify-between gap-4">
+                                  <div>
+                                    <p className="text-base font-bold">
+                                      {q.label}
+                                    </p>
+                                    <p className="mt-2 text-sm text-muted-foreground">
+                                      {q.desc}
+                                    </p>
+                                  </div>
+
+                                  <div
+                                    className={`mt-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${
+                                      active
+                                        ? "bg-primary text-white"
+                                        : "bg-muted text-muted-foreground"
+                                    }`}
+                                  >
+                                    {active ? <CheckIcon /> : null}
+                                  </div>
                                 </div>
-                                <span className="pointer-events-none absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity bg-gradient-to-r from-primary/0 via-primary/5 to-purple-500/10" />
-                                <input
-                                  type="checkbox"
-                                  checked={active}
-                                  onChange={() => handleChoiceChange(q.id)}
-                                  className="sr-only"
-                                />
-                              </label>
+                              </button>
                             );
                           })}
                         </div>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </div>
-              );
-            })}
-          </motion.div>
-
-          {/* Boutons */}
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button
-              size="lg"
-              onClick={handleSubmit}
-              disabled={isLoading}
-              className="font-bold px-10 py-7 text-lg hover:scale-[1.01] transition"
-            >
-              {isLoading ? (
-                "Analyse en cours..."
-              ) : (
-                <div className="flex items-center">
-                  <SparklesIcon /> Trouver mes résultats
-                </div>
-              )}
-            </Button>
-
-            {results.length > 0 && !isLoading && (
-              <Button
-                size="lg"
-                variant="outline"
-                onClick={handleReset}
-                className="font-bold px-10 py-7 text-lg hover:scale-[1.01] transition"
-              >
-                Recommencer
-              </Button>
-            )}
-          </div>
-
-          {/* Résultats */}
-          <div className="mt-14" ref={resultsRef}>
-            <AnimatePresence mode="wait">
-              {isLoading && (
-                <motion.div
-                  key="loader"
-                  className="text-center"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.25 }}
-                >
-                  <div className="inline-block w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
-                  <p className="mt-4 text-muted-foreground font-semibold">
-                    Nous analysons des centaines d'options pour vous...
-                  </p>
-                </motion.div>
-              )}
-
-              {!isLoading && results.length > 0 && (
-                <motion.div key="results" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.25 }}>
-                  {/* ✅ NEW: controls results */}
-                  <div className="flex flex-col sm:flex-row items-center justify-between gap-3 mb-6">
-                    <div className="flex items-center gap-2">
-                      <Button variant={showAll ? "outline" : "default"} onClick={() => setShowAll(false)}>
-                        Top 3
-                      </Button>
-                      <Button variant={showAll ? "default" : "outline"} onClick={() => setShowAll(true)}>
-                        Tout afficher
-                      </Button>
-                    </div>
-
-                    <div className="flex items-center gap-2 text-sm">
-                      <span className="text-muted-foreground">Trier par</span>
-                      <Button variant={sortMode === "score" ? "default" : "outline"} onClick={() => setSortMode("score")}>
-                        Score
-                      </Button>
-                      <Button
-                        variant={sortMode === "coverage" ? "default" : "outline"}
-                        onClick={() => setSortMode("coverage")}
-                      >
-                        Couverture
-                      </Button>
-                    </div>
+                      </div>
+                    ))}
                   </div>
 
-                  {/* ✅ NEW: compare CTA */}
-                  {results.length >= 2 && !showAll && (
-                    <div className="mb-6 flex flex-col sm:flex-row gap-3 items-stretch">
-                      <Button
-                        variant="outline"
-                        className="w-full sm:w-auto"
-                        onClick={() => setCompareOpen(true)}
-                      >
-                        Comparer TOP 1 vs TOP 2
-                      </Button>
-                      <Button
-                        className="w-full sm:w-auto font-bold bg-gradient-to-r from-emerald-500 to-primary text-white hover:opacity-95"
-                        onClick={() => setShowBooking(true)}
-                      >
-                        Finaliser avec un conseiller
-                      </Button>
-                      <Button
-                        variant="outline"
-                        className="w-full sm:w-auto"
-                        onClick={() => {
-                          const link = buildWhatsAppLink({
-                            phone: WHATSAPP_PHONE,
-                            motif: "Avis rapide",
-                            datetimeISO: undefined,
-                            top3: results || [],
-                            selectedNeeds,
-                            priority,
-                            messageMode: "quick",
-                          });
-                          window.open(link, "_blank");
-                        }}
-                      >
-                        <WhatsIcon /> Avis rapide (WhatsApp)
-                      </Button>
-                    </div>
-                  )}
+                  <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:justify-between">
+                    <Button
+                      variant="outline"
+                      size="lg"
+                      onClick={() => setCurrentStep(1)}
+                    >
+                      Retour
+                    </Button>
 
+                    <Button
+                      size="lg"
+                      onClick={handleOpenLeadCapture}
+                      className="font-bold"
+                    >
+                      <div className="flex items-center">
+                        <SparklesIcon /> Obtenir mes résultats
+                      </div>
+                    </Button>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+
+            {currentStep === 3 && (
+              <motion.div
+                key="step-3"
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                ref={resultsRef}
+              >
+                <div className="mb-8 flex flex-col gap-4 rounded-3xl border border-border bg-card/70 p-6 backdrop-blur sm:flex-row sm:items-center sm:justify-between">
+                  <div>
+                    <p className="text-sm font-semibold uppercase tracking-[0.2em] text-primary">
+                      Étape 3
+                    </p>
+                    <h2 className="mt-2 text-2xl font-bold sm:text-3xl">
+                      Vos résultats personnalisés
+                    </h2>
+                  </div>
+
+                  <div className="flex flex-col gap-3 sm:flex-row">
+                    <Button variant="outline" onClick={() => setCurrentStep(2)}>
+                      Modifier mes besoins
+                    </Button>
+                    <Button variant="outline" onClick={handleReset}>
+                      Recommencer
+                    </Button>
+                  </div>
+                </div>
+
+                <AnimatePresence>
+                  {popupCountdown > 0 && results.length > 0 && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -6 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -6 }}
+                      className="mb-6 mx-auto inline-flex items-center gap-2 rounded-full border border-border bg-card/70 backdrop-blur px-3 py-1 text-xs"
+                    >
+                      <span className="opacity-70">
+                        Conseiller disponible dans
+                      </span>
+                      <span className="font-semibold">{popupCountdown}s</span>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
+                {results.length >= 2 && !showAll && (
+                  <div className="mb-6 flex flex-col sm:flex-row gap-3 items-stretch">
+                    <Button
+                      variant="outline"
+                      className="w-full sm:w-auto"
+                      onClick={() => setCompareOpen(true)}
+                    >
+                      Comparer TOP 1 et TOP 2
+                    </Button>
+                    <Button
+                      className="w-full sm:w-auto font-bold bg-gradient-to-r from-primary to-primary/80 text-white hover:opacity-95"
+                      onClick={() => setShowBooking(true)}
+                    >
+                      Finaliser avec un conseiller
+                    </Button>
+                  </div>
+                )}
+
+                <div className="mb-6 flex flex-col sm:flex-row items-center justify-between gap-3">
+                  <div className="flex items-center gap-2">
+                    <Button
+                      variant={showAll ? "outline" : "default"}
+                      onClick={() => setShowAll(false)}
+                    >
+                      Top 3
+                    </Button>
+                    <Button
+                      variant={showAll ? "default" : "outline"}
+                      onClick={() => setShowAll(true)}
+                    >
+                      Tout afficher
+                    </Button>
+                  </div>
+
+                  <div className="flex items-center gap-2 text-sm">
+                    <span className="text-muted-foreground">Trier par</span>
+                    <Button
+                      variant={sortMode === "score" ? "default" : "outline"}
+                      onClick={() => setSortMode("score")}
+                    >
+                      Score
+                    </Button>
+                    <Button
+                      variant={sortMode === "coverage" ? "default" : "outline"}
+                      onClick={() => setSortMode("coverage")}
+                    >
+                      Couverture
+                    </Button>
+                  </div>
+                </div>
+
+                {isLoading ? (
+                  <div className="text-center">
+                    <div className="inline-block w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+                    <p className="mt-4 text-muted-foreground font-semibold">
+                      Analyse des meilleures solutions du marché en cours...
+                    </p>
+                  </div>
+                ) : (
                   <motion.div
-                    className="grid grid-cols-1 lg:grid-cols-3 items-stretch justify-center gap-8"
+                    className="grid grid-cols-1 lg:grid-cols-3 gap-8"
                     initial="hidden"
                     animate="show"
                     variants={{
                       hidden: {},
-                      show: { transition: { staggerChildren: 0.08, delayChildren: 0.15 } },
+                      show: {
+                        transition: {
+                          staggerChildren: 0.08,
+                          delayChildren: 0.15,
+                        },
+                      },
                     }}
                   >
                     {top3StyledOrder.map((res, index) => {
-                      // Styling "Top 3" seulement si showAll = false
-                      const isTop1 = !showAll && ((results.length >= 3 && index === 1) || (results.length < 3 && index === 0));
-                      const rank = showAll ? index + 1 : isTop1 ? 1 : index === 0 ? 2 : 3;
+                      const isTop1 =
+                        !showAll &&
+                        ((results.length >= 3 && index === 1) ||
+                          (results.length < 3 && index === 0));
 
-                      const cardColors = {
-                        1: { bg: "bg-card-top3-gold", text: "text-card-top3-gold", border: "border-t-card-top3-gold", bottom: "border-b-card-top3-gold" },
-                        2: { bg: "bg-card-top3-silver", text: "text-card-top3-silver", border: "border-t-card-top3-silver", bottom: "border-b-card-top3-silver" },
-                        3: { bg: "bg-card-top3-bronze", text: "text-card-top3-bronze", border: "border-t-card-top3-bronze", bottom: "border-b-card-top3-bronze" },
-                      };
-                      const colors = cardColors[rank] || cardColors[3];
+                      const rank = showAll
+                        ? index + 1
+                        : isTop1
+                        ? 1
+                        : index === 0
+                        ? 2
+                        : 3;
 
                       const covered = getCoverageCount(res, choices);
-                      const pct = getCoveragePct(res, selectedNeeds.length, choices);
+                      const pct = getCoveragePct(
+                        res,
+                        selectedNeeds.length,
+                        choices
+                      );
 
                       const strengths = getTopStrengths(res, choices, 3).map(
                         (id) => questions.find((q) => q.id === id)?.label || id
                       );
+
                       const weak = getWeakSpot(res, choices);
-                      const weakLabel = weak ? questions.find((q) => q.id === weak)?.label || weak : null;
+                      const weakLabel = weak
+                        ? questions.find((q) => q.id === weak)?.label || weak
+                        : null;
 
                       return (
                         <motion.div
                           key={`${res.caisse}-${res.produit}-${index}`}
                           variants={{
                             hidden: { opacity: 0, y: 28 },
-                            show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 110 } },
+                            show: {
+                              opacity: 1,
+                              y: 0,
+                              transition: { type: "spring", stiffness: 110 },
+                            },
                           }}
                           whileHover={{ y: -6, scale: 1.02 }}
-                          className={`relative bg-card rounded-2xl border border-border shadow-lg w-full max-w-xl overflow-hidden flex flex-col p-8 transition-all duration-300 ${
+                          className={`relative rounded-2xl border border-border bg-card p-8 shadow-lg transition-all ${
                             isTop1
                               ? "lg:-translate-y-4 lg:scale-105 lg:shadow-2xl z-10 ring-1 ring-primary/20"
                               : "hover:shadow-xl"
                           }`}
                         >
-                          {!showAll && isTop1 && (
-                            <div className="absolute -left-10 top-6 rotate-[-35deg] bg-gradient-to-r from-primary to-purple-500 text-white px-10 py-1 text-[10px] font-black tracking-widest shadow">
+                          {isTop1 && !showAll && (
+                            <div className="absolute -left-10 top-6 rotate-[-35deg] bg-gradient-to-r from-primary to-primary/80 px-10 py-1 text-[10px] font-black tracking-widest text-white shadow">
                               MEILLEUR MATCH
                             </div>
                           )}
 
-                          {!showAll && (
-                            <>
-                              <div
-                                className={`corner-triangle absolute top-0 right-0 w-0 h-0 border-l-[60px] border-l-transparent border-t-[60px] ${colors.border}`}
-                              />
-                              <div
-                                className={`corner-bottom absolute bottom-0 left-0 w-0 h-0 border-r-[60px] border-r-transparent border-b-[60px] ${colors.bottom}`}
-                              />
-                            </>
-                          )}
-
-                          <div className="flex items-center justify-between mb-4">
-                            <h2 className={`text-2xl font-extrabold ${!showAll ? colors.text : "text-foreground"}`}>
+                          <div className="mb-4 flex items-center justify-between">
+                            <h2 className="text-2xl font-extrabold text-foreground">
                               {showAll ? `#${rank}` : `TOP ${rank}`}
                             </h2>
-                            <div className="text-xs font-bold px-3 py-1 rounded-full bg-muted">
-                              {covered} / {selectedNeeds.length || 0} besoins • {pct}%
+                            <div className="rounded-full bg-muted px-3 py-1 text-xs font-bold">
+                              {covered} / {selectedNeeds.length || 0} • {pct}%
                             </div>
                           </div>
 
-                          <div className={`w-28 h-28 rounded-full flex flex-col items-center justify-center mb-6 text-white ${!showAll ? colors.bg : "bg-gradient-to-r from-primary to-purple-500"} shadow-inner`}>
-                            <span className="text-4xl font-black">{res.totalScore}</span>
-                            <span className="text-[10px] font-bold uppercase tracking-wider">
-                              Score
-                            </span>
+                          <div className="mb-6 flex h-28 w-28 items-center justify-center rounded-full bg-gradient-to-r from-primary to-primary/80 text-white shadow-inner">
+                            <div className="text-center">
+                              <div className="text-4xl font-black">
+                                {res.totalScore}
+                              </div>
+                              <div className="text-[10px] font-bold uppercase tracking-wider">
+                                Score
+                              </div>
+                            </div>
                           </div>
 
-                          <div className="flex-grow mb-5">
-                            <h3 className="text-xl font-bold text-foreground">{res.caisse}</h3>
-                            <p className="text-sm text-muted-foreground">{res.produit}</p>
+                          <div className="mb-5 flex-grow">
+                            <h3 className="text-xl font-bold text-foreground">
+                              {res.caisse}
+                            </h3>
+                            <p className="text-sm text-muted-foreground">
+                              {res.produit}
+                            </p>
 
-                            {/* ✅ NEW: Why this match */}
                             <div className="mt-4 rounded-xl border border-border bg-background/50 p-4">
-                              <p className="text-sm font-semibold">Pourquoi ce résultat ?</p>
+                              <p className="text-sm font-semibold">
+                                Pourquoi ce résultat ?
+                              </p>
                               <ul className="mt-2 space-y-1 text-sm text-muted-foreground">
                                 {strengths.length ? (
                                   strengths.map((t) => (
-                                    <li key={t} className="flex items-start gap-2">
-                                      <span className="mt-[6px] inline-block w-1.5 h-1.5 rounded-full bg-primary" />
+                                    <li
+                                      key={t}
+                                      className="flex items-start gap-2"
+                                    >
+                                      <span className="mt-[6px] inline-block h-1.5 w-1.5 rounded-full bg-primary" />
                                       <span>{t}</span>
                                     </li>
                                   ))
                                 ) : (
-                                  <li className="text-xs">Aucun besoin sélectionné (choisissez 1-2 options pour affiner).</li>
+                                  <li className="text-xs">
+                                    Aucun besoin sélectionné.
+                                  </li>
                                 )}
                               </ul>
                               {weakLabel && (
                                 <p className="mt-3 text-xs text-muted-foreground">
-                                  ⚠️ Potentiel point faible : <span className="font-medium text-foreground">{weakLabel}</span>
+                                  Point de vigilance potentiel :{" "}
+                                  <span className="font-medium text-foreground">
+                                    {weakLabel}
+                                  </span>
                                 </p>
                               )}
                             </div>
-
-                            {/* Liste courte des matches */}
-                            {Array.isArray(res?.prestations) && res.prestations.length > 0 && (
-                              <ul className="mt-4 space-y-2">
-                                {res.prestations
-                                  .filter((p) => choices[p.critere])
-                                  .slice(0, 3)
-                                  .map((p) => (
-                                    <li key={p.critere} className="text-sm flex items-start gap-2">
-                                      <span className="mt-[6px] inline-block w-1.5 h-1.5 rounded-full bg-primary"></span>
-                                      <span className="text-muted-foreground">
-                                        <span className="font-medium text-foreground">
-                                          {questions.find((q) => q.id === p.critere)?.label || p.critere}
-                                        </span>
-                                        {p.description ? ` — ${p.description}` : ""}
-                                      </span>
-                                    </li>
-                                  ))}
-                              </ul>
-                            )}
                           </div>
 
                           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                             <Button
                               variant="outline"
-                              className="w-full font-bold hover:scale-[1.01]"
+                              className="w-full font-bold"
                               onClick={() => setSelectedInsurance(res)}
                             >
                               Voir les détails
                             </Button>
                             <Button
-                              className={`w-full font-bold uppercase tracking-wider ${
-                                !showAll ? colors.bg : "bg-gradient-to-r from-emerald-500 to-primary"
-                              } text-white hover:opacity-90 hover:scale-[1.01]`}
+                              className="w-full font-bold bg-gradient-to-r from-primary to-primary/80 text-white"
                               onClick={() => setShowBooking(true)}
                             >
-                              Prendre RDV
+                              Être accompagné
                             </Button>
                           </div>
                         </motion.div>
                       );
                     })}
                   </motion.div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
+                )}
+              </motion.div>
+            )}
+          </AnimatePresence>
 
-          {/* Détails produit — Dialog shadcn */}
-          <Dialog open={!!selectedInsurance} onOpenChange={() => setSelectedInsurance(null)}>
+          <Dialog open={showLeadCapture} onOpenChange={setShowLeadCapture}>
+            <DialogContent className="sm:max-w-md bg-card">
+              <DialogHeader>
+                <DialogTitle className="text-2xl">
+                  Recevoir vos résultats par email
+                </DialogTitle>
+                <DialogDescription>
+                  Renseignez vos informations pour accéder à votre comparaison
+                  et recevoir une copie par email.
+                </DialogDescription>
+              </DialogHeader>
+
+              <div className="space-y-4 pt-4">
+                <div>
+                  <label className="text-sm font-semibold text-slate-700">
+                    Prénom
+                  </label>
+                  <input
+                    type="text"
+                    value={leadForm.firstName}
+                    onChange={(e) =>
+                      setLeadForm((prev) => ({
+                        ...prev,
+                        firstName: e.target.value,
+                      }))
+                    }
+                    className="mt-2 w-full rounded-xl border border-slate-300 px-4 py-3 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
+                    placeholder="Votre prénom"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-sm font-semibold text-slate-700">
+                    Nom
+                  </label>
+                  <input
+                    type="text"
+                    value={leadForm.lastName}
+                    onChange={(e) =>
+                      setLeadForm((prev) => ({
+                        ...prev,
+                        lastName: e.target.value,
+                      }))
+                    }
+                    className="mt-2 w-full rounded-xl border border-slate-300 px-4 py-3 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
+                    placeholder="Votre nom"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-sm font-semibold text-slate-700">
+                    Email
+                  </label>
+                  <input
+                    type="email"
+                    value={leadForm.email}
+                    onChange={(e) =>
+                      setLeadForm((prev) => ({
+                        ...prev,
+                        email: e.target.value,
+                      }))
+                    }
+                    className="mt-2 w-full rounded-xl border border-slate-300 px-4 py-3 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
+                    placeholder="votre.email@exemple.ch"
+                  />
+                </div>
+
+                <div className="flex flex-col gap-3 pt-2 sm:flex-row sm:justify-end">
+                  <Button
+                    variant="outline"
+                    onClick={() => setShowLeadCapture(false)}
+                  >
+                    Fermer
+                  </Button>
+                  <Button onClick={handleLeadSubmit} disabled={leadLoading}>
+                    {leadLoading ? "Enregistrement..." : "Voir mes résultats"}
+                  </Button>
+                </div>
+              </div>
+            </DialogContent>
+          </Dialog>
+
+          <Dialog
+            open={!!selectedInsurance}
+            onOpenChange={() => setSelectedInsurance(null)}
+          >
             <DialogContent className="sm:max-w-md bg-card">
               {selectedInsurance && (
                 <>
                   <DialogHeader>
-                    <DialogTitle className="text-2xl bg-clip-text text-transparent bg-gradient-to-r from-primary to-purple-500">
+                    <DialogTitle className="text-2xl">
                       {selectedInsurance.caisse} — {selectedInsurance.produit}
                     </DialogTitle>
-                    <DialogDescription>Aperçu des prestations de ce produit.</DialogDescription>
+                    <DialogDescription>
+                      Aperçu détaillé des prestations.
+                    </DialogDescription>
                   </DialogHeader>
 
-                  <div className="py-4 space-y-6 max-h-[60vh] overflow-y-auto pr-3">
+                  <div className="max-h-[60vh] space-y-6 overflow-y-auto py-4 pr-3">
                     <div>
-                      <h4 className="text-lg font-semibold text-foreground mb-3">
+                      <h4 className="mb-3 text-lg font-semibold text-foreground">
                         Correspond à vos besoins
                       </h4>
                       <div className="space-y-4">
                         {getDialogDetails().matched.map((p) => (
                           <div key={p.critere}>
-                            <div className="flex justify-between items-center">
+                            <div className="flex items-center justify-between">
                               <p className="font-semibold text-foreground">
-                                {questions.find((q) => q.id === p.critere)?.label || p.critere}
+                                {questions.find((q) => q.id === p.critere)
+                                  ?.label || p.critere}
                               </p>
-                              <span
-                                className={`text-xs font-bold px-2 py-1 rounded-full ${
-                                  p.score >= 3
-                                    ? "bg-green-500/20 text-green-500"
-                                    : p.score >= 2
-                                    ? "bg-blue-500/20 text-blue-500"
-                                    : "bg-amber-500/20 text-amber-500"
-                                }`}
-                              >
+                              <span className="rounded-full bg-blue-500/20 px-2 py-1 text-xs font-bold text-blue-600">
                                 Score {p.score}/3
                               </span>
                             </div>
-                            <p className="text-sm text-muted-foreground mt-1">{p.description}</p>
+                            <p className="mt-1 text-sm text-muted-foreground">
+                              {p.description}
+                            </p>
                           </div>
                         ))}
                       </div>
                     </div>
-
-                    {getDialogDetails().others.length > 0 && (
-                      <div className="pt-6 border-t border-border">
-                        <h4 className="text-lg font-semibold text-foreground mb-3">
-                          Autres avantages inclus
-                        </h4>
-                        <div className="space-y-4">
-                          {getDialogDetails().others.map((p) => (
-                            <div key={p.critere}>
-                              <div className="flex justify-between items-center">
-                                <p className="font-semibold text-foreground">
-                                  {questions.find((q) => q.id === p.critere)?.label || p.critere}
-                                </p>
-                                <span
-                                  className={`text-xs font-bold px-2 py-1 rounded-full ${
-                                    p.score >= 3
-                                      ? "bg-green-500/20 text-green-500"
-                                      : "bg-blue-500/20 text-blue-500"
-                                  }`}
-                                >
-                                  Score {p.score}/3
-                                </span>
-                              </div>
-                              <p className="text-sm text-muted-foreground mt-1">{p.description}</p>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
                   </div>
                 </>
               )}
             </DialogContent>
           </Dialog>
 
-          {/* ✅ NEW: Compare Top 1 vs Top 2 (Dialog) */}
           <Dialog open={compareOpen} onOpenChange={setCompareOpen}>
             <DialogContent className="sm:max-w-5xl bg-card">
               <DialogHeader>
-                <DialogTitle className="text-2xl bg-clip-text text-transparent bg-gradient-to-r from-primary to-purple-500">
+                <DialogTitle className="text-2xl">
                   Comparaison TOP 1 vs TOP 2
                 </DialogTitle>
                 <DialogDescription>
-                  Vos besoins sélectionnés d’abord, puis les autres avantages importants.
+                  Lecture directe des points forts sur vos critères.
                 </DialogDescription>
               </DialogHeader>
 
@@ -1112,101 +1225,37 @@ const ComparatorPage = () => {
                 </div>
               ) : (
                 <div className="py-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
-                    <div className="rounded-xl border border-border bg-background/60 p-4">
-                      <p className="text-sm font-bold">{compareA.caisse}</p>
-                      <p className="text-xs text-muted-foreground">{compareA.produit}</p>
-                    </div>
-                    <div className="rounded-xl border border-border bg-background/60 p-4">
-                      <p className="text-sm font-bold">{compareB.caisse}</p>
-                      <p className="text-xs text-muted-foreground">{compareB.produit}</p>
-                    </div>
-                  </div>
-
                   <div className="overflow-x-auto rounded-xl border border-border">
                     <table className="min-w-[900px] w-full text-sm">
                       <thead className="bg-muted/40">
                         <tr>
-                          <th className="text-left p-3 font-semibold w-[280px]">Critère</th>
-                          <th className="text-left p-3 font-semibold">{compareA.caisse}</th>
-                          <th className="text-left p-3 font-semibold">{compareB.caisse}</th>
+                          <th className="w-[280px] p-3 text-left font-semibold">
+                            Critère
+                          </th>
+                          <th className="p-3 text-left font-semibold">
+                            {compareA.caisse}
+                          </th>
+                          <th className="p-3 text-left font-semibold">
+                            {compareB.caisse}
+                          </th>
                         </tr>
                       </thead>
                       <tbody>
-                        {compareRows.map((row) => {
-                          const aGood = row.aScore >= 2;
-                          const bGood = row.bScore >= 2;
-
-                          return (
-                            <tr key={row.id} className={row.selected ? "bg-background" : "bg-background/60"}>
-                              <td className="p-3 border-t border-border">
-                                <div className="flex items-center gap-2">
-                                  <span className="font-medium">{row.label}</span>
-                                  {row.selected && (
-                                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20">
-                                      sélectionné
-                                    </span>
-                                  )}
-                                </div>
-                              </td>
-                              <td className="p-3 border-t border-border align-top">
-                                <div className="flex items-center gap-2">
-                                  <span className={`text-xs font-bold px-2 py-1 rounded-full ${
-                                    aGood ? "bg-green-500/15 text-green-600" : "bg-amber-500/15 text-amber-600"
-                                  }`}>
-                                    {row.aScore}/3
-                                  </span>
-                                  <span className="text-xs text-muted-foreground">
-                                    {aGood ? "✅ Bon" : "⚠️ Moyen"}
-                                  </span>
-                                </div>
-                                {row.aDesc && (
-                                  <p className="mt-2 text-xs text-muted-foreground">{row.aDesc}</p>
-                                )}
-                              </td>
-                              <td className="p-3 border-t border-border align-top">
-                                <div className="flex items-center gap-2">
-                                  <span className={`text-xs font-bold px-2 py-1 rounded-full ${
-                                    bGood ? "bg-green-500/15 text-green-600" : "bg-amber-500/15 text-amber-600"
-                                  }`}>
-                                    {row.bScore}/3
-                                  </span>
-                                  <span className="text-xs text-muted-foreground">
-                                    {bGood ? "✅ Bon" : "⚠️ Moyen"}
-                                  </span>
-                                </div>
-                                {row.bDesc && (
-                                  <p className="mt-2 text-xs text-muted-foreground">{row.bDesc}</p>
-                                )}
-                              </td>
-                            </tr>
-                          );
-                        })}
+                        {compareRows.map((row) => (
+                          <tr key={row.id}>
+                            <td className="border-t border-border p-3 font-medium">
+                              {row.label}
+                            </td>
+                            <td className="border-t border-border p-3">
+                              {row.aScore}/3
+                            </td>
+                            <td className="border-t border-border p-3">
+                              {row.bScore}/3
+                            </td>
+                          </tr>
+                        ))}
                       </tbody>
                     </table>
-                  </div>
-
-                  <div className="mt-4 flex flex-col sm:flex-row gap-3">
-                    <Button
-                      className="font-bold bg-gradient-to-r from-emerald-500 to-primary text-white hover:opacity-95"
-                      onClick={() => {
-                        const link = buildWhatsAppLink({
-                          phone: WHATSAPP_PHONE,
-                          motif: "Comparaison TOP 1 vs TOP 2",
-                          datetimeISO: undefined,
-                          top3: results || [],
-                          selectedNeeds,
-                          priority,
-                          messageMode: "quick",
-                        });
-                        window.open(link, "_blank");
-                      }}
-                    >
-                      <WhatsIcon /> Envoyer la comparaison (WhatsApp)
-                    </Button>
-                    <Button variant="outline" onClick={() => setCompareOpen(false)}>
-                      Fermer
-                    </Button>
                   </div>
                 </div>
               )}
@@ -1215,21 +1264,23 @@ const ComparatorPage = () => {
         </div>
       </div>
 
-      {/* Popup RDV — TopSheet sexy, toujours visible en haut */}
-      <TopSheet open={showBooking} onClose={() => setShowBooking(false)} maxWidth="lg">
+      <TopSheet
+        open={showBooking}
+        onClose={() => setShowBooking(false)}
+        maxWidth="lg"
+      >
         <div className="space-y-6">
           <div>
-            <h3 className="text-2xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-primary to-purple-500">
-              Finalisez en 1 minute avec un conseiller
+            <h3 className="bg-clip-text text-2xl font-extrabold text-transparent bg-gradient-to-r from-primary to-primary/80">
+              Analyse personnalisée avec un conseiller
             </h3>
             <p className="text-sm text-muted-foreground">
-              Choisissez une raison et un créneau — envoi direct par WhatsApp ou email.
+              Un expert vous accompagne pour valider et optimiser votre choix.
             </p>
           </div>
 
-          {/* Chips raisons rapides */}
           <div>
-            <p className="text-sm font-medium mb-2">Raison du RDV</p>
+            <p className="mb-2 text-sm font-medium">Motif de la demande</p>
             <div className="flex flex-wrap gap-2">
               {[
                 "Obtenir un devis personnalisé",
@@ -1243,9 +1294,9 @@ const ComparatorPage = () => {
                   <button
                     key={label}
                     onClick={() => setBookingReason(label)}
-                    className={`px-3 py-1.5 rounded-full text-xs border transition ${
+                    className={`rounded-full border px-3 py-1.5 text-xs transition ${
                       active
-                        ? "border-transparent bg-gradient-to-r from-primary to-purple-500 text-white"
+                        ? "border-transparent bg-gradient-to-r from-primary to-primary/80 text-white"
                         : "border-border bg-background hover:border-primary/50"
                     }`}
                   >
@@ -1256,13 +1307,14 @@ const ComparatorPage = () => {
             </div>
           </div>
 
-          {/* Créneau rapide + personnalisé */}
           <div>
-            <p className="text-sm font-medium mb-2">Créneau souhaité (optionnel)</p>
-            <div className="grid grid-cols-3 gap-2 mb-3">
+            <p className="mb-2 text-sm font-medium">
+              Créneau souhaité (optionnel)
+            </p>
+            <div className="mb-3 grid grid-cols-3 gap-2">
               {[
-                { t: "Aujourd’hui AM", addH: 3 },
-                { t: "Aujourd’hui PM", addH: 6 },
+                { t: "Aujourd’hui matin", addH: 3 },
+                { t: "Aujourd’hui après-midi", addH: 6 },
                 {
                   t: "Demain 10h",
                   addH: 24 + Math.max(0, 10 - new Date().getHours()),
@@ -1275,7 +1327,7 @@ const ComparatorPage = () => {
                     dt.setHours(dt.getHours() + opt.addH, 0, 0, 0);
                     setBookingWhen(toLocalDatetimeInputValue(dt));
                   }}
-                  className="text-xs border border-border rounded-md px-2 py-2 hover:border-primary/50 hover:bg-primary/5"
+                  className="rounded-md border border-border px-2 py-2 text-xs hover:border-primary/50 hover:bg-primary/5"
                 >
                   {opt.t}
                 </button>
@@ -1290,42 +1342,35 @@ const ComparatorPage = () => {
             />
           </div>
 
-          {/* Besoins cochés */}
-          <div className="text-sm">
-            <p className="font-medium mb-2">Vos besoins cochés</p>
-            {selectedNeeds.length > 0 ? (
-              <div className="flex flex-wrap gap-2">
-                {selectedNeeds.map((id) => (
-                  <span key={id} className="text-[11px] px-2 py-1 rounded-full bg-muted">
-                    {questions.find((q) => q.id === id)?.label || id}
-                  </span>
-                ))}
-              </div>
-            ) : (
-              <p className="text-muted-foreground">Aucun besoin spécifié</p>
-            )}
-          </div>
-
-          {/* CTA */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
             <Button
               variant="outline"
-              className="relative overflow-hidden"
               onClick={() => {
-                const subject = encodeText("Demande de RDV – Comparateur complémentaires");
+                const subject = encodeText(
+                  "Demande d'accompagnement – Comparateur complémentaires"
+                );
                 const body = encodeText(
-                  `Bonjour,\n\nJe souhaite un RDV.\nRaison: ${bookingReason}\nCréneau: ${
-                    bookingWhen || "à définir"
-                  }\nPriorité: ${priority}\nBesoins: ${
+                  `Bonjour,
+
+Je souhaite être recontacté.
+
+Motif : ${bookingReason}
+Créneau : ${bookingWhen || "à définir"}
+Priorité : ${priority}
+Besoins : ${
                     selectedNeeds
-                      .map((id) => questions.find((q) => q.id === id)?.label || id)
+                      .map(
+                        (id) => questions.find((q) => q.id === id)?.label || id
+                      )
                       .join(", ") || "non précisé"
-                  }\n\nMerci !`
+                  }
+
+Merci.`
                 );
                 window.location.href = `mailto:contact@monfideleconseiller.ch?subject=${subject}&body=${body}`;
               }}
             >
-              Être rappelé (email)
+              Être contacté par email
             </Button>
 
             <Button
@@ -1343,11 +1388,11 @@ const ComparatorPage = () => {
                 window.open(link, "_blank");
               }}
             >
-              <WhatsIcon /> Avis rapide
+              <WhatsIcon /> Demande rapide
             </Button>
 
             <Button
-              className="font-bold bg-gradient-to-r from-emerald-500 to-primary text-white hover:opacity-95"
+              className="bg-gradient-to-r from-primary to-primary/80 font-bold text-white hover:opacity-95"
               onClick={() => {
                 const link = buildWhatsAppLink({
                   phone: WHATSAPP_PHONE,
@@ -1361,15 +1406,10 @@ const ComparatorPage = () => {
                 window.open(link, "_blank");
               }}
             >
-              <WhatsIcon /> Envoyer (WhatsApp)
+              <WhatsIcon /> Contacter sur WhatsApp
             </Button>
           </div>
 
-          <p className="text-[11px] text-muted-foreground">
-            Astuce : vous pouvez modifier le texte dans WhatsApp avant l’envoi.
-          </p>
-
-          {/* Close */}
           <div className="pt-2 text-right">
             <button
               onClick={() => setShowBooking(false)}
@@ -1382,6 +1422,4 @@ const ComparatorPage = () => {
       </TopSheet>
     </PageTransition>
   );
-};
-
-export default ComparatorPage;
+}
